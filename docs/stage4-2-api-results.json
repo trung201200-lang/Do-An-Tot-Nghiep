@@ -1,0 +1,157 @@
+{
+  "testedAt": "2026-09-21T11:54:25.240Z",
+  "results": [
+    {
+      "test": 1,
+      "name": "Thiếu token -> 401 ở mọi endpoint",
+      "status": "PASS"
+    },
+    {
+      "test": 2,
+      "name": "EMPLOYEE không tạo bài -> 403",
+      "status": "PASS"
+    },
+    {
+      "test": 3,
+      "name": "IT tạo bài thành công",
+      "status": "PASS"
+    },
+    {
+      "test": 4,
+      "name": "Bài mới là DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 5,
+      "name": "Code dạng KB-xxxxxx",
+      "status": "PASS"
+    },
+    {
+      "test": 6,
+      "name": "created_by đúng IT",
+      "status": "PASS"
+    },
+    {
+      "test": 7,
+      "name": "ADMIN tạo bài",
+      "status": "PASS"
+    },
+    {
+      "test": 8,
+      "name": "EMPLOYEE không thấy DRAFT trong danh sách",
+      "status": "PASS"
+    },
+    {
+      "test": 9,
+      "name": "IT thấy DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 10,
+      "name": "ADMIN thấy DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 11,
+      "name": "EMPLOYEE không xem trực tiếp DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 12,
+      "name": "IT cập nhật title/content",
+      "status": "PASS"
+    },
+    {
+      "test": 13,
+      "name": "updated_by đúng người cập nhật",
+      "status": "PASS"
+    },
+    {
+      "test": 14,
+      "name": "EMPLOYEE không được update hoặc đổi status",
+      "status": "PASS"
+    },
+    {
+      "test": 15,
+      "name": "DRAFT -> PUBLISHED",
+      "status": "PASS"
+    },
+    {
+      "test": 16,
+      "name": "EMPLOYEE thấy PUBLISHED",
+      "status": "PASS"
+    },
+    {
+      "test": 17,
+      "name": "EMPLOYEE xem chi tiết PUBLISHED",
+      "status": "PASS"
+    },
+    {
+      "test": 18,
+      "name": "PUBLISHED -> ARCHIVED",
+      "status": "PASS"
+    },
+    {
+      "test": 19,
+      "name": "EMPLOYEE không thấy ARCHIVED",
+      "status": "PASS"
+    },
+    {
+      "test": 20,
+      "name": "ARCHIVED -> DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 21,
+      "name": "Chặn mọi transition không hợp lệ",
+      "status": "PASS"
+    },
+    {
+      "test": 22,
+      "name": "Chặn title rỗng, sai kiểu hoặc quá dài",
+      "status": "PASS"
+    },
+    {
+      "test": 23,
+      "name": "Chặn content rỗng hoặc sai kiểu",
+      "status": "PASS"
+    },
+    {
+      "test": 24,
+      "name": "ID không tồn tại -> 404",
+      "status": "PASS"
+    },
+    {
+      "test": 25,
+      "name": "Mọi response không lộ password/hash/secret/stack/SQL",
+      "status": "PASS"
+    },
+    {
+      "test": "B1",
+      "name": "Chặn trường chỉ server được quyết định",
+      "status": "PASS"
+    },
+    {
+      "test": "B2",
+      "name": "ADMIN sửa bài, giữ code/creator, truy vấn tham số an toàn",
+      "status": "PASS"
+    },
+    {
+      "test": "B3",
+      "name": "ID/status/body không hợp lệ -> 400",
+      "status": "PASS"
+    },
+    {
+      "test": "B4",
+      "name": "Tạo đồng thời không trùng mã",
+      "status": "PASS"
+    },
+    {
+      "test": "B5",
+      "name": "Publish đồng thời chỉ một request hợp lệ",
+      "status": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "temporaryArticles": 7
+}

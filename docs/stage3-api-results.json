@@ -1,0 +1,176 @@
+{
+  "testedAt": "2026-09-19T05:37:08.822Z",
+  "results": [
+    {
+      "test": 1,
+      "name": "EMPLOYEE tạo Ticket NEW",
+      "status": "PASS"
+    },
+    {
+      "test": 2,
+      "name": "Priority mặc định LOW",
+      "status": "PASS"
+    },
+    {
+      "test": 3,
+      "name": "EMPLOYEE chỉ thấy Ticket của mình",
+      "status": "PASS"
+    },
+    {
+      "test": 4,
+      "name": "EMPLOYEE không xem Ticket người khác",
+      "status": "PASS"
+    },
+    {
+      "test": 5,
+      "name": "EMPLOYEE không được tiếp nhận",
+      "status": "PASS"
+    },
+    {
+      "test": 6,
+      "name": "IT xem tất cả Ticket",
+      "status": "PASS"
+    },
+    {
+      "test": 7,
+      "name": "IT tiếp nhận NEW -> RECEIVED",
+      "status": "PASS"
+    },
+    {
+      "test": 8,
+      "name": "assigned_to lấy từ IT đăng nhập",
+      "status": "PASS"
+    },
+    {
+      "test": 9,
+      "name": "Priority LOW -> HIGH",
+      "status": "PASS"
+    },
+    {
+      "test": 10,
+      "name": "RECEIVED -> IN_PROGRESS",
+      "status": "PASS"
+    },
+    {
+      "test": 11,
+      "name": "Không cho NEW -> RESOLVED",
+      "status": "PASS"
+    },
+    {
+      "test": 12,
+      "name": "RESOLVED thiếu solution bị từ chối",
+      "status": "PASS"
+    },
+    {
+      "test": 13,
+      "name": "RESOLVED có solution thành công",
+      "status": "PASS"
+    },
+    {
+      "test": 14,
+      "name": "RESOLVED -> CLOSED",
+      "status": "PASS"
+    },
+    {
+      "test": 15,
+      "name": "CLOSED không mở lại",
+      "status": "PASS"
+    },
+    {
+      "test": 16,
+      "name": "RESOLVED -> IN_PROGRESS",
+      "status": "PASS"
+    },
+    {
+      "test": 17,
+      "name": "Mọi thay đổi trạng thái có history đúng thứ tự",
+      "status": "PASS"
+    },
+    {
+      "test": 18,
+      "name": "EMPLOYEE xem history của mình",
+      "status": "PASS"
+    },
+    {
+      "test": 19,
+      "name": "IT khác không xử lý Ticket đã assigned",
+      "status": "PASS"
+    },
+    {
+      "test": 20,
+      "name": "API không trả password/hash user",
+      "status": "PASS"
+    },
+    {
+      "test": 21,
+      "name": "Không token -> 401",
+      "status": "PASS"
+    },
+    {
+      "test": 22,
+      "name": "Role không phù hợp -> 403",
+      "status": "PASS"
+    },
+    {
+      "test": 23,
+      "name": "ID không tồn tại -> 404, ID sai -> 400",
+      "status": "PASS"
+    },
+    {
+      "test": 24,
+      "name": "Priority không hợp lệ bị từ chối",
+      "status": "PASS"
+    },
+    {
+      "test": 25,
+      "name": "Title/description rỗng bị từ chối",
+      "status": "PASS"
+    },
+    {
+      "test": "B1",
+      "name": "Chặn giả mạo trường server quản lý",
+      "status": "PASS"
+    },
+    {
+      "test": "B2",
+      "name": "ADMIN xử lý Ticket của IT, CLOSED chỉ xem",
+      "status": "PASS"
+    },
+    {
+      "test": "B3",
+      "name": "Hai người nhận đồng thời: chỉ một thành công",
+      "status": "PASS"
+    },
+    {
+      "test": "B4",
+      "name": "Rollback thật khi bước ghi history thất bại",
+      "status": "PASS"
+    },
+    {
+      "test": "B5",
+      "name": "Workflow khác bị chặn và không thêm history",
+      "status": "PASS"
+    }
+  ],
+  "remainingTickets": [
+    {
+      "id": 1,
+      "code": "TKT-000001",
+      "title": "Demo: Máy tính không kết nối Wi-Fi",
+      "status": "CLOSED",
+      "priority": "HIGH",
+      "created_by": 1,
+      "assigned_to": 2
+    },
+    {
+      "id": 3,
+      "code": "TKT-000003",
+      "title": "Demo: Máy in cần kiểm tra thêm",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "created_by": 1,
+      "assigned_to": 2
+    }
+  ],
+  "historyCount": 12
+}

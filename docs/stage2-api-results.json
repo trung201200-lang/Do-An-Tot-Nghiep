@@ -1,0 +1,114 @@
+{
+  "testedAt": "2026-09-19T05:40:27.977Z",
+  "results": [
+    {
+      "name": "Bcrypt: 3 demo passwords hashed, cost 12, compare succeeds",
+      "status": "PASS"
+    },
+    {
+      "name": "Seed repeated: no duplicate, unchanged passwords and roles",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 1: EMPLOYEE login",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 2: IT login",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 3: ADMIN login",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 4: wrong password",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 5: unknown email",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 6: missing token",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 7: valid token /me for all roles",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 8: EMPLOYEE denied IT",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 9: EMPLOYEE denied ADMIN",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 10: IT allowed IT",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 11: IT denied ADMIN",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 12: ADMIN allowed ADMIN",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 13: ADMIN lists users",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 14: EMPLOYEE denied users",
+      "status": "PASS"
+    },
+    {
+      "name": "Test 15: INACTIVE login and existing token rejected; restored ACTIVE",
+      "status": "PASS"
+    },
+    {
+      "name": "RBAC full matrix and non-admin mutations denied",
+      "status": "PASS"
+    },
+    {
+      "name": "ADMIN creates user: bcrypt hash, defaults, duplicate email rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "ADMIN changes role; existing JWT uses current DB role",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid role/status/id/email/password rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid, expired, wrong-signature JWT rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Health and real MySQL health available",
+      "status": "PASS"
+    }
+  ],
+  "accounts": [
+    {
+      "email": "employee@test.local",
+      "role": "EMPLOYEE",
+      "status": "ACTIVE"
+    },
+    {
+      "email": "it@test.local",
+      "role": "IT",
+      "status": "ACTIVE"
+    },
+    {
+      "email": "admin@test.local",
+      "role": "ADMIN",
+      "status": "ACTIVE"
+    }
+  ]
+}

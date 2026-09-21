@@ -1,0 +1,30 @@
+{
+  "testedAt": "2026-09-19T05:38:58.571Z",
+  "browser": "Microsoft Edge headless",
+  "results": [
+    {
+      "name": "EMPLOYEE: login, create, list, detail, initial history",
+      "status": "PASS"
+    },
+    {
+      "name": "IT: view employee ticket, accept, set HIGH, start, resolve, close",
+      "status": "PASS"
+    },
+    {
+      "name": "EMPLOYEE: sees CLOSED, assignee, solution, five history entries",
+      "status": "PASS"
+    },
+    {
+      "name": "ADMIN: view ticket and history, existing users API works",
+      "status": "PASS"
+    },
+    {
+      "name": "No frontend JavaScript runtime errors",
+      "status": "PASS"
+    }
+  ],
+  "demoTicket": {
+    "id": 7,
+    "code": "TKT-000007"
+  }
+}

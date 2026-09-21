@@ -1,0 +1,34 @@
+{
+  "testedAt": "2026-09-19T05:40:55.052Z",
+  "browser": "Microsoft Edge headless",
+  "results": [
+    {
+      "name": "Frontend EMPLOYEE: login, role display, reload, logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend IT: login, role display, reload, logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend ADMIN: login, role display, reload, logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend wrong password shows error without session",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend invalid JWT removed and login restored",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend expired JWT removed and login restored",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend no JavaScript runtime errors",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "testedAt": "2026-09-22T05:46:52.778Z",
+  "results": [
+    {
+      "test": 1,
+      "name": "Login Employee",
+      "status": "PASS"
+    },
+    {
+      "test": 2,
+      "name": "Employee có mục Kho kiến thức",
+      "status": "PASS"
+    },
+    {
+      "test": 3,
+      "name": "Employee mở Kho kiến thức",
+      "status": "PASS"
+    },
+    {
+      "test": 4,
+      "name": "Hiển thị đúng 8 bài PUBLISHED từ API",
+      "status": "PASS"
+    },
+    {
+      "test": 5,
+      "name": "Employee không có Tạo bài",
+      "status": "PASS"
+    },
+    {
+      "test": 6,
+      "name": "Employee không có Sửa bài",
+      "status": "PASS"
+    },
+    {
+      "test": 7,
+      "name": "Employee không có nút đổi trạng thái",
+      "status": "PASS"
+    },
+    {
+      "test": 8,
+      "name": "Search Wi-Fi, không phân biệt hoa thường, trim",
+      "status": "PASS"
+    },
+    {
+      "test": 9,
+      "name": "Search không có kết quả",
+      "status": "PASS"
+    },
+    {
+      "test": 10,
+      "name": "Employee mở chi tiết",
+      "status": "PASS"
+    },
+    {
+      "test": 11,
+      "name": "Hiển thị đủ nội dung và giữ xuống dòng",
+      "status": "PASS"
+    },
+    {
+      "test": 12,
+      "name": "Quay lại danh sách",
+      "status": "PASS"
+    },
+    {
+      "test": 13,
+      "name": "Login IT",
+      "status": "PASS"
+    },
+    {
+      "test": 14,
+      "name": "IT có mục Kho kiến thức",
+      "status": "PASS"
+    },
+    {
+      "test": 15,
+      "name": "IT thấy danh sách",
+      "status": "PASS"
+    },
+    {
+      "test": 16,
+      "name": "IT có nút Tạo bài",
+      "status": "PASS"
+    },
+    {
+      "test": 17,
+      "name": "IT tạo bài mới DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 18,
+      "name": "IT mở chi tiết bài vừa tạo",
+      "status": "PASS"
+    },
+    {
+      "test": 19,
+      "name": "IT sửa title/content, giữ code/status",
+      "status": "PASS"
+    },
+    {
+      "test": 20,
+      "name": "DRAFT -> PUBLISHED",
+      "status": "PASS"
+    },
+    {
+      "test": 21,
+      "name": "PUBLISHED -> ARCHIVED",
+      "status": "PASS"
+    },
+    {
+      "test": 22,
+      "name": "ARCHIVED -> DRAFT",
+      "status": "PASS"
+    },
+    {
+      "test": 23,
+      "name": "IT tìm theo code",
+      "status": "PASS"
+    },
+    {
+      "test": 24,
+      "name": "Login ADMIN",
+      "status": "PASS"
+    },
+    {
+      "test": 25,
+      "name": "ADMIN có mục Kho kiến thức",
+      "status": "PASS"
+    },
+    {
+      "test": 26,
+      "name": "ADMIN xem đủ ba trạng thái",
+      "status": "PASS"
+    },
+    {
+      "test": 27,
+      "name": "ADMIN tạo/sửa bài",
+      "status": "PASS"
+    },
+    {
+      "test": 28,
+      "name": "ADMIN đổi trạng thái đủ workflow",
+      "status": "PASS"
+    },
+    {
+      "test": 29,
+      "name": "API quản lý user ADMIN cũ hoạt động",
+      "status": "PASS"
+    },
+    {
+      "test": 30,
+      "name": "Tab Ticket và chi tiết cũ hoạt động",
+      "status": "PASS"
+    },
+    {
+      "test": 31,
+      "name": "Frontend build",
+      "status": "PASS"
+    },
+    {
+      "test": 32,
+      "name": "Không lỗi JavaScript nghiêm trọng",
+      "status": "PASS"
+    },
+    {
+      "test": 33,
+      "name": "Frontend không hard-code tám bài",
+      "status": "PASS"
+    },
+    {
+      "test": 34,
+      "name": "Employee không có chức năng quản trị, không thấy bài tạm chưa xuất bản",
+      "status": "PASS"
+    },
+    {
+      "test": 35,
+      "name": "Reload giữ phiên đăng nhập",
+      "status": "PASS"
+    },
+    {
+      "test": "B1",
+      "name": "Màn hình 390px không tràn ngang",
+      "status": "PASS"
+    },
+    {
+      "test": "B2",
+      "name": "Loading, lỗi 500 thân thiện, thử lại và danh sách rỗng",
+      "status": "PASS"
+    },
+    {
+      "test": "B3",
+      "name": "403/404 hiển thị thông báo, không mở chi tiết",
+      "status": "PASS"
+    },
+    {
+      "test": "B4",
+      "name": "401 xóa phiên và quay lại Login",
+      "status": "PASS"
+    }
+  ],
+  "dataPreserved": true,
+  "temporaryArticles": 3
+}

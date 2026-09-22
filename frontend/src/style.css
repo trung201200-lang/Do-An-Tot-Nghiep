@@ -31,3 +31,24 @@ dd { margin-left: 0; }
 .multiline { white-space: pre-wrap; overflow-wrap: anywhere; }
 .ticket-detail li { margin-bottom: 12px; }
 .ticket-detail li p { margin: 0; }
+
+.section-nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.section-nav button { background: #e9eff7; color: #1858a8; border: 1px solid #1858a8; }
+.section-nav button[aria-pressed="true"] { background: #1858a8; color: white; }
+.knowledge { margin-top: 24px; border-top: 1px solid #d6dce4; padding-top: 16px; }
+.knowledge > input { max-width: 640px; }
+.kb-list { list-style: none; padding: 0; }
+.kb-list li { border: 1px solid #d6dce4; border-radius: 6px; padding: 16px; margin-top: 12px; }
+.kb-title { padding: 0; margin: 0; background: transparent; color: #1858a8; text-align: left; font-weight: bold; text-decoration: underline; overflow-wrap: anywhere; }
+.kb-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 10px; font-size: 14px; }
+.kb-badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 14px; }
+.kb-draft { background: #fff1ce; color: #664400; }
+.kb-published { background: #e3f4e9; color: #16562c; }
+.kb-archived { background: #e9edf1; color: #354354; }
+.kb-detail { margin-top: 20px; }
+.kb-detail h3 { overflow-wrap: anywhere; }
+.kb-meta-details { font-size: 14px; color: #4e5b70; }
+.kb-content { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; margin-top: 24px; padding: 20px; background: #f7f9fc; border-radius: 6px; }
+.kb-form { max-width: 800px; margin-top: 20px; }
+.kb-success { color: #16562c; background: #e3f4e9; padding: 12px; border-radius: 4px; }
+@media (max-width: 600px) { .kb-content { padding: 12px; } .kb-list li { padding: 12px; } }

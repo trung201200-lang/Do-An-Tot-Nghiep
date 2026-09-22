@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from './api';
 import Tickets from './Tickets';
+import KnowledgeBase from './KnowledgeBase';
 
 const TOKEN_KEY = 'it_support_token';
 const roleNames = { EMPLOYEE: 'Nhân viên', IT: 'Nhân viên IT', ADMIN: 'Quản trị viên' };
@@ -14,9 +15,11 @@ export default function App() {
   const [checking, setChecking] = useState(Boolean(token));
   const [submitting, setSubmitting] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [section, setSection] = useState('tickets');
 
   function logout(message = '') {
     sessionStorage.removeItem(TOKEN_KEY);
+    setSection('tickets');
     setToken('');
     setUser(null);
     setPassword('');
@@ -94,7 +97,13 @@ export default function App() {
             <p>Email: {user.email}</p>
             <p>Bạn đã đăng nhập thành công.</p>
             <button type="button" onClick={() => logout()}>Đăng xuất</button>
-            <Tickets key={user.id} token={token} user={user} onUnauthorized={logout} />
+            <nav className="section-nav" aria-label="Chức năng">
+              <button type="button" aria-pressed={section === 'tickets'} onClick={() => setSection('tickets')}>{user.role === 'EMPLOYEE' ? 'Ticket của tôi' : 'Ticket'}</button>
+              <button type="button" aria-pressed={section === 'knowledge'} onClick={() => setSection('knowledge')}>Kho kiến thức</button>
+            </nav>
+            {section === 'tickets'
+              ? <Tickets key={user.id} token={token} user={user} onUnauthorized={logout} />
+              : <KnowledgeBase key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} />}
           </section>
         ) : (
           <section>

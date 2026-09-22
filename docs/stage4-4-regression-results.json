@@ -1,0 +1,510 @@
+{
+  "testedAt": "2026-09-22T05:48:22.279Z",
+  "suites": [
+    {
+      "script": "stage4-2-api.cjs",
+      "result": {
+        "testedAt": "2026-09-22T05:48:23.579Z",
+        "results": [
+          {
+            "test": 1,
+            "name": "Thiếu token -> 401 ở mọi endpoint",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "EMPLOYEE không tạo bài -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "IT tạo bài thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Bài mới là DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Code dạng KB-xxxxxx",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "created_by đúng IT",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "ADMIN tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "EMPLOYEE không thấy DRAFT trong danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "IT thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "ADMIN thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "EMPLOYEE không xem trực tiếp DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "IT cập nhật title/content",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "updated_by đúng người cập nhật",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "EMPLOYEE không được update hoặc đổi status",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "EMPLOYEE thấy PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "EMPLOYEE xem chi tiết PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "EMPLOYEE không thấy ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Chặn mọi transition không hợp lệ",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Chặn title rỗng, sai kiểu hoặc quá dài",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "Chặn content rỗng hoặc sai kiểu",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "ID không tồn tại -> 404",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Mọi response không lộ password/hash/secret/stack/SQL",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn trường chỉ server được quyết định",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN sửa bài, giữ code/creator, truy vấn tham số an toàn",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "ID/status/body không hợp lệ -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Tạo đồng thời không trùng mã",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Publish đồng thời chỉ một request hợp lệ",
+            "status": "PASS"
+          }
+        ],
+        "cleanup": "PASS",
+        "temporaryArticles": 7
+      }
+    },
+    {
+      "script": "stage4-2-regression.cjs",
+      "result": {
+        "testedAt": "2026-09-22T05:48:23.710Z",
+        "suites": [
+          {
+            "script": "stage2-api.cjs",
+            "results": [
+              {
+                "name": "Bcrypt: 3 demo passwords hashed, cost 12, compare succeeds",
+                "status": "PASS"
+              },
+              {
+                "name": "Seed repeated: no duplicate, unchanged passwords and roles",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 1: EMPLOYEE login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 2: IT login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 3: ADMIN login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 4: wrong password",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 5: unknown email",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 6: missing token",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 7: valid token /me for all roles",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 8: EMPLOYEE denied IT",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 9: EMPLOYEE denied ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 10: IT allowed IT",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 11: IT denied ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 12: ADMIN allowed ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 13: ADMIN lists users",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 14: EMPLOYEE denied users",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 15: INACTIVE login and existing token rejected; restored ACTIVE",
+                "status": "PASS"
+              },
+              {
+                "name": "RBAC full matrix and non-admin mutations denied",
+                "status": "PASS"
+              },
+              {
+                "name": "ADMIN creates user: bcrypt hash, defaults, duplicate email rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "ADMIN changes role; existing JWT uses current DB role",
+                "status": "PASS"
+              },
+              {
+                "name": "Invalid role/status/id/email/password rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "Invalid, expired, wrong-signature JWT rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "Health and real MySQL health available",
+                "status": "PASS"
+              }
+            ]
+          },
+          {
+            "script": "stage3-api.cjs",
+            "results": [
+              {
+                "test": 1,
+                "name": "EMPLOYEE tạo Ticket NEW",
+                "status": "PASS"
+              },
+              {
+                "test": 2,
+                "name": "Priority mặc định LOW",
+                "status": "PASS"
+              },
+              {
+                "test": 3,
+                "name": "EMPLOYEE chỉ thấy Ticket của mình",
+                "status": "PASS"
+              },
+              {
+                "test": 4,
+                "name": "EMPLOYEE không xem Ticket người khác",
+                "status": "PASS"
+              },
+              {
+                "test": 5,
+                "name": "EMPLOYEE không được tiếp nhận",
+                "status": "PASS"
+              },
+              {
+                "test": 6,
+                "name": "IT xem tất cả Ticket",
+                "status": "PASS"
+              },
+              {
+                "test": 7,
+                "name": "IT tiếp nhận NEW -> RECEIVED",
+                "status": "PASS"
+              },
+              {
+                "test": 8,
+                "name": "assigned_to lấy từ IT đăng nhập",
+                "status": "PASS"
+              },
+              {
+                "test": 9,
+                "name": "Priority LOW -> HIGH",
+                "status": "PASS"
+              },
+              {
+                "test": 10,
+                "name": "RECEIVED -> IN_PROGRESS",
+                "status": "PASS"
+              },
+              {
+                "test": 11,
+                "name": "Không cho NEW -> RESOLVED",
+                "status": "PASS"
+              },
+              {
+                "test": 12,
+                "name": "RESOLVED thiếu solution bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": 13,
+                "name": "RESOLVED có solution thành công",
+                "status": "PASS"
+              },
+              {
+                "test": 14,
+                "name": "RESOLVED -> CLOSED",
+                "status": "PASS"
+              },
+              {
+                "test": 15,
+                "name": "CLOSED không mở lại",
+                "status": "PASS"
+              },
+              {
+                "test": 16,
+                "name": "RESOLVED -> IN_PROGRESS",
+                "status": "PASS"
+              },
+              {
+                "test": 17,
+                "name": "Mọi thay đổi trạng thái có history đúng thứ tự",
+                "status": "PASS"
+              },
+              {
+                "test": 18,
+                "name": "EMPLOYEE xem history của mình",
+                "status": "PASS"
+              },
+              {
+                "test": 19,
+                "name": "IT khác không xử lý Ticket đã assigned",
+                "status": "PASS"
+              },
+              {
+                "test": 20,
+                "name": "API không trả password/hash user",
+                "status": "PASS"
+              },
+              {
+                "test": 21,
+                "name": "Không token -> 401",
+                "status": "PASS"
+              },
+              {
+                "test": 22,
+                "name": "Role không phù hợp -> 403",
+                "status": "PASS"
+              },
+              {
+                "test": 23,
+                "name": "ID không tồn tại -> 404, ID sai -> 400",
+                "status": "PASS"
+              },
+              {
+                "test": 24,
+                "name": "Priority không hợp lệ bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": 25,
+                "name": "Title/description rỗng bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": "B1",
+                "name": "Chặn giả mạo trường server quản lý",
+                "status": "PASS"
+              },
+              {
+                "test": "B2",
+                "name": "ADMIN xử lý Ticket của IT, CLOSED chỉ xem",
+                "status": "PASS"
+              },
+              {
+                "test": "B3",
+                "name": "Hai người nhận đồng thời: chỉ một thành công",
+                "status": "PASS"
+              },
+              {
+                "test": "B4",
+                "name": "Rollback thật khi bước ghi history thất bại",
+                "status": "PASS"
+              },
+              {
+                "test": "B5",
+                "name": "Workflow khác bị chặn và không thêm history",
+                "status": "PASS"
+              }
+            ]
+          }
+        ],
+        "dataPreserved": true,
+        "counts": {
+          "users": 3,
+          "tickets": 3,
+          "ticket_history": 17,
+          "knowledge_articles": 8
+        }
+      }
+    },
+    {
+      "script": "stage2-browser.cjs",
+      "result": {
+        "testedAt": "2026-09-22T05:48:32.707Z",
+        "browser": "Microsoft Edge headless",
+        "results": [
+          {
+            "name": "Frontend EMPLOYEE: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend IT: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend ADMIN: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend wrong password shows error without session",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend invalid JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend expired JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend no JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ]
+      }
+    },
+    {
+      "script": "stage3-browser.cjs",
+      "result": {
+        "testedAt": "2026-09-22T05:48:37.137Z",
+        "browser": "Microsoft Edge headless",
+        "results": [
+          {
+            "name": "EMPLOYEE: login, create, list, detail, initial history",
+            "status": "PASS"
+          },
+          {
+            "name": "IT: view employee ticket, accept, set HIGH, start, resolve, close",
+            "status": "PASS"
+          },
+          {
+            "name": "EMPLOYEE: sees CLOSED, assignee, solution, five history entries",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN: view ticket and history, existing users API works",
+            "status": "PASS"
+          },
+          {
+            "name": "No frontend JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ],
+        "demoTicket": {
+          "id": 32,
+          "code": "TKT-000032"
+        }
+      }
+    }
+  ],
+  "seedIdempotency": true,
+  "dataPreserved": true,
+  "counts": {
+    "users": 3,
+    "tickets": 3,
+    "ticket_history": 17,
+    "knowledge_articles": 8
+  }
+}

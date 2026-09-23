@@ -87,7 +87,7 @@ export default function App() {
   return (
     <main>
       <h1>HỆ THỐNG HỖ TRỢ CNTT NỘI BỘ</h1>
-      <p>Quản lý yêu cầu hỗ trợ và tra cứu sự cố CNTT nội bộ ứng dụng RAG</p>
+      <p>Quản lý yêu cầu hỗ trợ và tra cứu hướng dẫn xử lý sự cố CNTT nội bộ.</p>
       {error && <p className="error" role="alert">{error}</p>}
       {checking ? <p role="status">Đang kiểm tra phiên đăng nhập...</p> : token ? (
         user ? (

@@ -1,71 +1,108 @@
 # Hệ thống hỗ trợ CNTT nội bộ
 
-Quản lý yêu cầu hỗ trợ và tra cứu sự cố CNTT nội bộ ứng dụng RAG.
+Hệ thống hỗ trợ xử lý sự cố CNTT nội bộ: quản lý Ticket và tra cứu hướng dẫn trong Kho kiến thức (Knowledge Base).
 
-Đã hoàn thành Giai đoạn 1–3: khởi tạo hệ thống, Users/Login/JWT/RBAC và Ticket Management. Chưa triển khai Knowledge Base hoặc RAG.
+Đã hoàn thành Giai đoạn 1–4: Authentication/RBAC, Ticket Management và Knowledge Base truyền thống. Tìm kiếm hiện tại là tìm kiếm từ khóa phía frontend; chưa triển khai RAG hoặc AI Assistant.
 
-## Công nghệ và cấu trúc
+## Công nghệ
 
-- Frontend: React, Vite, CSS; dùng state đơn giản, không có Redux.
-- Backend: Node.js, Express 5, cors, dotenv, mysql2, bcrypt, jsonwebtoken; nodemon cho development.
-- MySQL Server có sẵn; quản lý bằng MySQL Workbench. Không cần cài MySQL mới, XAMPP hoặc Docker.
-- Môi trường đã dùng ở Giai đoạn 1: Node.js 22.17.1, npm 10.9.2.
+- Frontend: React, Vite, CSS; quản lý giao diện bằng React state.
+- Backend: Node.js, Express 5, mysql2, dotenv, cors.
+- Database: MySQL, quản lý bằng MySQL Workbench.
+- Authentication: JWT (HS256), bcrypt (cost 12).
+- Môi trường ban đầu: Node.js 22.17.1, npm 10.9.2. Không cần XAMPP hoặc Docker.
+
+## Cấu trúc
 
 ```text
-frontend/src/          Giao diện đăng nhập, trang chính, gọi API
-backend/src/config/    Cấu hình môi trường, MySQL, JWT
-backend/src/controllers/ Xử lý auth và quản lý user
-backend/src/models/    Truy vấn users bằng tham số
-backend/src/middleware/ Kiểm tra đăng nhập, quyền và xử lý lỗi
-backend/src/routes/    Định tuyến health/auth/users/test
-backend/src/utils/     Validation và seed tài khoản
-backend/server.js      Khởi động server
-database/              SQL chạy trong MySQL Workbench
-docs/                  Hướng dẫn và kết quả kiểm thử
+frontend/src/           Đăng nhập, Ticket, Knowledge Base, API helper
+backend/src/config/     Cấu hình môi trường, MySQL, JWT
+backend/src/controllers/ Auth, users, Ticket, Knowledge Base, health
+backend/src/models/     Truy vấn MySQL sử dụng tham số
+backend/src/middleware/  JWT, RBAC, xử lý lỗi
+backend/src/routes/      Định tuyến API
+backend/src/utils/       Validation, seed users và Knowledge Base
+backend/tests/           Kiểm thử API, browser và hồi quy
+backend/server.js        Khởi động server
+database/               SQL chạy thủ công trong MySQL Workbench
+docs/                   Tài liệu, báo cáo và ảnh kiểm thử
 ```
 
-## Chuẩn bị database trong MySQL Workbench
+## Vai trò
 
-1. Kết nối MySQL Server local `127.0.0.1:3306`, tài khoản `root`.
-2. Database `it_support_rag` đã được tạo ở Giai đoạn 1. File `01_create_database.sql` dùng khi thiết lập lần đầu.
-3. Mở và chạy **database/02_create_users.sql** bằng nút Execute trong Workbench.
-4. Refresh Schemas để kiểm tra bảng `users`.
+| Role | Ticket | Knowledge Base | Users |
+| --- | --- | --- | --- |
+| EMPLOYEE | Tạo và xem Ticket của mình | Chỉ đọc bài PUBLISHED | Xem thông tin phiên của mình |
+| IT | Xem tất cả, tiếp nhận và xử lý Ticket được giao cho mình | Xem tất cả, tạo, sửa, đổi trạng thái | Không quản trị |
+| ADMIN | Xem và xử lý tất cả Ticket | Quyền giống IT | Quản lý qua API |
 
-File SQL chỉ tạo users nếu chưa tồn tại, không xóa database, bảng hoặc dữ liệu. Nếu users đã tồn tại nhưng cấu trúc khác, cần kiểm tra cấu trúc trước; CREATE TABLE IF NOT EXISTS không tự sửa bảng cũ.
+Hiện chưa có giao diện quản trị users riêng. Backend kiểm tra quyền từ database trên mỗi yêu cầu, không chỉ dựa vào nút hiển thị trên frontend.
 
-| Cột | Kiểu và ý nghĩa |
-|---|---|
-| id | INT, khóa chính, tự tăng |
-| name | VARCHAR(100), bắt buộc |
-| email | VARCHAR(254), bắt buộc, duy nhất |
-| password | VARCHAR(255), chỉ lưu hash bcrypt |
-| role | ENUM: EMPLOYEE, IT, ADMIN; mặc định EMPLOYEE |
-| status | ENUM: ACTIVE, INACTIVE; mặc định ACTIVE |
-| created_at | TIMESTAMP, tự ghi khi tạo |
-| updated_at | TIMESTAMP, tự cập nhật khi sửa |
+## Chức năng đã hoàn thành
+
+### Authentication
+
+- Đăng nhập, JWT, RBAC; chặn tài khoản INACTIVE.
+- Mật khẩu lưu bằng bcrypt, không lưu plaintext trong database.
+- Frontend giữ token trong sessionStorage theo tab, gọi /api/auth/me khi reload; kiểm tra lại khi quay lại tab và định kỳ một phút.
+- Đăng xuất xóa token ở trình duyệt; chưa có cơ chế thu hồi token phía server.
+
+### Ticket Management
+
+- Employee tạo yêu cầu; IT/Admin tiếp nhận, priority thủ công LOW/MEDIUM/HIGH.
+- Workflow: NEW → RECEIVED → IN_PROGRESS → RESOLVED → CLOSED; cho phép RESOLVED → IN_PROGRESS.
+- Bắt buộc solution khi RESOLVED; CLOSED chỉ xem.
+- IT khác không được xử lý Ticket đã giao cho người khác. ADMIN có quyền xử lý tất cả.
+- Lưu history khi tạo và mọi chuyển trạng thái; transaction và khóa dòng bảo vệ cập nhật Ticket/history.
+
+### Knowledge Base
+
+- Danh sách, chi tiết, tạo/sửa bài, trạng thái và phân quyền.
+- Employee chỉ đọc PUBLISHED; IT/Admin quản lý mọi trạng thái.
+- Tìm theo code/title, trim khoảng trắng, không phân biệt hoa/thường. Từ khóa rỗng trả toàn bộ danh sách API cho phép xem.
+- Tám bài demo tiếng Việt về Wi-Fi, máy in, mật khẩu, email, máy chậm, thư mục mạng, microphone và website nội bộ.
+- Loading, thông báo lỗi, danh sách rỗng, giữ xuống dòng nội dung; hỗ trợ bố cục màn hình nhỏ.
+
+## Knowledge Base workflow
+
+```text
+DRAFT → PUBLISHED → ARCHIVED → DRAFT
+```
+
+Bài mới luôn DRAFT. Backend tự sinh code dạng KB-000001 từ ID thực tế; không yêu cầu mã bắt đầu từ 1 và có thể nhảy số. PUT chỉ sửa title/content; PATCH status chỉ cho phép chuyển theo workflow trên. Không có API xóa bài.
+
+Keyword Search khác Semantic Search và RAG. Search hiện tại chỉ lọc chuỗi code/title trên danh sách frontend đã lấy từ API; không tìm theo ý nghĩa, không truy xuất vector và không sinh câu trả lời.
+
+## Thiết lập database bằng MySQL Workbench
+
+Với môi trường mới, kết nối MySQL local và chạy các file theo thứ tự:
+
+1. database/01_create_database.sql
+2. database/02_create_users.sql
+3. database/03_create_tickets.sql
+4. database/04_create_knowledge_base.sql
+
+Database it_support_rag có bốn bảng: users, tickets, ticket_history, knowledge_articles. Các file dùng CREATE IF NOT EXISTS, không xóa dữ liệu. Bảng đã tồn tại sẽ không được tự điều chỉnh cấu trúc; cần kiểm tra nếu schema cũ khác. Môi trường hiện tại đã có đủ bốn bảng, không cần chạy lại SQL.
 
 ## Cấu hình local
 
-Giữ nguyên cấu hình MySQL đang hoạt động trong `backend/.env`. File mẫu là `backend/.env.example`; nếu tạo mới từ mẫu, hãy tự điền thông tin local và khóa ký JWT ngẫu nhiên dài ít nhất 32 ký tự. File local đã được bổ sung khóa ký development nếu chưa có; thời hạn token mặc định là một ngày.
+Giữ cấu hình MySQL đang hoạt động trong backend/.env. Khi thiết lập mới, sao chép backend/.env.example thành backend/.env rồi điền cấu hình MySQL, JWT_SECRET ngẫu nhiên dài ít nhất 32 ký tự và SEED_USER_PASSWORD. Không đưa file .env hoặc secret thật vào Git.
 
-Mật khẩu và khóa ký thật chỉ nằm trong file local, không đưa vào mã nguồn, tài liệu hoặc Git. `.gitignore` bỏ qua `.env` và các biến thể, cho phép `.env.example`.
-
-Biến `SEED_USER_PASSWORD` trong file local là mật khẩu dùng chung cho ba tài khoản demo. Bạn có thể tự đổi trước lần seed đầu. Mật khẩu ít nhất 8 ký tự, tối đa 72 byte UTF-8. Seed không thay mật khẩu tài khoản đã tồn tại. Chỉ sử dụng tài khoản seed ở môi trường local/demo.
-
-Khởi động lại backend sau khi sửa cấu hình môi trường.
+SEED_USER_PASSWORD chỉ dùng tạo tài khoản local/demo lần đầu, ít nhất 8 ký tự và tối đa 72 byte UTF-8. Seed bỏ qua tài khoản có sẵn, không đổi mật khẩu hoặc quyền. Khởi động lại backend sau khi sửa cấu hình môi trường. Frontend mặc định gọi http://127.0.0.1:5000/api; có thể cấu hình VITE_API_URL theo API helper hiện tại.
 
 ## Cài đặt và chạy
 
-Terminal thứ nhất, từ thư mục gốc:
+Terminal thứ nhất, từ thư mục gốc; chỉ seed sau khi đã tạo bảng và cấu hình .env:
 
 ```powershell
 cd backend
 npm.cmd install
 npm.cmd run seed:users
+npm.cmd run seed:knowledge
 npm.cmd run dev
 ```
 
-Chỉ chạy seed sau khi chạy SQL tạo users. Script kiểm tra email, bỏ qua tài khoản có sẵn, hash bằng bcrypt với cost 12 rồi insert. Không tự tạo bảng hoặc xóa dữ liệu. Có thể dùng `npm.cmd start` để chạy backend không có nodemon.
+Có thể dùng npm.cmd start để chạy backend không có nodemon.
 
 Terminal thứ hai, từ thư mục gốc:
 
@@ -75,85 +112,90 @@ npm.cmd install
 npm.cmd run dev
 ```
 
+Trên PowerShell, npm.cmd tương đương npm và tránh lỗi ExecutionPolicy của npm.ps1. Các lệnh tương ứng là npm install, npm run dev, npm run seed:knowledge và npm run build.
+
 - Frontend: http://127.0.0.1:5173
 - Backend: http://127.0.0.1:5000
-- Kiểm tra server: http://127.0.0.1:5000/api/health
-- Kiểm tra MySQL: http://127.0.0.1:5000/api/health/db
+- Health: http://127.0.0.1:5000/api/health
+- MySQL health: http://127.0.0.1:5000/api/health/db
 
-Trong thư mục frontend, dùng `npm.cmd run build` để build hoặc `npm.cmd run preview` để xem bản build. Dùng Ctrl+C để dừng server.
+Trong frontend, dùng npm.cmd run build để build và npm.cmd run preview để xem bản build. Dùng Ctrl+C dừng server. Origin frontend mặc định được backend cho phép là http://127.0.0.1:5173.
 
-## Tài khoản demo và đăng nhập
+## Tài khoản demo
 
 | Email | Role |
-|---|---|
+| --- | --- |
 | employee@test.local | EMPLOYEE |
 | it@test.local | IT |
 | admin@test.local | ADMIN |
 
-Các tài khoản mới có trạng thái ACTIVE. Mật khẩu là giá trị bạn đặt cho seed trong file local tại thời điểm tạo tài khoản. Sau seed, mở frontend, nhập email/mật khẩu để đăng nhập, xem tên và vai trò, rồi dùng Đăng xuất để xóa phiên.
+Chỉ dùng local/demo. Mật khẩu là SEED_USER_PASSWORD tại thời điểm tạo tài khoản; không công bố mật khẩu thật trong tài liệu. Ba tài khoản demo hiện ACTIVE.
 
-Frontend lưu token trong sessionStorage (theo từng tab), thông tin user trong React state. Khi tải lại trang, frontend gọi `/api/auth/me` trước khi hiển thị trang chính. Token sai/hết hạn bị xóa; lỗi mạng cho phép thử lại. Phiên được kiểm tra lại khi quay lại tab và định kỳ một phút. sessionStorage là lựa chọn đơn giản cho demo; không lưu mật khẩu tại trình duyệt và không chèn HTML không tin cậy.
+Sau đăng nhập, chọn Ticket hoặc Kho kiến thức. Reload giữ phiên và trở về tab Ticket. Frontend không lưu mật khẩu vào sessionStorage/localStorage.
 
-## Authentication, JWT và RBAC
+## Seed Knowledge Base
 
-1. Login chuẩn hóa email, kiểm tra ACTIVE và so sánh mật khẩu bằng bcrypt.
-2. Backend ký JWT bằng HS256, có ID user và hạn dùng, không chứa mật khẩu. JWT được ký để kiểm tra tính toàn vẹn, không phải dữ liệu mã hóa.
-3. Client gửi `Authorization: Bearer <token>`.
-4. Middleware xác minh chữ ký và hạn token, đọc user hiện tại trong MySQL, kiểm tra ACTIVE rồi gắn vào req.user.
-5. RBAC kiểm tra role từ database ở backend. Việc thay role/status có hiệu lực ở yêu cầu tiếp theo dù token cũ chưa hết hạn.
+Chạy npm.cmd run seed:knowledge trong backend. Script yêu cầu MySQL local, bảng knowledge_articles và tài khoản it@test.local có role IT, status ACTIVE; từ chối production.
 
-Đăng xuất xóa token phía trình duyệt; chưa có danh sách thu hồi token. ADMIN đổi role/status qua các API quản lý tài khoản. Trang chính có thông tin người dùng và quản lý Ticket; chưa có biểu mẫu quản trị tài khoản.
+Mỗi bài mới được tạo rồi xuất bản bằng model hiện có. Seed nhận diện bài qua tiêu đề gốc hoặc marker [DEMO-KB:...] trong nội dung. Bài đã tồn tại được bỏ qua hoàn toàn: không đổi code, nội dung, trạng thái hoặc timestamp. Chạy lại trên bộ demo hiện tại tạo 0, bỏ qua 8.
+
+Nếu mất cả tiêu đề gốc và marker hoặc nhận diện bị trùng, script dừng để kiểm tra thủ công. Seed không tự xuất bản lại bài đã tồn tại ở DRAFT/ARCHIVED. Không xóa dữ liệu để seed lại. Nội dung seed là dữ liệu đồ án, không phải quy trình chính thức của doanh nghiệp.
 
 ## API
 
-| Method | Đường dẫn | Quyền |
-|---|---|---|
-| GET | /api/health | Công khai |
-| GET | /api/health/db | Công khai |
-| POST | /api/auth/login | Công khai |
+Các API nghiệp vụ yêu cầu `Authorization: Bearer <token>`.
+
+| Method | API | Quyền / chức năng |
+| --- | --- | --- |
+| GET | /api/health, /api/health/db | Công khai |
+| POST | /api/auth/login | Công khai, nhận email/password |
 | GET | /api/auth/me | User ACTIVE có JWT hợp lệ |
 | GET | /api/test/employee | EMPLOYEE, IT, ADMIN |
 | GET | /api/test/it | IT, ADMIN |
 | GET | /api/test/admin | ADMIN |
-| GET | /api/users | ADMIN |
-| POST | /api/users | ADMIN |
-| PATCH | /api/users/:id/status | ADMIN |
-| PATCH | /api/users/:id/role | ADMIN |
+| GET, POST | /api/users | ADMIN: danh sách/tạo user |
+| PATCH | /api/users/:id/status, /api/users/:id/role | ADMIN |
+| POST | /api/tickets | EMPLOYEE tạo Ticket |
+| GET | /api/tickets, /api/tickets/:id | Danh sách/chi tiết và history theo quyền |
+| PATCH | /api/tickets/:id/accept | IT/ADMIN tiếp nhận |
+| PATCH | /api/tickets/:id/priority | IT/ADMIN, kiểm tra người được giao |
+| PATCH | /api/tickets/:id/status | IT/ADMIN, kiểm tra workflow và người được giao |
+| GET | /api/knowledge, /api/knowledge/:id | Employee chỉ PUBLISHED; IT/Admin mọi trạng thái |
+| POST | /api/knowledge | IT/ADMIN; title, content |
+| PUT | /api/knowledge/:id | IT/ADMIN; title, content |
+| PATCH | /api/knowledge/:id/status | IT/ADMIN; status |
 
-Login nhận JSON `email`, `password`, trả `success`, `message`, `token`, `user`.
+Response dùng success, message khi phù hợp và dữ liệu; KB trả articles cho danh sách hoặc article cho một bài. Không trả password/hash. HTTP 400: validation/workflow; 401: phiên không hợp lệ; 403: sai quyền; 404: không tồn tại; 409: trùng mã/email; 413: vượt giới hạn JSON 16 KB; 500/503: lỗi xử lý/database, thông báo an toàn.
 
-Tạo user nhận `name`, `email`, `password`, `role`, `status`; role/status mặc định EMPLOYEE/ACTIVE nếu bỏ qua. Đổi role nhận `{"role":"IT"}`; đổi status nhận `{"status":"INACTIVE"}`. ID phải là số nguyên dương. API chỉ trả các trường user an toàn, không trả hash.
+## Kiểm thử và tài liệu
 
-HTTP: 400 dữ liệu không hợp lệ; 401 đăng nhập/token không hợp lệ hoặc user bị vô hiệu hóa; 403 không đủ quyền; 404 không có user/API; 409 email trùng; 503 thiếu bảng/lỗi kết nối database. Các lỗi bất ngờ trả 500 với thông báo chung, không trả thông tin nhạy cảm.
+Trong backend, chạy bộ tổng hợp GĐ4.5:
 
-## Kiểm thử
+```powershell
+node tests/stage4-5-regression.cjs
+```
 
-Đã kiểm thử Giai đoạn 2: 15/15 ca API PASS trên MySQL thật; đăng nhập, tải lại trang và đăng xuất của cả ba role PASS trên Microsoft Edge; frontend build thành công. Ba tài khoản demo hiện đều ACTIVE. Xem `docs/giai-doan-2.md` để biết kết quả chi tiết và cách chạy lại các script trong `backend/tests/`. Các file `docs/stage2-api-results.json` và `docs/stage2-browser-results.json` lưu kết quả thực tế, không chứa mật khẩu hoặc token.
+Script tái sử dụng bộ API/browser hiện có, chạy build frontend và seed hai lần, giữ báo cáo các giai đoạn cũ. Kết quả mới lưu tại docs/stage4-5-results.json. Cần MySQL local, ba tài khoản demo khớp cấu hình, Microsoft Edge, Playwright đã có tại thư mục tạm it-support-browser-check/node_modules/playwright và cổng 5173 trống. Playwright không được thêm vào dependency ứng dụng.
 
-Dừng sau Giai đoạn 3; chỉ chuyển sang Giai đoạn 4 khi được xác nhận.
+Bộ tổng hợp dành cho bộ dữ liệu demo 3 users / 3 tickets / 17 history / 8 bài KB; dừng nếu dữ liệu ban đầu khác. Không chạy đồng thời với người khác sửa dữ liệu. Test tạo và dọn đúng bản ghi tạm, đối chiếu toàn bộ dữ liệu gốc trước/sau; không reset AUTO_INCREMENT. Kiểm thử seed giữ nội dung đã sửa dùng mô phỏng, không biên tập tám bài thật.
 
-## Giai đoạn 3 — Ticket Management
+Kết quả GĐ4.5: Auth API 23/23, Ticket API 30/30, KB API 30/30, browser đăng nhập 7/7, browser Ticket 5/5, browser KB 39/39 PASS; health, DB health, build và hai lần seed PASS. Dữ liệu cuối: 3 users, 3 tickets, 17 history, 8 bài KB PUBLISHED.
 
-Chạy `database/03_create_tickets.sql` trong MySQL Workbench để tạo `tickets` và `ticket_history` nếu thiết lập mới. Trên máy hiện tại người dùng đã chạy thành công; không cần tạo lại users.
+- [GĐ2: Auth và RBAC](docs/giai-doan-2.md)
+- [GĐ3: Ticket](docs/giai-doan-3.md)
+- [GĐ4.2: KB API](docs/giai-doan-4-2.md)
+- [GĐ4.3: Seed](docs/giai-doan-4-3.md)
+- [GĐ4.4: Frontend KB](docs/giai-doan-4-4.md)
+- [GĐ4.5: Tổng kết và kiểm thử](docs/giai-doan-4-5.md)
 
-- EMPLOYEE: tạo và xem Ticket của chính mình.
-- IT: xem tất cả, tiếp nhận và xử lý Ticket đã nhận; priority điều chỉnh thủ công.
-- ADMIN: xem và xử lý tất cả Ticket, giữ các API quản lý users cũ.
-- Workflow: NEW → RECEIVED → IN_PROGRESS → RESOLVED → CLOSED; cho phép RESOLVED → IN_PROGRESS.
-- Bắt buộc giải pháp khi RESOLVED. CLOSED chỉ xem.
-- Ghi history lúc tạo và mọi chuyển trạng thái; transaction và khóa dòng bảo vệ tính nhất quán.
+Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó; README và tổng kết GĐ4.5 mô tả trạng thái hiện tại.
 
-| Method | API | Nội dung |
-|---|---|---|
-| POST | /api/tickets | Employee tạo yêu cầu |
-| GET | /api/tickets | Danh sách theo quyền |
-| GET | /api/tickets/:id | Chi tiết và lịch sử |
-| PATCH | /api/tickets/:id/accept | IT/Admin tiếp nhận |
-| PATCH | /api/tickets/:id/priority | Đổi LOW/MEDIUM/HIGH |
-| PATCH | /api/tickets/:id/status | Chuyển trạng thái; kèm solution khi RESOLVED |
+## Trạng thái dự án và giới hạn
 
-Đã kiểm chứng 25/25 ca backend, năm ca bổ sung về bảo mật/workflow/transaction, toàn bộ luồng Ticket trên Edge và hồi quy Giai đoạn 1/2. Không thêm dependency ứng dụng.
+Đã hoàn thành Authentication/RBAC, Ticket Management và Knowledge Base. Giai đoạn 4 đã hoàn thành.
 
-Xem [tài liệu Giai đoạn 3](docs/giai-doan-3.md) để biết request mẫu, quyền, cách chạy test và kết quả chi tiết. Báo cáo thực tế ở `docs/stage3-api-results.json`, `docs/stage3-browser-results.json`; ảnh demo ở `docs/stage3-ticket-demo.png`.
+Chưa triển khai RAG, Chunking, Embedding, Vector Search, Qdrant hoặc LLM Assistant. Không có chatbot hoặc tìm kiếm ngữ nghĩa.
 
-Dữ liệu sau kiểm thử: 3 user demo ACTIVE, 3 Ticket (2 CLOSED, 1 IN_PROGRESS), 17 history. Danh sách chưa phân trang và cần bấm Làm mới để xem thay đổi từ người dùng khác.
+Hiện chưa phân trang, cập nhật thời gian thực, upload hoặc lịch sử phiên bản KB. Search không bỏ dấu tiếng Việt; chuyển tab không lưu form chưa gửi. Review bảo mật ở phạm vi đồ án/local, chưa phải đánh giá bảo mật triển khai production.
+
+Dừng trước Giai đoạn 5, chờ người dùng xác nhận phạm vi tiếp theo.

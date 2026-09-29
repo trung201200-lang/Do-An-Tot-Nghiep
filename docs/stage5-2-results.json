@@ -1,0 +1,960 @@
+{
+  "timestamp": "2026-09-29T10:40:39.063Z",
+  "completed": true,
+  "tests": [
+    {
+      "test": 1,
+      "name": "Chỉ sử dụng PUBLISHED; SQL tham số và chặn trạng thái khác đã kiểm tra logic",
+      "status": "PASS"
+    },
+    {
+      "test": 2,
+      "name": "Dữ liệu hiện tại có 8 article",
+      "status": "PASS"
+    },
+    {
+      "test": 3,
+      "name": "Preprocessing giữ tiếng Việt và dữ kiện kỹ thuật",
+      "status": "PASS"
+    },
+    {
+      "test": 4,
+      "name": "Không chunk rỗng",
+      "status": "PASS"
+    },
+    {
+      "test": 5,
+      "name": "Mỗi chunk có article_id đúng nguồn",
+      "status": "PASS"
+    },
+    {
+      "test": 6,
+      "name": "Mỗi chunk có code đúng nguồn",
+      "status": "PASS"
+    },
+    {
+      "test": 7,
+      "name": "Mỗi chunk có title đúng nguồn",
+      "status": "PASS"
+    },
+    {
+      "test": 8,
+      "name": "chunk_index liên tiếp từ 0 theo article",
+      "status": "PASS"
+    },
+    {
+      "test": 9,
+      "name": "Mọi article được phủ toàn bộ nội dung chuẩn hóa",
+      "status": "PASS"
+    },
+    {
+      "test": 10,
+      "name": "Model thật tạo embedding cho mọi chunk",
+      "status": "PASS"
+    },
+    {
+      "test": 11,
+      "name": "Embedding là vector số",
+      "status": "PASS"
+    },
+    {
+      "test": 12,
+      "name": "Mọi vector có 384 chiều",
+      "status": "PASS"
+    },
+    {
+      "test": 13,
+      "name": "Không có NaN",
+      "status": "PASS"
+    },
+    {
+      "test": 14,
+      "name": "Không có Infinity",
+      "status": "PASS"
+    },
+    {
+      "test": 15,
+      "name": "Metadata không đổi sau embedding, L2 hợp lệ",
+      "status": "PASS"
+    },
+    {
+      "test": "B1",
+      "name": "Giới hạn ký tự/overlap/token và số token tính trên toàn input thật",
+      "status": "PASS"
+    },
+    {
+      "test": "B2",
+      "name": "Tokenizer thật chia tiếp khi input vượt 512 token, giữ coverage",
+      "status": "PASS"
+    },
+    {
+      "test": 16,
+      "name": "Pipeline lần hai chạy model thật và giữ dữ liệu KB",
+      "status": "PASS"
+    },
+    {
+      "test": 17,
+      "name": "Toàn bộ dữ liệu nghiệp vụ trước/sau hai lần pipeline không đổi",
+      "status": "PASS"
+    }
+  ],
+  "logicTests": [
+    {
+      "name": "Chuẩn hóa tiếng Việt/line break, giữ khoảng trắng kỹ thuật",
+      "status": "PASS"
+    },
+    {
+      "name": "SQL chỉ đọc PUBLISHED bằng tham số",
+      "status": "PASS"
+    },
+    {
+      "name": "Từ chối DRAFT và ARCHIVED trước chunking",
+      "status": "PASS"
+    },
+    {
+      "name": "Bài ngắn giữ nguyên một chunk",
+      "status": "PASS"
+    },
+    {
+      "name": "Coverage Unicode/emoji/đoạn dài; index/span/overlap và tiến lên",
+      "status": "PASS"
+    },
+    {
+      "name": "Ngân sách token hẹp tự chia, không truncation/mất nội dung",
+      "status": "PASS"
+    },
+    {
+      "name": "Từ chối rỗng/config sai/title vượt ngân sách",
+      "status": "PASS"
+    },
+    {
+      "name": "Validator từ chối NaN, Infinity, sai chiều, string và vector 0",
+      "status": "PASS"
+    }
+  ],
+  "regression": [
+    {
+      "script": "stage4-2-api.cjs",
+      "result": {
+        "testedAt": "2026-09-29T10:40:44.198Z",
+        "results": [
+          {
+            "test": 1,
+            "name": "Thiếu token -> 401 ở mọi endpoint",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "EMPLOYEE không tạo bài -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "IT tạo bài thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Bài mới là DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Code dạng KB-xxxxxx",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "created_by đúng IT",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "ADMIN tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "EMPLOYEE không thấy DRAFT trong danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "IT thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "ADMIN thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "EMPLOYEE không xem trực tiếp DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "IT cập nhật title/content",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "updated_by đúng người cập nhật",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "EMPLOYEE không được update hoặc đổi status",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "EMPLOYEE thấy PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "EMPLOYEE xem chi tiết PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "EMPLOYEE không thấy ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Chặn mọi transition không hợp lệ",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Chặn title rỗng, sai kiểu hoặc quá dài",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "Chặn content rỗng hoặc sai kiểu",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "ID không tồn tại -> 404",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Mọi response không lộ password/hash/secret/stack/SQL",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn trường chỉ server được quyết định",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN sửa bài, giữ code/creator, truy vấn tham số an toàn",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "ID/status/body không hợp lệ -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Tạo đồng thời không trùng mã",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Publish đồng thời chỉ một request hợp lệ",
+            "status": "PASS"
+          }
+        ],
+        "cleanup": "PASS",
+        "temporaryArticles": 7
+      }
+    },
+    {
+      "script": "stage4-2-regression.cjs",
+      "result": {
+        "testedAt": "2026-09-29T10:40:44.365Z",
+        "suites": [
+          {
+            "script": "stage2-api.cjs",
+            "results": [
+              {
+                "name": "Bcrypt: 3 demo passwords hashed, cost 12, compare succeeds",
+                "status": "PASS"
+              },
+              {
+                "name": "Seed repeated: no duplicate, unchanged passwords and roles",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 1: EMPLOYEE login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 2: IT login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 3: ADMIN login",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 4: wrong password",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 5: unknown email",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 6: missing token",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 7: valid token /me for all roles",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 8: EMPLOYEE denied IT",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 9: EMPLOYEE denied ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 10: IT allowed IT",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 11: IT denied ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 12: ADMIN allowed ADMIN",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 13: ADMIN lists users",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 14: EMPLOYEE denied users",
+                "status": "PASS"
+              },
+              {
+                "name": "Test 15: INACTIVE login and existing token rejected; restored ACTIVE",
+                "status": "PASS"
+              },
+              {
+                "name": "RBAC full matrix and non-admin mutations denied",
+                "status": "PASS"
+              },
+              {
+                "name": "ADMIN creates user: bcrypt hash, defaults, duplicate email rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "ADMIN changes role; existing JWT uses current DB role",
+                "status": "PASS"
+              },
+              {
+                "name": "Invalid role/status/id/email/password rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "Invalid, expired, wrong-signature JWT rejected",
+                "status": "PASS"
+              },
+              {
+                "name": "Health and real MySQL health available",
+                "status": "PASS"
+              }
+            ]
+          },
+          {
+            "script": "stage3-api.cjs",
+            "results": [
+              {
+                "test": 1,
+                "name": "EMPLOYEE tạo Ticket NEW",
+                "status": "PASS"
+              },
+              {
+                "test": 2,
+                "name": "Priority mặc định LOW",
+                "status": "PASS"
+              },
+              {
+                "test": 3,
+                "name": "EMPLOYEE chỉ thấy Ticket của mình",
+                "status": "PASS"
+              },
+              {
+                "test": 4,
+                "name": "EMPLOYEE không xem Ticket người khác",
+                "status": "PASS"
+              },
+              {
+                "test": 5,
+                "name": "EMPLOYEE không được tiếp nhận",
+                "status": "PASS"
+              },
+              {
+                "test": 6,
+                "name": "IT xem tất cả Ticket",
+                "status": "PASS"
+              },
+              {
+                "test": 7,
+                "name": "IT tiếp nhận NEW -> RECEIVED",
+                "status": "PASS"
+              },
+              {
+                "test": 8,
+                "name": "assigned_to lấy từ IT đăng nhập",
+                "status": "PASS"
+              },
+              {
+                "test": 9,
+                "name": "Priority LOW -> HIGH",
+                "status": "PASS"
+              },
+              {
+                "test": 10,
+                "name": "RECEIVED -> IN_PROGRESS",
+                "status": "PASS"
+              },
+              {
+                "test": 11,
+                "name": "Không cho NEW -> RESOLVED",
+                "status": "PASS"
+              },
+              {
+                "test": 12,
+                "name": "RESOLVED thiếu solution bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": 13,
+                "name": "RESOLVED có solution thành công",
+                "status": "PASS"
+              },
+              {
+                "test": 14,
+                "name": "RESOLVED -> CLOSED",
+                "status": "PASS"
+              },
+              {
+                "test": 15,
+                "name": "CLOSED không mở lại",
+                "status": "PASS"
+              },
+              {
+                "test": 16,
+                "name": "RESOLVED -> IN_PROGRESS",
+                "status": "PASS"
+              },
+              {
+                "test": 17,
+                "name": "Mọi thay đổi trạng thái có history đúng thứ tự",
+                "status": "PASS"
+              },
+              {
+                "test": 18,
+                "name": "EMPLOYEE xem history của mình",
+                "status": "PASS"
+              },
+              {
+                "test": 19,
+                "name": "IT khác không xử lý Ticket đã assigned",
+                "status": "PASS"
+              },
+              {
+                "test": 20,
+                "name": "API không trả password/hash user",
+                "status": "PASS"
+              },
+              {
+                "test": 21,
+                "name": "Không token -> 401",
+                "status": "PASS"
+              },
+              {
+                "test": 22,
+                "name": "Role không phù hợp -> 403",
+                "status": "PASS"
+              },
+              {
+                "test": 23,
+                "name": "ID không tồn tại -> 404, ID sai -> 400",
+                "status": "PASS"
+              },
+              {
+                "test": 24,
+                "name": "Priority không hợp lệ bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": 25,
+                "name": "Title/description rỗng bị từ chối",
+                "status": "PASS"
+              },
+              {
+                "test": "B1",
+                "name": "Chặn giả mạo trường server quản lý",
+                "status": "PASS"
+              },
+              {
+                "test": "B2",
+                "name": "ADMIN xử lý Ticket của IT, CLOSED chỉ xem",
+                "status": "PASS"
+              },
+              {
+                "test": "B3",
+                "name": "Hai người nhận đồng thời: chỉ một thành công",
+                "status": "PASS"
+              },
+              {
+                "test": "B4",
+                "name": "Rollback thật khi bước ghi history thất bại",
+                "status": "PASS"
+              },
+              {
+                "test": "B5",
+                "name": "Workflow khác bị chặn và không thêm history",
+                "status": "PASS"
+              }
+            ]
+          }
+        ],
+        "dataPreserved": true,
+        "counts": {
+          "users": 3,
+          "tickets": 3,
+          "ticket_history": 17,
+          "knowledge_articles": 8
+        }
+      }
+    }
+  ],
+  "dataPreserved": true,
+  "modelLoadMs": 1663.1528,
+  "articleCount": 8,
+  "chunkCount": 24,
+  "chunkConfiguration": {
+    "method": "paragraph-first with length/token limit",
+    "size": 800,
+    "overlap": 120,
+    "unit": "Unicode code point",
+    "maxInputTokens": 512
+  },
+  "embedding": {
+    "provider": "local CPU",
+    "model": "Xenova/multilingual-e5-small",
+    "baseModel": "intfloat/multilingual-e5-small",
+    "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+    "dtype": "q8",
+    "artifact": "onnx/model_quantized.onnx",
+    "dimension": 384,
+    "pooling": "attention-mask mean + L2",
+    "apiKey": false,
+    "library": "4.3.0"
+  },
+  "environment": {
+    "node": "v22.17.1",
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "ramBytes": 8276946944
+  },
+  "processingTimeMs": {
+    "read": 3.552199999999857,
+    "preprocessing": 0.09130000000004657,
+    "chunking": 34.568500000000085,
+    "embedding": 389.93179999999984,
+    "validation": 0.720299999999952,
+    "total": 430.34659999999985
+  },
+  "chunkLengths": {
+    "min": 294,
+    "max": 797,
+    "mean": 491.1666666666667
+  },
+  "articles": [
+    {
+      "article_id": 8,
+      "code": "KB-000008",
+      "title": "Không kết nối được Wi-Fi",
+      "status": "PUBLISHED",
+      "sourceHash": "cca6283bc3420b9141647eaaf239a5bfa893b0fc4a859f82969ac0e4b7157e7e",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 413,
+          "tokens": 120,
+          "start": 0,
+          "end": 413,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 653,
+          "tokens": 184,
+          "start": 293,
+          "end": 946,
+          "overlap": 120
+        },
+        {
+          "index": 2,
+          "characters": 313,
+          "tokens": 87,
+          "start": 827,
+          "end": 1140,
+          "overlap": 119
+        }
+      ]
+    },
+    {
+      "article_id": 9,
+      "code": "KB-000009",
+      "title": "Máy in không in được tài liệu",
+      "status": "PUBLISHED",
+      "sourceHash": "77bd1b2d539ccbbe5b9f10b65ca4914d10faab75cd7c14a75eb7fcbd1c5860cb",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 382,
+          "tokens": 115,
+          "start": 0,
+          "end": 382,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 780,
+          "tokens": 220,
+          "start": 262,
+          "end": 1042,
+          "overlap": 120
+        },
+        {
+          "index": 2,
+          "characters": 307,
+          "tokens": 86,
+          "start": 924,
+          "end": 1231,
+          "overlap": 118
+        }
+      ]
+    },
+    {
+      "article_id": 10,
+      "code": "KB-000010",
+      "title": "Quên mật khẩu tài khoản nội bộ",
+      "status": "PUBLISHED",
+      "sourceHash": "c0e41e20b6e6da17d01da03e7dc417330c91358b760d32e32137014c65a491c9",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 381,
+          "tokens": 109,
+          "start": 0,
+          "end": 381,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 777,
+          "tokens": 210,
+          "start": 265,
+          "end": 1042,
+          "overlap": 116
+        },
+        {
+          "index": 2,
+          "characters": 363,
+          "tokens": 101,
+          "start": 924,
+          "end": 1287,
+          "overlap": 118
+        }
+      ]
+    },
+    {
+      "article_id": 11,
+      "code": "KB-000011",
+      "title": "Không gửi hoặc nhận được email",
+      "status": "PUBLISHED",
+      "sourceHash": "ec9ab94ff068e02a44ab7cdbf6076b9bae005307f16a224b21db5b514a60a181",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 357,
+          "tokens": 104,
+          "start": 0,
+          "end": 357,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 661,
+          "tokens": 183,
+          "start": 239,
+          "end": 900,
+          "overlap": 118
+        },
+        {
+          "index": 2,
+          "characters": 450,
+          "tokens": 120,
+          "start": 782,
+          "end": 1232,
+          "overlap": 118
+        }
+      ]
+    },
+    {
+      "article_id": 12,
+      "code": "KB-000012",
+      "title": "Máy tính hoạt động chậm",
+      "status": "PUBLISHED",
+      "sourceHash": "7298033afad62ea836fb8db71bc475befbdad1b42c30e44d57a901bd70632448",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 406,
+          "tokens": 111,
+          "start": 0,
+          "end": 406,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 784,
+          "tokens": 212,
+          "start": 289,
+          "end": 1073,
+          "overlap": 117
+        },
+        {
+          "index": 2,
+          "characters": 294,
+          "tokens": 86,
+          "start": 953,
+          "end": 1247,
+          "overlap": 120
+        }
+      ]
+    },
+    {
+      "article_id": 13,
+      "code": "KB-000013",
+      "title": "Không truy cập được thư mục mạng nội bộ",
+      "status": "PUBLISHED",
+      "sourceHash": "8c5b5ae234bfab0df9d56602ac4b5b6ab0b5ac40686ce5cba786664fc8cfd759",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 379,
+          "tokens": 107,
+          "start": 0,
+          "end": 379,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 797,
+          "tokens": 214,
+          "start": 263,
+          "end": 1060,
+          "overlap": 116
+        },
+        {
+          "index": 2,
+          "characters": 306,
+          "tokens": 87,
+          "start": 942,
+          "end": 1248,
+          "overlap": 118
+        }
+      ]
+    },
+    {
+      "article_id": 14,
+      "code": "KB-000014",
+      "title": "Microphone không hoạt động khi họp trực tuyến",
+      "status": "PUBLISHED",
+      "sourceHash": "dadc7a104dd1824aba81bee529576a41cb9d08996375bf53e21a547d6a17e0f4",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 381,
+          "tokens": 105,
+          "start": 0,
+          "end": 381,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 664,
+          "tokens": 181,
+          "start": 264,
+          "end": 928,
+          "overlap": 117
+        },
+        {
+          "index": 2,
+          "characters": 454,
+          "tokens": 127,
+          "start": 811,
+          "end": 1265,
+          "overlap": 117
+        }
+      ]
+    },
+    {
+      "article_id": 15,
+      "code": "KB-000015",
+      "title": "Không truy cập được website nội bộ",
+      "status": "PUBLISHED",
+      "sourceHash": "bb098583fb065f73ceacca03329f969a874e705ff2c95d1b5426af6b5cdf534c",
+      "chunks": [
+        {
+          "index": 0,
+          "characters": 406,
+          "tokens": 115,
+          "start": 0,
+          "end": 406,
+          "overlap": 0
+        },
+        {
+          "index": 1,
+          "characters": 781,
+          "tokens": 208,
+          "start": 287,
+          "end": 1068,
+          "overlap": 119
+        },
+        {
+          "index": 2,
+          "characters": 299,
+          "tokens": 87,
+          "start": 948,
+          "end": 1247,
+          "overlap": 120
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "article_id": 8,
+      "code": "KB-000008",
+      "title": "Không kết nối được Wi-Fi",
+      "status": "PUBLISHED",
+      "chunk_index": 0,
+      "chunk_text": "[DEMO-KB:wifi]\nDữ liệu demo phục vụ đồ án, không phải quy trình CNTT chính thức.\n\nHiện tượng\nMáy tính không nhìn thấy mạng Wi-Fi, không kết nối được hoặc báo đã kết nối nhưng không truy cập được tài nguyên cần dùng.\n\nNguyên nhân thường gặp\nWi-Fi trên thiết bị bị tắt, chế độ máy bay đang bật, tín hiệu yếu hoặc cấu hình kết nối đã lưu không còn phù hợp. Sự cố cũng có thể nằm ở mạng chung, không chỉ trên một máy.",
+      "start": 0,
+      "end": 413,
+      "token_count": 120,
+      "overlap_chars": 0
+    },
+    {
+      "article_id": 8,
+      "code": "KB-000008",
+      "title": "Không kết nối được Wi-Fi",
+      "status": "PUBLISHED",
+      "chunk_index": 1,
+      "chunk_text": "tín hiệu yếu hoặc cấu hình kết nối đã lưu không còn phù hợp. Sự cố cũng có thể nằm ở mạng chung, không chỉ trên một máy.\n\nCác bước kiểm tra/xử lý cơ bản\n1. Kiểm tra Wi-Fi đã bật và chế độ máy bay đã tắt. Di chuyển đến vị trí có tín hiệu tốt hơn.\n2. Xác nhận đang chọn đúng mạng được phép sử dụng. Không kết nối mạng lạ chỉ vì có tên tương tự.\n3. Thử ngắt rồi kết nối lại. Nếu cần quên mạng đã lưu, chỉ thực hiện khi đã có thông tin kết nối hợp lệ để đăng nhập lại.\n4. Lưu công việc rồi khởi động lại máy. Hỏi người dùng gần đó xem họ có gặp cùng hiện tượng hay không.\n5. Không tự khởi động lại thiết bị mạng dùng chung hoặc cài driver từ nguồn không rõ.",
+      "start": 293,
+      "end": 946,
+      "token_count": 184,
+      "overlap_chars": 120
+    },
+    {
+      "article_id": 8,
+      "code": "KB-000008",
+      "title": "Không kết nối được Wi-Fi",
+      "status": "PUBLISHED",
+      "chunk_index": 2,
+      "chunk_text": "có gặp cùng hiện tượng hay không.\n5. Không tự khởi động lại thiết bị mạng dùng chung hoặc cài driver từ nguồn không rõ.\n\nKhi nào cần gửi Ticket cho IT\nNếu vẫn lỗi, tạo Ticket ghi thời điểm xảy ra, thông báo lỗi, phạm vi ảnh hưởng và các bước đã thử. Không gửi mật khẩu Wi-Fi hoặc thông tin đăng nhập trong Ticket.",
+      "start": 827,
+      "end": 1140,
+      "token_count": 87,
+      "overlap_chars": 119
+    }
+  ],
+  "vectorSample": {
+    "article_id": 8,
+    "chunk_index": 0,
+    "first8": [
+      0.0526236093617243,
+      -0.06855990460364206,
+      -0.03594513608918797,
+      -0.0907265899844259,
+      0.053291623201142266,
+      -0.01638555037468902,
+      0.007927791816133147,
+      0.014984313486248284
+    ],
+    "norm": 1
+  },
+  "validation": {
+    "status": "PASS",
+    "fullCoverage": true,
+    "finiteVectors": true,
+    "dimension": 384
+  },
+  "preprocessingExample": {
+    "input": "  Không xóa dữ liệu\r\nIP: 127.0.0.1  ",
+    "output": "Không xóa dữ liệu\nIP: 127.0.0.1"
+  },
+  "repeatedRun": {
+    "articleCount": 8,
+    "chunkCount": 24,
+    "processingTimeMs": {
+      "read": 1.3486000000002605,
+      "preprocessing": 0.08130000000028303,
+      "chunking": 16.215599999999995,
+      "embedding": 375.2514000000001,
+      "validation": 0.8197999999997592,
+      "total": 394.33280000000013
+    },
+    "validation": {
+      "status": "PASS",
+      "fullCoverage": true,
+      "finiteVectors": true,
+      "dimension": 384
+    }
+  },
+  "counts": {
+    "users": 3,
+    "tickets": 3,
+    "ticket_history": 17,
+    "knowledge_articles": 8
+  }
+}

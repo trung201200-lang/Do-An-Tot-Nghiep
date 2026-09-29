@@ -4,3 +4,6 @@ node_modules/
 !.env.example
 dist/
 *.log
+
+# Cache model và báo cáo chạy local GĐ5.2
+backend/.cache/

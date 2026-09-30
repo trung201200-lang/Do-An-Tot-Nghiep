@@ -1,0 +1,274 @@
+{
+  "source": "docs/giai-doan-5-1.md, mục 6 và 11",
+  "topics": {
+    "wifi": "Không kết nối được Wi-Fi",
+    "printer": "Máy in không in được tài liệu",
+    "account-password": "Quên mật khẩu tài khoản nội bộ",
+    "email": "Không gửi hoặc nhận được email",
+    "slow-computer": "Máy tính hoạt động chậm",
+    "network-folder": "Không truy cập được thư mục mạng nội bộ",
+    "microphone": "Microphone không hoạt động khi họp trực tuyến",
+    "internal-website": "Không truy cập được website nội bộ"
+  },
+  "questions": [
+    {
+      "id": "A01",
+      "group": "DIRECT",
+      "split": "DEV",
+      "question": "Không kết nối được Wi-Fi thì cần kiểm tra gì trước?",
+      "expectedTopics": [
+        "wifi"
+      ],
+      "expectation": "Nguồn wifi trong Top-K; mong muốn hạng 1",
+      "note": "Có bật Wi-Fi, chế độ máy bay, tín hiệu"
+    },
+    {
+      "id": "A02",
+      "group": "DIRECT",
+      "split": "DEV",
+      "question": "Máy in không in được tài liệu, tôi nên làm gì?",
+      "expectedTopics": [
+        "printer"
+      ],
+      "expectation": "Nguồn printer trong Top-K; mong muốn hạng 1",
+      "note": "Nguồn/giấy, đúng máy in, hàng đợi"
+    },
+    {
+      "id": "A03",
+      "group": "DIRECT",
+      "split": "DEV",
+      "question": "Quên mật khẩu tài khoản nội bộ thì xử lý thế nào?",
+      "expectedTopics": [
+        "account-password"
+      ],
+      "expectation": "Nguồn account-password trong Top-K; mong muốn hạng 1",
+      "note": "Hướng dẫn có điều kiện; không khẳng định app có reset password"
+    },
+    {
+      "id": "A04",
+      "group": "DIRECT",
+      "split": "DEV",
+      "question": "Tôi không gửi hoặc nhận được email, cần kiểm tra gì?",
+      "expectedTopics": [
+        "email"
+      ],
+      "expectation": "Nguồn email trong Top-K; mong muốn hạng 1",
+      "note": "Kết nối, đồng bộ, thư mục, thông báo lỗi"
+    },
+    {
+      "id": "A05",
+      "group": "DIRECT",
+      "split": "TEST",
+      "question": "Máy tính hoạt động chậm thì tôi nên kiểm tra gì?",
+      "expectedTopics": [
+        "slow-computer"
+      ],
+      "expectation": "Nguồn slow-computer trong Top-K; mong muốn hạng 1",
+      "note": "Ứng dụng, tài nguyên, dung lượng"
+    },
+    {
+      "id": "A06",
+      "group": "DIRECT",
+      "split": "TEST",
+      "question": "Không truy cập được thư mục mạng nội bộ thì làm sao?",
+      "expectedTopics": [
+        "network-folder"
+      ],
+      "expectation": "Nguồn network-folder trong Top-K; mong muốn hạng 1",
+      "note": "Đường dẫn, mạng, tài khoản, quyền"
+    },
+    {
+      "id": "A07",
+      "group": "DIRECT",
+      "split": "TEST",
+      "question": "Microphone không hoạt động khi họp trực tuyến, kiểm tra thế nào?",
+      "expectedTopics": [
+        "microphone"
+      ],
+      "expectation": "Nguồn microphone trong Top-K; mong muốn hạng 1",
+      "note": "Mute, thiết bị đầu vào, quyền mic"
+    },
+    {
+      "id": "A08",
+      "group": "DIRECT",
+      "split": "TEST",
+      "question": "Không truy cập được website nội bộ thì tôi cần làm gì?",
+      "expectedTopics": [
+        "internal-website"
+      ],
+      "expectation": "Nguồn internal-website trong Top-K; mong muốn hạng 1",
+      "note": "Xác nhận địa chỉ, kết nối, phiên, cảnh báo chứng chỉ"
+    },
+    {
+      "id": "B01",
+      "group": "PARAPHRASE",
+      "split": "TEST",
+      "question": "Biểu tượng sóng trên laptop có dấu gạch, tôi không vào mạng không dây được.",
+      "expectedTopics": [
+        "wifi"
+      ],
+      "expectation": "Tìm wifi dù diễn đạt khác tiêu đề",
+      "note": "Không suy đoán cấu hình router"
+    },
+    {
+      "id": "B02",
+      "group": "PARAPHRASE",
+      "split": "TEST",
+      "question": "Tôi bấm xuất bản giấy rồi mà lệnh cứ nằm chờ, không có tờ nào đi ra.",
+      "expectedTopics": [
+        "printer"
+      ],
+      "expectation": "Tìm printer qua triệu chứng",
+      "note": "Đối chiếu phần hàng đợi, không hủy lệnh người khác"
+    },
+    {
+      "id": "B03",
+      "group": "PARAPHRASE",
+      "split": "TEST",
+      "question": "Tôi không nhớ chuỗi bí mật để vào tài khoản công ty và đã thử sai nhiều lần.",
+      "expectedTopics": [
+        "account-password"
+      ],
+      "expectation": "Tìm account-password",
+      "note": "Không xin mật khẩu/cấp tài khoản thay thế"
+    },
+    {
+      "id": "B04",
+      "group": "PARAPHRASE",
+      "split": "TEST",
+      "question": "Thư đã soạn cứ nằm ở hộp đi, đồng nghiệp bảo chưa nhận được gì.",
+      "expectedTopics": [
+        "email"
+      ],
+      "expectation": "Tìm email",
+      "note": "Kiểm tra thư gửi thất bại và địa chỉ nhận"
+    },
+    {
+      "id": "B05",
+      "group": "PARAPHRASE",
+      "split": "DEV",
+      "question": "Mở ứng dụng nào cũng phải đợi rất lâu, nhiều lúc máy đứng yên.",
+      "expectedTopics": [
+        "slow-computer"
+      ],
+      "expectation": "Tìm slow-computer",
+      "note": "Không tự kết luận nhiễm mã độc"
+    },
+    {
+      "id": "B06",
+      "group": "PARAPHRASE",
+      "split": "DEV",
+      "question": "Thư mục dùng chung của nhóm báo từ chối quyền dù tôi vẫn vào Internet được.",
+      "expectedTopics": [
+        "network-folder"
+      ],
+      "expectation": "Tìm network-folder",
+      "note": "Không chỉ trả hướng dẫn Wi-Fi"
+    },
+    {
+      "id": "B07",
+      "group": "PARAPHRASE",
+      "split": "DEV",
+      "question": "Trong cuộc họp tôi nói nhưng mọi người không nghe thấy, dù tôi vẫn nghe họ.",
+      "expectedTopics": [
+        "microphone"
+      ],
+      "expectation": "Tìm microphone",
+      "note": "Phân biệt đầu vào với đầu ra âm thanh"
+    },
+    {
+      "id": "B08",
+      "group": "PARAPHRASE",
+      "split": "DEV",
+      "question": "Trang làm việc của công ty cứ quay mãi không mở ra, các trang khác vẫn vào được.",
+      "expectedTopics": [
+        "internal-website"
+      ],
+      "expectation": "Tìm internal-website",
+      "note": "Không đoán domain/server cụ thể"
+    },
+    {
+      "id": "C01",
+      "group": "PARTIAL",
+      "split": "DEV",
+      "question": "Tôi đã kết nối mạng nhưng không mở được tài nguyên của công ty.",
+      "expectedTopics": [
+        "wifi",
+        "network-folder",
+        "internal-website"
+      ],
+      "expectation": "Có thể trả ứng viên trong tập; chưa có một bài duy nhất",
+      "note": "Hỏi rõ tài nguyên là trang web hay thư mục; không chẩn đoán chắc chắn"
+    },
+    {
+      "id": "C02",
+      "group": "PARTIAL",
+      "split": "DEV",
+      "question": "Máy in báo lỗi E42, tôi cần thay linh kiện nào?",
+      "expectedTopics": [
+        "printer"
+      ],
+      "expectation": "Có thể tìm printer nhưng phải nhận ra KB không giải mã E42",
+      "note": "Không bịa linh kiện hoặc cách tháo sửa; đề nghị IT"
+    },
+    {
+      "id": "C03",
+      "group": "PARTIAL",
+      "split": "TEST",
+      "question": "Tôi không đăng nhập được vào trang làm việc.",
+      "expectedTopics": [
+        "account-password",
+        "internal-website"
+      ],
+      "expectation": "Có ứng viên, cần hỏi thông báo lỗi và tình huống",
+      "note": "Không đồng nhất mọi lỗi đăng nhập với quên mật khẩu"
+    },
+    {
+      "id": "C04",
+      "group": "PARTIAL",
+      "split": "TEST",
+      "question": "Cần chỉnh bản ghi DNS nào để sửa lỗi thư gửi bị trả lại?",
+      "expectedTopics": [
+        "email"
+      ],
+      "expectation": "Có thể tìm email, không coi đó là đủ hướng dẫn sửa DNS",
+      "note": "KB không có bản ghi DNS hoặc cấu hình dịch vụ"
+    },
+    {
+      "id": "D01",
+      "group": "OUT_OF_KB",
+      "split": "DEV",
+      "question": "Nhân viên mới có bao nhiêu ngày nghỉ phép năm?",
+      "expectedTopics": [],
+      "expectation": "Không chấp nhận nguồn KB làm câu trả lời",
+      "note": "Ngoài CNTT; hướng đến bộ phận phụ trách, không bịa chính sách"
+    },
+    {
+      "id": "D02",
+      "group": "OUT_OF_KB",
+      "split": "DEV",
+      "question": "Làm thế nào để cấu hình BGP trên router Cisco?",
+      "expectedTopics": [],
+      "expectation": "Từ chối gán bài Wi-Fi thành tài liệu BGP",
+      "note": "Ngoài KB nhưng trong CNTT; đề nghị IT"
+    },
+    {
+      "id": "D03",
+      "group": "OUT_OF_KB",
+      "split": "TEST",
+      "question": "Công ty hoàn tiền công tác theo mức nào?",
+      "expectedTopics": [],
+      "expectation": "Không có nguồn đủ trả lời",
+      "note": "Không bịa chính sách tài chính"
+    },
+    {
+      "id": "D04",
+      "group": "OUT_OF_KB",
+      "split": "TEST",
+      "question": "Hướng dẫn khôi phục database PostgreSQL bằng WAL khi mất ổ đĩa.",
+      "expectedTopics": [],
+      "expectation": "Không chấp nhận bài máy chậm làm quy trình khôi phục DB",
+      "note": "Ngoài KB nhưng gần CNTT; không đưa lệnh nguy hiểm"
+    }
+  ]
+}

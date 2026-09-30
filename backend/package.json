@@ -8,7 +8,9 @@
         "seed:users": "node src/utils/seedUsers.js",
         "seed:knowledge": "node src/utils/seedKnowledge.js",
         "experiment:embedding": "node src/rag/experiment.js",
-        "test:stage5-2": "node tests/stage5-2-experiment.cjs"
+        "test:stage5-2": "node tests/stage5-2-experiment.cjs",
+        "experiment:retrieval": "node src/rag/retrievalExperiment.js",
+        "test:stage5-3": "node tests/stage5-3-experiment.cjs"
     },
     "dependencies": {
         "@huggingface/transformers": "4.3.0",

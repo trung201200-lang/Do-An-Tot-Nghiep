@@ -2,7 +2,7 @@
 
 Hệ thống hỗ trợ xử lý sự cố CNTT nội bộ: quản lý Ticket và tra cứu hướng dẫn trong Kho kiến thức (Knowledge Base).
 
-Đã hoàn thành Giai đoạn 1–4: Authentication/RBAC, Ticket Management và Knowledge Base truyền thống. Tìm kiếm hiện tại là tìm kiếm từ khóa phía frontend; chưa triển khai RAG hoặc AI Assistant.
+Đã hoàn thành Giai đoạn 1–4: Authentication/RBAC, Ticket Management và Knowledge Base truyền thống. Frontend tiếp tục tìm kiếm KB theo từ khóa. GĐ5.2–5.4 bổ sung pipeline RAG thử nghiệm ở backend: embedding local, vector retrieval và generation bằng Gemini; chưa có giao diện chatbot.
 
 ## Công nghệ
 
@@ -188,14 +188,32 @@ Kết quả GĐ4.5: Auth API 23/23, Ticket API 30/30, KB API 30/30, browser đă
 - [GĐ4.4: Frontend KB](docs/giai-doan-4-4.md)
 - [GĐ4.5: Tổng kết và kiểm thử](docs/giai-doan-4-5.md)
 
-Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó; README và tổng kết GĐ4.5 mô tả trạng thái hiện tại.
+Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó; README mô tả trạng thái hiện tại.
 
 ## Trạng thái dự án và giới hạn
 
 Đã hoàn thành Authentication/RBAC, Ticket Management và Knowledge Base. Giai đoạn 4 đã hoàn thành.
 
-Chưa triển khai RAG, Chunking, Embedding, Vector Search, Qdrant hoặc LLM Assistant. Không có chatbot hoặc tìm kiếm ngữ nghĩa.
+Đã có thử nghiệm Chunking, Embedding, Vector Retrieval và RAG Generation tại backend. Chưa có giao diện chatbot, Qdrant hoặc triển khai production.
 
 Hiện chưa phân trang, cập nhật thời gian thực, upload hoặc lịch sử phiên bản KB. Search không bỏ dấu tiếng Việt; chuyển tab không lưu form chưa gửi. Review bảo mật ở phạm vi đồ án/local, chưa phải đánh giá bảo mật triển khai production.
 
-Dừng trước Giai đoạn 5, chờ người dùng xác nhận phạm vi tiếp theo.
+Dừng sau GĐ5.4; chưa triển khai GĐ5.5.
+
+## GĐ5.4: RAG Generation với Gemini
+
+Dependency mới: @google/genai 2.24.0. Trong backend, chạy npm ci khi cài lại dependency. Chỉ cấu hình GEMINI_API_KEY trong backend/.env local (đã ignore); đặt GEMINI_MODEL=gemini-3.5-flash-lite theo model đã được phê duyệt. Không in key, đưa key vào frontend hoặc commit .env. .env.example chỉ chứa tên biến và giá trị mẫu không bí mật.
+
+POST /api/rag/ask yêu cầu JWT hiện tại của EMPLOYEE/IT/ADMIN ACTIVE, body gồm question (chuỗi 1–1000 ký tự). Response gồm answered, answer, sources; fallback có answered=false và sources=[]. Ví dụ body: {"question":"Không kết nối được Wi-Fi thì làm gì?"}. Lỗi provider/đầu ra trả HTTP 502/503/504 có code và message an toàn; không được coi là câu trả lời thành công.
+
+Chạy trong thư mục backend:
+
+~~~powershell
+npm run test:stage5-4:logic
+node tests/stage5-4-api.cjs
+npm run test:stage5-4
+~~~
+
+Hai lệnh đầu dùng Gemini mock; API test đăng nhập MySQL thật. Lệnh cuối gọi Gemini thật cho các câu vượt threshold, ghi kết quả 24 câu và chạy regression GĐ5.2/5.3, Auth, Ticket, KB. Cần MySQL local, cấu hình demo đang hoạt động, model embedding local/cached và key/model hợp lệ; không chạy đồng thời với người sửa dữ liệu. Lượt thực nghiệm đã lưu gọi Gemini 18 lần; chạy lại có thể phát sinh quota/chi phí và kết quả khác. Runner giữ lượt trước trong previousAttempts và đặt đánh giá thủ công lượt mới về PENDING, cần rà soát lại từng câu. Exit code 0/completed=true chỉ xác nhận chạy đủ, không bảo đảm chất lượng mọi câu.
+
+Kết quả hiện tại: 14 answer, 8 fallback, 2 lỗi kiểm tra evidence; groundedness thủ công 13 PASS/1 PARTIAL trên 14 answer. Xem [báo cáo GĐ5.4](docs/giai-doan-5-4.md) và [kết quả đầy đủ](docs/stage5-4-results.json), gồm các trường hợp chưa đạt. Không chạy seed hoặc thay threshold để làm đẹp kết quả.

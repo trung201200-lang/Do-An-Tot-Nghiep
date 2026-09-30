@@ -10,9 +10,12 @@
         "experiment:embedding": "node src/rag/experiment.js",
         "test:stage5-2": "node tests/stage5-2-experiment.cjs",
         "experiment:retrieval": "node src/rag/retrievalExperiment.js",
-        "test:stage5-3": "node tests/stage5-3-experiment.cjs"
+        "test:stage5-3": "node tests/stage5-3-experiment.cjs",
+        "test:stage5-4:logic": "node tests/stage5-4-logic.cjs",
+        "test:stage5-4": "node tests/stage5-4-generation.cjs"
     },
     "dependencies": {
+        "@google/genai": "2.24.0",
         "@huggingface/transformers": "4.3.0",
         "bcrypt": "^6.0.0",
         "cors": "^2.8.5",

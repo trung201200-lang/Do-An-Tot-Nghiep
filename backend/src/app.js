@@ -11,6 +11,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/test', require('./routes/testRoutes'));
 app.use('/api/tickets', require('./routes/ticketRoutes'));
 app.use('/api/knowledge', require('./routes/knowledgeArticleRoutes'));
+app.use('/api/rag', require('./routes/ragRoutes'));
 
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'API không tồn tại.' });

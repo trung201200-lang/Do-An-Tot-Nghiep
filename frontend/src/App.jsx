@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiRequest } from './api';
 import Tickets from './Tickets';
 import KnowledgeBase from './KnowledgeBase';
+import RagAssistant from './RagAssistant';
 
 const TOKEN_KEY = 'it_support_token';
 const roleNames = { EMPLOYEE: 'Nhân viên', IT: 'Nhân viên IT', ADMIN: 'Quản trị viên' };
@@ -100,10 +101,13 @@ export default function App() {
             <nav className="section-nav" aria-label="Chức năng">
               <button type="button" aria-pressed={section === 'tickets'} onClick={() => setSection('tickets')}>{user.role === 'EMPLOYEE' ? 'Ticket của tôi' : 'Ticket'}</button>
               <button type="button" aria-pressed={section === 'knowledge'} onClick={() => setSection('knowledge')}>Kho kiến thức</button>
+              <button type="button" aria-pressed={section === 'rag'} onClick={() => setSection('rag')}>Trợ lý CNTT</button>
             </nav>
             {section === 'tickets'
               ? <Tickets key={user.id} token={token} user={user} onUnauthorized={logout} />
-              : <KnowledgeBase key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} />}
+              : section === 'knowledge'
+                ? <KnowledgeBase key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} />
+                : <RagAssistant key={user.id} token={token} user={user} onUnauthorized={logout} onCreateTicket={() => setSection('tickets')} />}
           </section>
         ) : (
           <section>

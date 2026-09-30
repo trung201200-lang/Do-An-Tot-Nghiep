@@ -2,7 +2,7 @@
 
 Hệ thống hỗ trợ xử lý sự cố CNTT nội bộ: quản lý Ticket và tra cứu hướng dẫn trong Kho kiến thức (Knowledge Base).
 
-Đã hoàn thành Giai đoạn 1–4: Authentication/RBAC, Ticket Management và Knowledge Base truyền thống. Frontend tiếp tục tìm kiếm KB theo từ khóa. GĐ5.2–5.4 bổ sung pipeline RAG thử nghiệm ở backend: embedding local, vector retrieval và generation bằng Gemini; chưa có giao diện chatbot.
+Đã hoàn thành Giai đoạn 1–4: Authentication/RBAC, Ticket Management và Knowledge Base truyền thống. Frontend tiếp tục tìm kiếm KB theo từ khóa. GĐ5.2–5.4 bổ sung pipeline RAG thử nghiệm ở backend: embedding local, vector retrieval và generation bằng Gemini. GĐ5.5 tích hợp giao diện Trợ lý CNTT để hỏi đáp từng câu độc lập.
 
 ## Công nghệ
 
@@ -194,11 +194,11 @@ Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó
 
 Đã hoàn thành Authentication/RBAC, Ticket Management và Knowledge Base. Giai đoạn 4 đã hoàn thành.
 
-Đã có thử nghiệm Chunking, Embedding, Vector Retrieval và RAG Generation tại backend. Chưa có giao diện chatbot, Qdrant hoặc triển khai production.
+Đã có thử nghiệm Chunking, Embedding, Vector Retrieval và RAG Generation tại backend. Đã có giao diện Trợ lý CNTT; chưa có chat memory, Qdrant hoặc triển khai production.
 
 Hiện chưa phân trang, cập nhật thời gian thực, upload hoặc lịch sử phiên bản KB. Search không bỏ dấu tiếng Việt; chuyển tab không lưu form chưa gửi. Review bảo mật ở phạm vi đồ án/local, chưa phải đánh giá bảo mật triển khai production.
 
-Dừng sau GĐ5.4; chưa triển khai GĐ5.5.
+GĐ5.5 đã hoàn thành. Dừng sau GĐ5.5; chưa triển khai GĐ5.6.
 
 ## GĐ5.4: RAG Generation với Gemini
 
@@ -217,3 +217,11 @@ npm run test:stage5-4
 Hai lệnh đầu dùng Gemini mock; API test đăng nhập MySQL thật. Lệnh cuối gọi Gemini thật cho các câu vượt threshold, ghi kết quả 24 câu và chạy regression GĐ5.2/5.3, Auth, Ticket, KB. Cần MySQL local, cấu hình demo đang hoạt động, model embedding local/cached và key/model hợp lệ; không chạy đồng thời với người sửa dữ liệu. Lượt thực nghiệm đã lưu gọi Gemini 18 lần; chạy lại có thể phát sinh quota/chi phí và kết quả khác. Runner giữ lượt trước trong previousAttempts và đặt đánh giá thủ công lượt mới về PENDING, cần rà soát lại từng câu. Exit code 0/completed=true chỉ xác nhận chạy đủ, không bảo đảm chất lượng mọi câu.
 
 Kết quả hiện tại: 14 answer, 8 fallback, 2 lỗi kiểm tra evidence; groundedness thủ công 13 PASS/1 PARTIAL trên 14 answer. Xem [báo cáo GĐ5.4](docs/giai-doan-5-4.md) và [kết quả đầy đủ](docs/stage5-4-results.json), gồm các trường hợp chưa đạt. Không chạy seed hoặc thay threshold để làm đẹp kết quả.
+
+## GĐ5.5: Giao diện Trợ lý CNTT
+
+Đăng nhập bằng EMPLOYEE, IT hoặc ADMIN, chọn **Trợ lý CNTT**, nhập câu hỏi rồi bấm **Gửi câu hỏi** hoặc Enter (Shift+Enter xuống dòng). Giao diện gọi POST /api/rag/ask bằng JWT hiện tại; Gemini chạy ở backend, frontend không chứa API key. Answer được hiển thị dưới dạng text cùng mã/tiêu đề nguồn; fallback và lỗi provider/evidence có thông báo riêng. API hiện không trả nguyên nhân chi tiết cho từng dạng fallback.
+
+Khi fallback, EMPLOYEE có nút **Tạo yêu cầu hỗ trợ** để chuyển sang mục Ticket; người dùng chọn **Tạo yêu cầu** và tự gửi form. Không tự động tạo Ticket. Chỉ giữ kết quả hiện tại trong state; chuyển tab hoặc đăng xuất sẽ xóa.
+
+GĐ5.5 đã kiểm thử 34 browser tests, regression 83 API nghiệp vụ + 51 browser cũ + 23 RAG logic/API, build và giữ dữ liệu gốc PASS; dùng đúng một request Gemini thật. Xem [báo cáo GĐ5.5](docs/giai-doan-5-5.md) và [kết quả kiểm thử](docs/stage5-5-results.json). Trong backend, node tests/stage5-5-regression.cjs chạy bộ tổng hợp; cần MySQL local, tài khoản demo, Edge và Playwright tại thư mục tạm như các bộ browser trước. Lệnh có gọi Gemini thật; không chạy lại nếu chỉ muốn xem kết quả đã lưu. Các hạn chế chất lượng GĐ5.4 vẫn được giữ nguyên trong báo cáo.

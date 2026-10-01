@@ -164,6 +164,7 @@ Các API nghiệp vụ yêu cầu `Authorization: Bearer <token>`.
 | POST | /api/knowledge | IT/ADMIN; title, content |
 | PUT | /api/knowledge/:id | IT/ADMIN; title, content |
 | PATCH | /api/knowledge/:id/status | IT/ADMIN; status |
+| POST | /api/rag/ask | EMPLOYEE/IT/ADMIN ACTIVE; question → answer/sources hoặc fallback |
 
 Response dùng success, message khi phù hợp và dữ liệu; KB trả articles cho danh sách hoặc article cho một bài. Không trả password/hash. HTTP 400: validation/workflow; 401: phiên không hợp lệ; 403: sai quyền; 404: không tồn tại; 409: trùng mã/email; 413: vượt giới hạn JSON 16 KB; 500/503: lỗi xử lý/database, thông báo an toàn.
 
@@ -198,7 +199,7 @@ Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó
 
 Hiện chưa phân trang, cập nhật thời gian thực, upload hoặc lịch sử phiên bản KB. Search không bỏ dấu tiếng Việt; chuyển tab không lưu form chưa gửi. Review bảo mật ở phạm vi đồ án/local, chưa phải đánh giá bảo mật triển khai production.
 
-GĐ5.5 đã hoàn thành. Dừng sau GĐ5.5; chưa triển khai GĐ5.6.
+GĐ5.6 đã hoàn thành tổng hợp, đánh giá và kiểm thử cuối phần RAG. Dừng sau GĐ5.6; chưa bắt đầu GĐ6.
 
 ## GĐ5.4: RAG Generation với Gemini
 
@@ -225,3 +226,9 @@ Kết quả hiện tại: 14 answer, 8 fallback, 2 lỗi kiểm tra evidence; gr
 Khi fallback, EMPLOYEE có nút **Tạo yêu cầu hỗ trợ** để chuyển sang mục Ticket; người dùng chọn **Tạo yêu cầu** và tự gửi form. Không tự động tạo Ticket. Chỉ giữ kết quả hiện tại trong state; chuyển tab hoặc đăng xuất sẽ xóa.
 
 GĐ5.5 đã kiểm thử 34 browser tests, regression 83 API nghiệp vụ + 51 browser cũ + 23 RAG logic/API, build và giữ dữ liệu gốc PASS; dùng đúng một request Gemini thật. Xem [báo cáo GĐ5.5](docs/giai-doan-5-5.md) và [kết quả kiểm thử](docs/stage5-5-results.json). Trong backend, node tests/stage5-5-regression.cjs chạy bộ tổng hợp; cần MySQL local, tài khoản demo, Edge và Playwright tại thư mục tạm như các bộ browser trước. Lệnh có gọi Gemini thật; không chạy lại nếu chỉ muốn xem kết quả đã lưu. Các hạn chế chất lượng GĐ5.4 vẫn được giữ nguyên trong báo cáo.
+
+## Tổng kết phần RAG – GĐ5.6
+
+Pipeline hiện tại: Knowledge Base PUBLISHED → Chunking → Embedding local bằng Xenova/multilingual-e5-small (384 chiều) → vector trong RAM → Retrieval cosine → context → Gemini gemini-3.5-flash-lite → answer/sources hoặc fallback → React Trợ lý CNTT. Câu hỏi đi qua JWT, validation và query embedding; Gemini chỉ chạy ở backend. EMPLOYEE gửi yêu cầu hỗ trợ bằng cách tạo Ticket, IT tiếp nhận/xử lý; RAG không tự tạo Ticket.
+
+Xem [tổng kết và đánh giá RAG](docs/giai-doan-5-6.md), [kết quả kiểm chứng cuối](docs/stage5-6-results.json) và [checklist 14 hình minh chứng](docs/giai-doan-5-minh-chung.md). GĐ5.6 giữ nguyên code nghiệp vụ/số liệu thực nghiệm cũ và không gọi Gemini thật. Các chỉ số Retrieval, Generation, groundedness, nguồn, latency và UX được phân biệt; những trường hợp chưa đạt vẫn được ghi nhận. Phần RAG hoàn thiện trong phạm vi nghiên cứu/thực nghiệm đồ án, chưa triển khai production.

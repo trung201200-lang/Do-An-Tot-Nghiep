@@ -1,0 +1,2839 @@
+{
+  "stage": "6.1",
+  "testedAt": "2026-10-01T14:40:09.665Z",
+  "completed": true,
+  "git": {
+    "branch": "main",
+    "initialWorkingTree": "CLEAN",
+    "baseCommit": "c4dda25c86fd7d9773be3294ff2d5b63e04c31d3",
+    "baseMessage": "docs: finalize RAG evaluation and evidence",
+    "initialOriginMain": "c4dda25c86fd7d9773be3294ff2d5b63e04c31d3",
+    "initialSynchronized": true,
+    "plannedCommitMessage": "docs: add system audit and E2E baseline",
+    "deliveryVerification": "Xác minh hash remote và working tree sau push được báo ở phản hồi cuối, không tự tham chiếu hash commit chứa JSON này."
+  },
+  "database": {
+    "name": "it_support_rag",
+    "before": {
+      "counts": {
+        "users": 3,
+        "tickets": 3,
+        "ticket_history": 17,
+        "knowledge_articles": 8
+      },
+      "knowledgeStatus": {
+        "PUBLISHED": 8,
+        "DRAFT": 0,
+        "ARCHIVED": 0
+      }
+    },
+    "after": {
+      "counts": {
+        "users": 3,
+        "tickets": 3,
+        "ticket_history": 17,
+        "knowledge_articles": 8
+      },
+      "knowledgeStatus": {
+        "PUBLISHED": 8,
+        "DRAFT": 0,
+        "ARCHIVED": 0
+      }
+    },
+    "fullRowsPreserved": true,
+    "allKnowledgePublished": true,
+    "schema": {
+      "tables": [
+        {
+          "name": "knowledge_articles",
+          "engine": "InnoDB",
+          "collation": "utf8mb4_unicode_ci"
+        },
+        {
+          "name": "ticket_history",
+          "engine": "InnoDB",
+          "collation": "utf8mb4_unicode_ci"
+        },
+        {
+          "name": "tickets",
+          "engine": "InnoDB",
+          "collation": "utf8mb4_unicode_ci"
+        },
+        {
+          "name": "users",
+          "engine": "InnoDB",
+          "collation": "utf8mb4_unicode_ci"
+        }
+      ],
+      "columns": [
+        {
+          "tableName": "knowledge_articles",
+          "name": "id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "code",
+          "type": "varchar(32)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "UNI",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "title",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "content",
+          "type": "text",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "status",
+          "type": "enum('DRAFT','PUBLISHED','ARCHIVED')",
+          "nullable": "NO",
+          "defaultValue": "DRAFT",
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "created_by",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "updated_by",
+          "type": "int",
+          "nullable": "YES",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED"
+        },
+        {
+          "tableName": "knowledge_articles",
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "ticket_id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "actor_id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "old_status",
+          "type": "enum('NEW','RECEIVED','IN_PROGRESS','RESOLVED','CLOSED')",
+          "nullable": "YES",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "new_status",
+          "type": "enum('NEW','RECEIVED','IN_PROGRESS','RESOLVED','CLOSED')",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "note",
+          "type": "text",
+          "nullable": "YES",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "ticket_history",
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED"
+        },
+        {
+          "tableName": "tickets",
+          "name": "id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "tableName": "tickets",
+          "name": "code",
+          "type": "varchar(32)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "UNI",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "title",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "description",
+          "type": "text",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "priority",
+          "type": "enum('LOW','MEDIUM','HIGH')",
+          "nullable": "NO",
+          "defaultValue": "LOW",
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "status",
+          "type": "enum('NEW','RECEIVED','IN_PROGRESS','RESOLVED','CLOSED')",
+          "nullable": "NO",
+          "defaultValue": "NEW",
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "created_by",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "assigned_to",
+          "type": "int",
+          "nullable": "YES",
+          "defaultValue": null,
+          "keyType": "MUL",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "solution",
+          "type": "text",
+          "nullable": "YES",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "tickets",
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED"
+        },
+        {
+          "tableName": "tickets",
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+        },
+        {
+          "tableName": "users",
+          "name": "id",
+          "type": "int",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "PRI",
+          "extra": "auto_increment"
+        },
+        {
+          "tableName": "users",
+          "name": "name",
+          "type": "varchar(100)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "users",
+          "name": "email",
+          "type": "varchar(254)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "UNI",
+          "extra": ""
+        },
+        {
+          "tableName": "users",
+          "name": "password",
+          "type": "varchar(255)",
+          "nullable": "NO",
+          "defaultValue": null,
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "users",
+          "name": "role",
+          "type": "enum('EMPLOYEE','IT','ADMIN')",
+          "nullable": "NO",
+          "defaultValue": "EMPLOYEE",
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "users",
+          "name": "status",
+          "type": "enum('ACTIVE','INACTIVE')",
+          "nullable": "NO",
+          "defaultValue": "ACTIVE",
+          "keyType": "",
+          "extra": ""
+        },
+        {
+          "tableName": "users",
+          "name": "created_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED"
+        },
+        {
+          "tableName": "users",
+          "name": "updated_at",
+          "type": "timestamp",
+          "nullable": "NO",
+          "defaultValue": "CURRENT_TIMESTAMP",
+          "keyType": "",
+          "extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+        }
+      ],
+      "foreignKeys": [
+        {
+          "tableName": "knowledge_articles",
+          "columnName": "created_by",
+          "referencedTable": "users",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        },
+        {
+          "tableName": "knowledge_articles",
+          "columnName": "updated_by",
+          "referencedTable": "users",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        },
+        {
+          "tableName": "ticket_history",
+          "columnName": "actor_id",
+          "referencedTable": "users",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        },
+        {
+          "tableName": "ticket_history",
+          "columnName": "ticket_id",
+          "referencedTable": "tickets",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        },
+        {
+          "tableName": "tickets",
+          "columnName": "assigned_to",
+          "referencedTable": "users",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        },
+        {
+          "tableName": "tickets",
+          "columnName": "created_by",
+          "referencedTable": "users",
+          "referencedColumn": "id",
+          "deleteRule": "RESTRICT",
+          "updateRule": "RESTRICT"
+        }
+      ]
+    },
+    "notes": "SELECT cho audit schema; suite cũ tự quản lý dữ liệu test/khôi phục ACTIVE và timestamp. Không dump dữ liệu nhạy cảm. AUTO_INCREMENT có thể tiến; không reset."
+  },
+  "inventory": {
+    "files": [
+      "backend/src/app.js",
+      "backend/src/config/db.js",
+      "backend/src/config/env.js",
+      "backend/src/config/jwt.js",
+      "backend/src/controllers/authController.js",
+      "backend/src/controllers/healthController.js",
+      "backend/src/controllers/knowledgeArticleController.js",
+      "backend/src/controllers/ticketController.js",
+      "backend/src/controllers/userController.js",
+      "backend/src/middleware/.gitkeep",
+      "backend/src/middleware/authMiddleware.js",
+      "backend/src/middleware/errorMiddleware.js",
+      "backend/src/middleware/roleMiddleware.js",
+      "backend/src/models/.gitkeep",
+      "backend/src/models/knowledgeArticleModel.js",
+      "backend/src/models/ticketModel.js",
+      "backend/src/models/userModel.js",
+      "backend/src/rag/config.js",
+      "backend/src/rag/embedding.js",
+      "backend/src/rag/experiment.js",
+      "backend/src/rag/geminiClient.js",
+      "backend/src/rag/generationConfig.js",
+      "backend/src/rag/generationContext.js",
+      "backend/src/rag/generationOutput.js",
+      "backend/src/rag/generationPrompt.js",
+      "backend/src/rag/generationSafety.js",
+      "backend/src/rag/generationService.js",
+      "backend/src/rag/pipeline.js",
+      "backend/src/rag/retrieval.js",
+      "backend/src/rag/retrievalConfig.js",
+      "backend/src/rag/retrievalEvaluation.js",
+      "backend/src/rag/retrievalExperiment.js",
+      "backend/src/rag/retrievalQuestions.json",
+      "backend/src/rag/text.js",
+      "backend/src/routes/authRoutes.js",
+      "backend/src/routes/healthRoutes.js",
+      "backend/src/routes/knowledgeArticleRoutes.js",
+      "backend/src/routes/ragRoutes.js",
+      "backend/src/routes/testRoutes.js",
+      "backend/src/routes/ticketRoutes.js",
+      "backend/src/routes/userRoutes.js",
+      "backend/src/services/.gitkeep",
+      "backend/src/utils/.gitkeep",
+      "backend/src/utils/knowledgeSeedData.js",
+      "backend/src/utils/seedKnowledge.js",
+      "backend/src/utils/seedUsers.js",
+      "backend/src/utils/validation.js",
+      "backend/tests/stage2-api.cjs",
+      "backend/tests/stage2-browser.cjs",
+      "backend/tests/stage3-api.cjs",
+      "backend/tests/stage3-browser.cjs",
+      "backend/tests/stage4-2-api.cjs",
+      "backend/tests/stage4-2-regression.cjs",
+      "backend/tests/stage4-3-seed.cjs",
+      "backend/tests/stage4-4-browser.cjs",
+      "backend/tests/stage4-4-regression.cjs",
+      "backend/tests/stage4-5-regression.cjs",
+      "backend/tests/stage5-2-experiment.cjs",
+      "backend/tests/stage5-2-logic.cjs",
+      "backend/tests/stage5-3-experiment.cjs",
+      "backend/tests/stage5-3-logic.cjs",
+      "backend/tests/stage5-4-api.cjs",
+      "backend/tests/stage5-4-generation.cjs",
+      "backend/tests/stage5-4-logic.cjs",
+      "backend/tests/stage5-5-browser.cjs",
+      "backend/tests/stage5-5-regression.cjs",
+      "database/01_create_database.sql",
+      "database/02_create_users.sql",
+      "database/03_create_tickets.sql",
+      "database/04_create_knowledge_base.sql",
+      "docs/.gitkeep",
+      "docs/giai-doan-2.md",
+      "docs/giai-doan-3.md",
+      "docs/giai-doan-4-2.md",
+      "docs/giai-doan-4-3.md",
+      "docs/giai-doan-4-4.md",
+      "docs/giai-doan-4-5.md",
+      "docs/giai-doan-5-1.md",
+      "docs/giai-doan-5-2.md",
+      "docs/giai-doan-5-3.md",
+      "docs/giai-doan-5-4.md",
+      "docs/giai-doan-5-5.md",
+      "docs/giai-doan-5-6.md",
+      "docs/giai-doan-5-minh-chung.md",
+      "docs/stage2-api-results.json",
+      "docs/stage2-browser-results.json",
+      "docs/stage3-api-results.json",
+      "docs/stage3-browser-results.json",
+      "docs/stage3-ticket-demo.png",
+      "docs/stage4-2-api-results.json",
+      "docs/stage4-2-regression-results.json",
+      "docs/stage4-3-results.json",
+      "docs/stage4-4-browser-results.json",
+      "docs/stage4-4-knowledge.png",
+      "docs/stage4-4-regression-results.json",
+      "docs/stage4-5-results.json",
+      "docs/stage5-2-results.json",
+      "docs/stage5-3-results.json",
+      "docs/stage5-4-results.json",
+      "docs/stage5-5-results.json",
+      "docs/stage5-6-results.json",
+      "frontend/src/App.jsx",
+      "frontend/src/KnowledgeBase.jsx",
+      "frontend/src/RagAssistant.jsx",
+      "frontend/src/Tickets.jsx",
+      "frontend/src/api.js",
+      "frontend/src/main.jsx",
+      "frontend/src/style.css"
+    ],
+    "sourceCounts": {
+      "backend": 43,
+      "frontend": 7,
+      "tests": 19
+    },
+    "standaloneStage1Doc": false
+  },
+  "modules": {
+    "authenticationUsers": {
+      "implemented": true,
+      "jwt": "HS256",
+      "passwordHash": "bcrypt cost 12",
+      "roleStatusRecheckedPerRequest": true,
+      "userAdminUi": false
+    },
+    "ticket": {
+      "implemented": true,
+      "creatorRole": "EMPLOYEE",
+      "workflow": [
+        "NEW -> RECEIVED",
+        "RECEIVED -> IN_PROGRESS",
+        "IN_PROGRESS -> RESOLVED",
+        "RESOLVED -> CLOSED",
+        "RESOLVED -> IN_PROGRESS"
+      ],
+      "solutionRequiredAt": "RESOLVED",
+      "historyOnEveryStatusChange": true,
+      "transactionAndRowLock": true,
+      "assignment": "Người IT/ADMIN tiếp nhận; không có endpoint phân công người khác.",
+      "priority": [
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ]
+    },
+    "knowledge": {
+      "implemented": true,
+      "employeeVisibility": "PUBLISHED",
+      "workflow": [
+        "DRAFT -> PUBLISHED",
+        "PUBLISHED -> ARCHIVED",
+        "ARCHIVED -> DRAFT"
+      ],
+      "search": "Frontend includes code/title, trim/lowercase",
+      "seedReview": "Đọc code và báo cáo cũ, không chạy seed KB; suite Auth có chạy seed users idempotent."
+    },
+    "rag": {
+      "implemented": true,
+      "publishedOnly": true,
+      "embeddingModel": "Xenova/multilingual-e5-small",
+      "revision": "761b726dd34fb83930e26aab4e9ac3899aa1fa78",
+      "dimension": 384,
+      "chunkSize": 800,
+      "maxOverlap": 120,
+      "maxInputTokens": 512,
+      "documentPrefix": "passage:",
+      "queryPrefix": "query:",
+      "pooling": "attention-mask mean + L2",
+      "retrieval": "cosine toàn chunks; max aggregate article trước Top-K",
+      "k": 3,
+      "threshold": 0.8504602347669256,
+      "context": "full article; tối đa 12000 code point nội dung",
+      "geminiModel": "gemini-3.5-flash-lite",
+      "sdk": "@google/genai 2.24.0",
+      "sourceVerification": "PUBLISHED/status/hash trước và sau generation",
+      "evidence": "Literal quote normalized, 20-500 UTF-16; không kiểm định toàn bộ claim",
+      "fallback": {
+        "answered": false,
+        "sources": []
+      },
+      "realGeminiCallsInThisAudit": 0,
+      "automaticTicketCreation": false
+    }
+  },
+  "roles": {
+    "matrix": [
+      [
+        "Login / profile",
+        "Có, ACTIVE",
+        "Có, ACTIVE",
+        "Có, ACTIVE"
+      ],
+      [
+        "Tạo Ticket",
+        "Có",
+        "Không",
+        "Không"
+      ],
+      [
+        "Xem Ticket / history",
+        "Của mình",
+        "Tất cả",
+        "Tất cả"
+      ],
+      [
+        "Tiếp nhận Ticket NEW",
+        "Không",
+        "Có, gán chính mình",
+        "Có, gán chính mình"
+      ],
+      [
+        "Đổi priority",
+        "Không",
+        "Chưa gán hoặc gán mình; chưa CLOSED",
+        "Mọi Ticket chưa CLOSED"
+      ],
+      [
+        "Đổi status / solution",
+        "Không",
+        "Gán mình, đúng workflow",
+        "Mọi Ticket, đúng workflow"
+      ],
+      [
+        "Xem KB",
+        "PUBLISHED",
+        "Mọi trạng thái",
+        "Mọi trạng thái"
+      ],
+      [
+        "Tạo / sửa / đổi status KB",
+        "Không",
+        "Có, mọi bài",
+        "Có, mọi bài"
+      ],
+      [
+        "Dùng RAG",
+        "Có",
+        "Có",
+        "Có"
+      ],
+      [
+        "Fallback → mục Ticket",
+        "Có, chủ động",
+        "Không có nút tạo",
+        "Không có nút tạo"
+      ],
+      [
+        "Quản lý user",
+        "Không",
+        "Không",
+        "API; chưa có UI riêng"
+      ]
+    ],
+    "notes": "Mọi endpoint JWT cần ACTIVE; backend quyết định quyền theo bản ghi, ADMIN không được POST tạo Ticket."
+  },
+  "api": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "auth": "Không",
+      "roles": "PUBLIC",
+      "purpose": "Trạng thái backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health/db",
+      "auth": "Không",
+      "roles": "PUBLIC",
+      "purpose": "Kiểm tra SELECT 1 tới MySQL"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "auth": "Không",
+      "roles": "PUBLIC",
+      "purpose": "Đăng nhập tài khoản ACTIVE"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "Thông tin phiên, role/status hiện tại"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users",
+      "auth": "JWT",
+      "roles": "ADMIN",
+      "purpose": "Danh sách user, không password/hash"
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "auth": "JWT",
+      "roles": "ADMIN",
+      "purpose": "Tạo user, bcrypt cost 12"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/:id/status",
+      "auth": "JWT",
+      "roles": "ADMIN",
+      "purpose": "Đổi ACTIVE/INACTIVE"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/:id/role",
+      "auth": "JWT",
+      "roles": "ADMIN",
+      "purpose": "Đổi role"
+    },
+    {
+      "method": "GET",
+      "path": "/api/test/employee",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "Kiểm tra RBAC"
+    },
+    {
+      "method": "GET",
+      "path": "/api/test/it",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Kiểm tra RBAC"
+    },
+    {
+      "method": "GET",
+      "path": "/api/test/admin",
+      "auth": "JWT",
+      "roles": "ADMIN",
+      "purpose": "Kiểm tra RBAC"
+    },
+    {
+      "method": "POST",
+      "path": "/api/tickets",
+      "auth": "JWT",
+      "roles": "EMPLOYEE",
+      "purpose": "Tạo Ticket NEW và history"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "EMPLOYEE chỉ của mình; IT/ADMIN tất cả"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tickets/:id",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "Chi tiết/history; kiểm tra chủ sở hữu với EMPLOYEE"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/:id/accept",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "NEW → RECEIVED, gán cho người tiếp nhận"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/:id/priority",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Chưa CLOSED; IT chỉ chưa gán hoặc gán chính mình"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/tickets/:id/status",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Theo workflow; IT chỉ Ticket gán mình; ADMIN mọi Ticket"
+    },
+    {
+      "method": "GET",
+      "path": "/api/knowledge",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "EMPLOYEE chỉ PUBLISHED; IT/ADMIN mọi trạng thái"
+    },
+    {
+      "method": "GET",
+      "path": "/api/knowledge/:id",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "EMPLOYEE bị 403 với bài chưa xuất bản"
+    },
+    {
+      "method": "POST",
+      "path": "/api/knowledge",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Tạo DRAFT, sinh code"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/knowledge/:id",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Sửa title/content, ghi updated_by"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/knowledge/:id/status",
+      "auth": "JWT",
+      "roles": "IT, ADMIN",
+      "purpose": "Theo vòng DRAFT → PUBLISHED → ARCHIVED → DRAFT"
+    },
+    {
+      "method": "POST",
+      "path": "/api/rag/ask",
+      "auth": "JWT",
+      "roles": "EMPLOYEE, IT, ADMIN",
+      "purpose": "Trả answer/sources hoặc fallback; lỗi riêng"
+    }
+  ],
+  "tests": {
+    "suites": [
+      {
+        "suite": "GĐ5.2 logic",
+        "tests": [
+          {
+            "name": "Chuẩn hóa tiếng Việt/line break, giữ khoảng trắng kỹ thuật",
+            "status": "PASS"
+          },
+          {
+            "name": "SQL chỉ đọc PUBLISHED bằng tham số",
+            "status": "PASS"
+          },
+          {
+            "name": "Từ chối DRAFT và ARCHIVED trước chunking",
+            "status": "PASS"
+          },
+          {
+            "name": "Bài ngắn giữ nguyên một chunk",
+            "status": "PASS"
+          },
+          {
+            "name": "Coverage Unicode/emoji/đoạn dài; index/span/overlap và tiến lên",
+            "status": "PASS"
+          },
+          {
+            "name": "Ngân sách token hẹp tự chia, không truncation/mất nội dung",
+            "status": "PASS"
+          },
+          {
+            "name": "Từ chối rỗng/config sai/title vượt ngân sách",
+            "status": "PASS"
+          },
+          {
+            "name": "Validator từ chối NaN, Infinity, sai chiều, string và vector 0",
+            "status": "PASS"
+          }
+        ],
+        "total": 8,
+        "pass": 8
+      },
+      {
+        "suite": "GĐ5.3 logic",
+        "tests": [
+          {
+            "test": 4,
+            "name": "Cosine với chính nó gần 1; trực giao 0; đối hướng -1; vector chưa L2",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 5,
+            "name": "Ranking giảm dần",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 6,
+            "name": "Top-K đủ số lượng khi đủ chunk",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 7,
+            "name": "K lớn hơn index và index rỗng xử lý an toàn",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 8,
+            "name": "K không phải số nguyên dương bị từ chối",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 9,
+            "name": "Câu hỏi rỗng hoặc sai kiểu bị từ chối",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 10,
+            "name": "Metadata nguồn nguyên vẹn; không trả embedding",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 11,
+            "name": "Rank bắt đầu 1 và liên tiếp",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 12,
+            "name": "Tie deterministic theo articleId/chunkIndex, độc lập thứ tự input",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 13,
+            "name": "Aggregation max toàn index; chunk trùng không chiếm chỗ article",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 14,
+            "name": "Threshold bao gồm biên bằng ngưỡng và validation",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 15,
+            "name": "Retrieval không sửa input vectors",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 16,
+            "name": "Giữ tiếng Việt NFC và prefix query chính xác",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn vector sai/zero/nonfinite và query quá ngân sách",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B2",
+            "name": "24 câu/nhãn/split giữ đúng Markdown GĐ5.1",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B3",
+            "name": "Metric không gộp OUT; chọn threshold chỉ DEV, đếm FP/FN đúng",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B4",
+            "name": "Keyword baseline giữ phép includes trên code + title như frontend",
+            "status": "PASS",
+            "mode": "logic fixture"
+          }
+        ],
+        "total": 17,
+        "pass": 17
+      },
+      {
+        "suite": "GĐ5.4 logic/API mock Gemini",
+        "tests": [
+          {
+            "name": "Question rỗng/whitespace/sai kiểu/quá dài bị chặn",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Threshold bị từ chối không gọi Gemini, sources rỗng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Threshold accept gọi Gemini và trả cấu trúc đúng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Context chỉ PUBLISHED, kiểm tra đúng code/title và ngưỡng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Context khử trùng bài, không vượt ngân sách",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Nguồn mới ARCHIVED/đổi nội dung bị chặn trước và sau generation",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Prompt grounding tách instruction khỏi QUESTION/CONTEXT",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Sources lấy từ context được kiểm chứng, không nhận sources của LLM",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Chặn evidence không có trong nguồn và mã KB trong answer",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "LLM báo thiếu context trả fallback chuẩn không nguồn giả",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Response rỗng/sai JSON/sai schema không được tính generation thành công",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Secret không xuất hiện output; không giữ raw lỗi provider",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK thiếu key báo lỗi kiểm soát",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK phân loại key/quota/model/timeout/network, không retry tự động",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK chặn response rỗng và bị cắt",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Question quá token bị chặn trước gọi provider",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "API thiếu JWT -> 401",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API JWT sai -> 401",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép EMPLOYEE đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép IT đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép ADMIN đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API validate question/body",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API provider failure trả lỗi kiểm soát, không giả câu trả lời",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          }
+        ],
+        "total": 23,
+        "pass": 23
+      },
+      {
+        "suite": "GĐ5.5 browser --mock-only + fallback backend/retrieval thật",
+        "tests": [
+          {
+            "id": 1,
+            "name": "EMPLOYEE đăng nhập thật",
+            "mode": "REAL_LOGIN",
+            "status": "PASS"
+          },
+          {
+            "id": 2,
+            "name": "EMPLOYEE thấy mục Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 3,
+            "name": "Mở giao diện hỏi đáp",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 4,
+            "name": "Rỗng và whitespace không gửi request",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "4b",
+            "name": "Giới hạn 1000 code point, không cắt sai emoji",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "4c",
+            "name": "Shift+Enter xuống dòng; IME Enter không gửi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 5,
+            "name": "Gửi Enter, trim, body đúng và JWT hiện tại",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 6,
+            "name": "Loading, disable và chặn submit lặp",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 7,
+            "name": "Answer và câu hỏi hiển thị đúng; giữ xuống dòng",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 8,
+            "name": "Sources chỉ có code/title backend trả",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 10,
+            "name": "Fallback không giữ answer/nguồn cũ hoặc tự bịa",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 11,
+            "name": "EMPLOYEE sang Ticket, không tự POST tạo yêu cầu",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 12,
+            "name": "IT mở Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 13,
+            "name": "IT nhận answer; fallback không có nút tạo Ticket",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 14,
+            "name": "ADMIN mở Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 15,
+            "name": "ADMIN nhận answer; fallback không có nút tạo Ticket",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 16,
+            "name": "401 xóa phiên, về login; không hiển thị raw lỗi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 17,
+            "name": "Xử lý HTTP 403 / FORBIDDEN",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 18,
+            "name": "Xử lý HTTP 429 / RAG_BUSY",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 19,
+            "name": "Xử lý HTTP 500 / RAG_ERROR",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E400",
+            "name": "Xử lý HTTP 400 / INVALID_QUESTION",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E404",
+            "name": "Xử lý HTTP 404 / NOT_FOUND",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E503",
+            "name": "Xử lý HTTP 503 / GEMINI_RATE_LIMIT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E502",
+            "name": "Xử lý HTTP 502 / GEMINI_INVALID_EVIDENCE",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E504",
+            "name": "Xử lý HTTP 504 / GEMINI_TIMEOUT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 20,
+            "name": "Network error và gửi lại sau lỗi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "EJSON",
+            "name": "Response sai contract không crash hoặc tự tạo answer",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 23,
+            "name": "Answer và source được render text, không thực thi HTML",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 25,
+            "name": "Màn hình 390px không tràn; form và nguồn đọc được",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "LIFECYCLE",
+            "name": "Chuyển tab khi request đang chạy không làm rò kết quả",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 9,
+            "name": "Ngoài KB: browser → backend/retrieval thật → fallback, không Gemini",
+            "mode": "REAL_BACKEND_RETRIEVAL",
+            "status": "PASS"
+          },
+          {
+            "id": 22,
+            "name": "Browser không gọi Google/Gemini trực tiếp",
+            "mode": "BROWSER_REQUEST_OBSERVATION",
+            "status": "PASS"
+          },
+          {
+            "id": "RUNTIME",
+            "name": "Không có lỗi JavaScript frontend",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          }
+        ],
+        "total": 33,
+        "pass": 33
+      },
+      {
+        "suite": "stage4-2-api.cjs",
+        "tests": [
+          {
+            "test": 1,
+            "name": "Thiếu token -> 401 ở mọi endpoint",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "EMPLOYEE không tạo bài -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "IT tạo bài thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Bài mới là DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Code dạng KB-xxxxxx",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "created_by đúng IT",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "ADMIN tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "EMPLOYEE không thấy DRAFT trong danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "IT thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "ADMIN thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "EMPLOYEE không xem trực tiếp DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "IT cập nhật title/content",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "updated_by đúng người cập nhật",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "EMPLOYEE không được update hoặc đổi status",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "EMPLOYEE thấy PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "EMPLOYEE xem chi tiết PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "EMPLOYEE không thấy ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Chặn mọi transition không hợp lệ",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Chặn title rỗng, sai kiểu hoặc quá dài",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "Chặn content rỗng hoặc sai kiểu",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "ID không tồn tại -> 404",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Mọi response không lộ password/hash/secret/stack/SQL",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn trường chỉ server được quyết định",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN sửa bài, giữ code/creator, truy vấn tham số an toàn",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "ID/status/body không hợp lệ -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Tạo đồng thời không trùng mã",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Publish đồng thời chỉ một request hợp lệ",
+            "status": "PASS"
+          }
+        ],
+        "total": 30,
+        "pass": 30
+      },
+      {
+        "suite": "stage4-2-regression.cjs",
+        "tests": [
+          {
+            "name": "Bcrypt: 3 demo passwords hashed, cost 12, compare succeeds",
+            "status": "PASS"
+          },
+          {
+            "name": "Seed repeated: no duplicate, unchanged passwords and roles",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 1: EMPLOYEE login",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 2: IT login",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 3: ADMIN login",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 4: wrong password",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 5: unknown email",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 6: missing token",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 7: valid token /me for all roles",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 8: EMPLOYEE denied IT",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 9: EMPLOYEE denied ADMIN",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 10: IT allowed IT",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 11: IT denied ADMIN",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 12: ADMIN allowed ADMIN",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 13: ADMIN lists users",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 14: EMPLOYEE denied users",
+            "status": "PASS"
+          },
+          {
+            "name": "Test 15: INACTIVE login and existing token rejected; restored ACTIVE",
+            "status": "PASS"
+          },
+          {
+            "name": "RBAC full matrix and non-admin mutations denied",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN creates user: bcrypt hash, defaults, duplicate email rejected",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN changes role; existing JWT uses current DB role",
+            "status": "PASS"
+          },
+          {
+            "name": "Invalid role/status/id/email/password rejected",
+            "status": "PASS"
+          },
+          {
+            "name": "Invalid, expired, wrong-signature JWT rejected",
+            "status": "PASS"
+          },
+          {
+            "name": "Health and real MySQL health available",
+            "status": "PASS"
+          },
+          {
+            "test": 1,
+            "name": "EMPLOYEE tạo Ticket NEW",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "Priority mặc định LOW",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "EMPLOYEE chỉ thấy Ticket của mình",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "EMPLOYEE không xem Ticket người khác",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "EMPLOYEE không được tiếp nhận",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "IT xem tất cả Ticket",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "IT tiếp nhận NEW -> RECEIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "assigned_to lấy từ IT đăng nhập",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "Priority LOW -> HIGH",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "RECEIVED -> IN_PROGRESS",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "Không cho NEW -> RESOLVED",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "RESOLVED thiếu solution bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "RESOLVED có solution thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "RESOLVED -> CLOSED",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "CLOSED không mở lại",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "RESOLVED -> IN_PROGRESS",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "Mọi thay đổi trạng thái có history đúng thứ tự",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "EMPLOYEE xem history của mình",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "IT khác không xử lý Ticket đã assigned",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "API không trả password/hash user",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Không token -> 401",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Role không phù hợp -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "ID không tồn tại -> 404, ID sai -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "Priority không hợp lệ bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Title/description rỗng bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn giả mạo trường server quản lý",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN xử lý Ticket của IT, CLOSED chỉ xem",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "Hai người nhận đồng thời: chỉ một thành công",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Rollback thật khi bước ghi history thất bại",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Workflow khác bị chặn và không thêm history",
+            "status": "PASS"
+          }
+        ],
+        "total": 53,
+        "pass": 53
+      },
+      {
+        "suite": "stage2-browser.cjs",
+        "tests": [
+          {
+            "name": "Frontend EMPLOYEE: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend IT: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend ADMIN: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend wrong password shows error without session",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend invalid JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend expired JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend no JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ],
+        "total": 7,
+        "pass": 7
+      },
+      {
+        "suite": "stage3-browser.cjs",
+        "tests": [
+          {
+            "name": "EMPLOYEE: login, create, list, detail, initial history",
+            "status": "PASS"
+          },
+          {
+            "name": "IT: view employee ticket, accept, set HIGH, start, resolve, close",
+            "status": "PASS"
+          },
+          {
+            "name": "EMPLOYEE: sees CLOSED, assignee, solution, five history entries",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN: view ticket and history, existing users API works",
+            "status": "PASS"
+          },
+          {
+            "name": "No frontend JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ],
+        "total": 5,
+        "pass": 5
+      },
+      {
+        "suite": "stage4-4-browser.cjs",
+        "tests": [
+          {
+            "test": 1,
+            "name": "Login Employee",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "Employee có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "Employee mở Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Hiển thị đúng 8 bài PUBLISHED từ API",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Employee không có Tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "Employee không có Sửa bài",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "Employee không có nút đổi trạng thái",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "Search Wi-Fi, không phân biệt hoa thường, trim",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "Search không có kết quả",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "Employee mở chi tiết",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "Hiển thị đủ nội dung và giữ xuống dòng",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "Quay lại danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "Login IT",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "IT có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "IT thấy danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "IT có nút Tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "IT tạo bài mới DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "IT mở chi tiết bài vừa tạo",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "IT sửa title/content, giữ code/status",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "IT tìm theo code",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "Login ADMIN",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "ADMIN có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 26,
+            "name": "ADMIN xem đủ ba trạng thái",
+            "status": "PASS"
+          },
+          {
+            "test": 27,
+            "name": "ADMIN tạo/sửa bài",
+            "status": "PASS"
+          },
+          {
+            "test": 28,
+            "name": "ADMIN đổi trạng thái đủ workflow",
+            "status": "PASS"
+          },
+          {
+            "test": 29,
+            "name": "API quản lý user ADMIN cũ hoạt động",
+            "status": "PASS"
+          },
+          {
+            "test": 30,
+            "name": "Tab Ticket và chi tiết cũ hoạt động",
+            "status": "PASS"
+          },
+          {
+            "test": 31,
+            "name": "Frontend build",
+            "status": "PASS"
+          },
+          {
+            "test": 32,
+            "name": "Không lỗi JavaScript nghiêm trọng",
+            "status": "PASS"
+          },
+          {
+            "test": 33,
+            "name": "Frontend không hard-code tám bài",
+            "status": "PASS"
+          },
+          {
+            "test": 34,
+            "name": "Employee không có chức năng quản trị, không thấy bài tạm chưa xuất bản",
+            "status": "PASS"
+          },
+          {
+            "test": 35,
+            "name": "Reload giữ phiên đăng nhập",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Màn hình 390px không tràn ngang",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "Loading, lỗi 500 thân thiện, thử lại và danh sách rỗng",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "403/404 hiển thị thông báo, không mở chi tiết",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "401 xóa phiên và quay lại Login",
+            "status": "PASS"
+          }
+        ],
+        "total": 39,
+        "pass": 39
+      }
+    ],
+    "total": 215,
+    "passed": 215,
+    "failed": 0,
+    "additionalVerification": [
+      {
+        "name": "Đối chiếu metric Retrieval với ranking gốc của đủ 24 câu",
+        "status": "PASS"
+      },
+      {
+        "name": "Đối chiếu output và nhãn đánh giá Generation, không tạo số liệu thay thế",
+        "status": "PASS"
+      },
+      {
+        "name": "Integration E5 thật: 8 PUBLISHED, 24 chunks, 384 chiều và metadata/hash đúng GĐ5.2",
+        "status": "PASS"
+      },
+      {
+        "name": "Integration retrieval thật A01 khớp ranking/ngưỡng đã lưu",
+        "status": "PASS"
+      },
+      {
+        "name": "Integration retrieval thật D01 khớp ranking/ngưỡng đã lưu",
+        "status": "PASS"
+      },
+      {
+        "name": "HTTP 200 /api/health",
+        "status": "PASS"
+      },
+      {
+        "name": "HTTP 200 /api/health/db",
+        "status": "PASS"
+      }
+    ],
+    "build": {
+      "status": "PASS",
+      "command": "node node_modules/vite/bin/vite.js build",
+      "directory": "frontend"
+    },
+    "realGeminiCalls": 0,
+    "priorReportsPreserved": true,
+    "orchestration": {
+      "path": "backend/.cache/rag/stage6-1-baseline.cjs",
+      "tracked": false,
+      "derivedFrom": "Runner tạm GĐ5.6; đổi đích report, bổ sung SELECT information_schema.",
+      "note": "Không chạy E2E mới GĐ6.2 hoặc generation experiment; không dùng --reuse-browser."
+    },
+    "limits": [
+      "CVE/pentest/thử tải chưa thực hiện",
+      "Không xác minh lại Gemini live trong GĐ6.1",
+      "Không chạy browser biên Unicode mới hoặc thử khóa ADMIN cuối"
+    ]
+  },
+  "security": {
+    "checks": [
+      {
+        "check": "envIgnored",
+        "result": "FOUND"
+      },
+      {
+        "check": "realEnvTracked",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "geminiApiKeyInCurrentGit",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "jwtSecretInCurrentGit",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "dbPasswordInCurrentGit",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "secretsInFrontendBundle",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "frontendDirectGeminiCall",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "passwordOrHashInTestedApi",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "bcryptCost12",
+        "result": "FOUND"
+      },
+      {
+        "check": "jwtAndActiveChecks",
+        "result": "FOUND"
+      },
+      {
+        "check": "backendRbac",
+        "result": "FOUND"
+      },
+      {
+        "check": "inputValidationParameterizedSql",
+        "result": "FOUND"
+      },
+      {
+        "check": "rawStackSqlSdkLeakInTestedResponses",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "corsFixedLocalOrigin",
+        "result": "FOUND"
+      },
+      {
+        "check": "jsonRequestLimit16kb",
+        "result": "FOUND"
+      },
+      {
+        "check": "debugTodoFixmeInAppSource",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "loginRateLimit",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "serverSideLogoutRevocation",
+        "result": "NOT FOUND"
+      },
+      {
+        "check": "fullGitHistorySecretScan",
+        "result": "NOT VERIFIED"
+      },
+      {
+        "check": "dependencyCveAudit",
+        "result": "NOT VERIFIED"
+      },
+      {
+        "check": "productionPentestLoadTest",
+        "result": "NOT VERIFIED"
+      }
+    ],
+    "scan": {
+      "status": "PASS",
+      "filesScanned": 117,
+      "envIgnored": true,
+      "localSecretsAbsent": true,
+      "bundleSecretsAbsent": true,
+      "noTrackedCacheOrDependencyArtifacts": true,
+      "scope": "Giá trị secret local + pattern key/JWT trong Git và bundle; không phải pentest hoặc quét toàn lịch sử Git."
+    },
+    "scope": "Git index/worktree hiện tại và bundle; giá trị env so sánh trong bộ nhớ, không in/log/lưu secret; không quét toàn lịch sử Git."
+  },
+  "consistency": [
+    {
+      "category": "A",
+      "topic": "Trạng thái theo thời điểm",
+      "evidence": [
+        "docs/giai-doan-2.md",
+        "docs/giai-doan-4-2.md",
+        "docs/giai-doan-4-3.md",
+        "docs/giai-doan-5-1.md",
+        "docs/giai-doan-5-3.md"
+      ],
+      "finding": "GĐ2 chỉ users, GĐ4.2/4.3 chưa UI/RAG, GĐ5.1 nghiên cứu và GĐ5.3 chưa generation là lịch sử đúng tại thời điểm đó, không mô tả hiện trạng; không sửa ngược."
+    },
+    {
+      "category": "A",
+      "topic": "Inventory ngắn trong README",
+      "evidence": [
+        "README.md: Cấu trúc"
+      ],
+      "finding": "Dòng frontend/src và cây backend không liệt kê RAG, nhưng phần chức năng/RAG phía dưới đã có; thiếu chi tiết nhỏ, giữ nguyên README."
+    },
+    {
+      "category": "C",
+      "topic": "Ai tạo Ticket / RAG → Ticket",
+      "evidence": [
+        "backend/src/routes/ticketRoutes.js",
+        "frontend/src/App.jsx",
+        "frontend/src/RagAssistant.jsx",
+        "docs/giai-doan-5-6.md"
+      ],
+      "finding": "Gửi yêu cầu nghĩa là EMPLOYEE tự tạo Ticket; nút RAG chỉ điều hướng. Không AI tự gửi hoặc IT tạo thay."
+    },
+    {
+      "category": "C",
+      "topic": "Giới hạn KB",
+      "evidence": [
+        "docs/giai-doan-4-2.md: validation",
+        "backend/src/app.js",
+        "frontend/src/KnowledgeBase.jsx"
+      ],
+      "finding": "TEXT 65535 byte và JSON 16 KB là hai lớp giới hạn; docs đã giải thích, UI đo JSON bytes. Không coi đây là lỗi backend."
+    },
+    {
+      "category": "C",
+      "topic": "Model và threshold",
+      "evidence": [
+        "backend/src/rag/config.js",
+        "backend/src/rag/generationConfig.js",
+        "docs/giai-doan-5-2.md",
+        "docs/giai-doan-5-3.md",
+        "docs/giai-doan-5-4.md"
+      ],
+      "finding": "Model gốc intfloat và artifact Xenova cùng thiết kế; Gemini thực tế 3.5 Flash-Lite đã thay mục tiêu 2.5; threshold null cho CLI nghiên cứu khác ngưỡng generation đã khóa."
+    },
+    {
+      "category": "B",
+      "topic": "Ý định chỉ dùng nguồn / hỏi rõ và output thực nghiệm",
+      "evidence": [
+        "backend/src/rag/generationPrompt.js",
+        "docs/stage5-4-results.json: B01/C03"
+      ],
+      "finding": "Một số output chưa đạt ý định grounding/clarification; đã công khai trong GĐ5.4/5.6, liên kết P2-01; không sửa số liệu."
+    },
+    {
+      "category": "D",
+      "topic": "Độ tổng quát và production",
+      "evidence": [
+        "docs/giai-doan-5-6.md"
+      ],
+      "finding": "Chưa đủ bằng chứng kết luận độ chính xác toàn hệ thống, tải lớn, CVE hiện tại hoặc chất lượng trên dữ liệu doanh nghiệp."
+    },
+    {
+      "category": "C",
+      "topic": "Workflow, API, database, số liệu",
+      "evidence": [
+        "docs/giai-doan-3.md",
+        "docs/giai-doan-4-5.md",
+        "docs/giai-doan-5-5.md",
+        "docs/giai-doan-5-6.md"
+      ],
+      "finding": "Workflow và quyền khớp code/schema; 4 bảng khớp DB; 24 câu và các metric được tính lại từ JSON gốc, không có chênh lệch đã phát hiện."
+    }
+  ],
+  "quality": {
+    "unusedApplicationComponentOrUnmountedRoute": "Không phát hiện từ import/require tĩnh và app mounts.",
+    "entrypointsNotDead": [
+      "backend/server.js",
+      "frontend/src/main.jsx",
+      "backend/src/rag/experiment.js",
+      "backend/src/utils/seedUsers.js",
+      "script backend/tests chạy bằng process/npm"
+    ],
+    "cleanupCandidates": [
+      "Unused import sourceHash trong stage5-4-logic.cjs",
+      ".gitkeep thư mục đã có code",
+      "Helper transaction/validation tương tự giữa Ticket/KB; readability RAG"
+    ],
+    "todoFixme": "Không phát hiện trong source ứng dụng",
+    "dependencies": "Các dependency trực tiếp có import/require hoặc entrypoint script; chưa chạy công cụ phân tích AST/CVE.",
+    "sourceChanged": false
+  },
+  "historicalEvidence": {
+    "sourceFiles": [
+      "docs/stage5-2-results.json",
+      "docs/stage5-3-results.json",
+      "docs/stage5-4-results.json",
+      "docs/stage5-5-results.json",
+      "docs/stage5-6-results.json"
+    ],
+    "recomputedMetricsMatch": true,
+    "articleCount": 8,
+    "chunkCount": 24,
+    "questionCount": 24,
+    "retrievalStrictTop1": {
+      "hits": 15,
+      "total": 16
+    },
+    "retrievalExpectedTop1": {
+      "hits": 19,
+      "total": 20
+    },
+    "generation": {
+      "realCalls": 18,
+      "answers": 14,
+      "fallbacks": 8,
+      "errors": 2,
+      "groundedPass": 13,
+      "groundedPartial": 1
+    },
+    "note": "Số liệu lịch sử, không phải lượt Gemini mới."
+  },
+  "issues": {
+    "P0": [],
+    "P1": [],
+    "P2": [
+      {
+        "id": "P2-01",
+        "title": "Grounding và xử lý câu mơ hồ chưa đầy đủ",
+        "evidence": [
+          "docs/stage5-4-results.json: B01, C03",
+          "backend/src/rag/generationOutput.js"
+        ],
+        "observation": "B01 PARTIAL vì khẳng định nguyên nhân thiếu căn cứ; C03 có hướng dẫn từ nguồn nhưng chưa hỏi rõ. Literal evidence không kiểm chứng mọi claim.",
+        "basis": "Kết quả lịch sử, đọc lại; không gọi lại Gemini.",
+        "recommendation": "GĐ6.2 kiểm tra cách UI trình bày giới hạn; nghiên cứu cải thiện chất lượng trong phạm vi được duyệt, không sửa prompt/validator ở GĐ6.1."
+      },
+      {
+        "id": "P2-02",
+        "title": "Một số output Gemini bị từ chối do quote quá dài",
+        "evidence": [
+          "docs/stage5-4-results.json: A03, C01",
+          "backend/src/rag/generationOutput.js",
+          "backend/src/rag/generationPrompt.js"
+        ],
+        "observation": "Quote A03 dài 537, C01 dài 679 đơn vị UTF-16 vượt contract 500; trả lỗi, không answer giả. C01 còn mơ hồ.",
+        "basis": "Lịch sử thực nghiệm; đây là giới hạn output, không phải regression mới.",
+        "recommendation": "Giữ nguyên bằng chứng; đánh giá ràng buộc output trên tập riêng khi được duyệt. GĐ6.2 kiểm tra UI lỗi 502."
+      },
+      {
+        "id": "P2-03",
+        "title": "Bộ điều phối regression cần dễ tái lập hơn",
+        "evidence": [
+          "backend/tests/stage4-5-regression.cjs",
+          "backend/tests/stage5-5-regression.cjs",
+          "backend/tests/stage5-5-browser.cjs"
+        ],
+        "observation": "Runner GĐ4.5 cố ý assert chưa có RAG nên không còn phù hợp hiện trạng; browser phụ thuộc Playwright thư mục tạm/Edge/cổng 5173; --reuse-browser chưa ràng buộc hash source. Runner tổng GĐ6.1 là file tạm ignored.",
+        "basis": "Đọc code; không chạy runner lịch sử sai phạm vi, không tái sử dụng kết quả browser để báo PASS mới.",
+        "recommendation": "GĐ6.3 xem xét runner dùng lại được, provenance theo commit và môi trường; giữ suite lịch sử, không xóa."
+      },
+      {
+        "id": "P2-04",
+        "title": "Chưa có bảo vệ ADMIN cuối cùng",
+        "evidence": [
+          "backend/src/controllers/userController.js: changeRole/changeStatus",
+          "backend/src/models/userModel.js: updateRole/updateStatus"
+        ],
+        "observation": "ADMIN có thể yêu cầu đổi role/status của chính mình; code không đếm ADMIN ACTIVE còn lại. Chưa có quy tắc nghiệp vụ bảo vệ người quản trị cuối.",
+        "basis": "Rà soát tĩnh; không thử vô hiệu hóa ADMIN thật, không kết luận đã có sự cố mất quyền.",
+        "recommendation": "Xác nhận chính sách trong phạm vi hoàn thiện được duyệt; chỉ kiểm thử bằng user tạm/mô phỏng, không đổi tài khoản gốc."
+      },
+      {
+        "id": "P2-05",
+        "title": "Giới hạn title KB khác đơn vị đếm giữa UI và backend",
+        "evidence": [
+          "frontend/src/KnowledgeBase.jsx: maxLength=255",
+          "backend/src/controllers/knowledgeArticleController.js: [...title].length"
+        ],
+        "observation": "HTML maxLength tính UTF-16, backend đếm Unicode code point. Ký tự ngoài BMP có thể bị UI giới hạn sớm hơn API. Chữ Việt BMP thông thường không chịu chênh lệch này.",
+        "basis": "Đọc code; chưa chạy ca browser biên Unicode bổ sung trong GĐ6.1.",
+        "recommendation": "Đưa ca biên Unicode vào kế hoạch 6.2; thống nhất validation/message ở 6.3 nếu được duyệt."
+      }
+    ],
+    "P3": [
+      {
+        "id": "P3-01",
+        "title": "Quy mô và chất lượng retrieval",
+        "observation": "Corpus 8 bài/24 câu nhỏ; B05 sai Top-1, B03/B07 false reject lịch sử; index RAM, chưa pagination, vector DB/hybrid/reranker.",
+        "recommendation": "Chỉ nghiên cứu sau khi có phạm vi và bộ đánh giá mở rộng; không tự đổi threshold."
+      },
+      {
+        "id": "P3-02",
+        "title": "Bảo vệ khi triển khai ngoài môi trường demo",
+        "observation": "Chưa có login rate limit, thu hồi JWT khi logout hoặc quota theo user; CORS cố định 127.0.0.1:5173. Có RBAC, expiry, ACTIVE và busy guard RAG.",
+        "recommendation": "Thiết kế theo môi trường triển khai tương lai; chưa pentest/thử tải/CVE, không tuyên bố production-ready."
+      },
+      {
+        "id": "P3-03",
+        "title": "Trải nghiệm và chức năng mở rộng",
+        "observation": "Chưa UI quản trị users, chat memory/history/streaming, realtime hoặc bản nháp form qua tab/reload; navigation React state.",
+        "recommendation": "Giữ phạm vi đồ án; chỉ bổ sung sau phê duyệt, không xem các chức năng chưa yêu cầu là lỗi."
+      },
+      {
+        "id": "P3-04",
+        "title": "Chất lượng đánh giá độc lập",
+        "observation": "Chấm groundedness lịch sử do Codex, chưa có người chấm độc lập hoặc tập doanh nghiệp lớn.",
+        "recommendation": "Bổ sung đánh giá độc lập/tập mới khi được duyệt; không thay nhãn hoặc kết quả lịch sử."
+      }
+    ]
+  },
+  "recommendation": {
+    "nextStage": "6.2",
+    "status": "PLAN_ONLY_NOT_STARTED",
+    "file": "docs/giai-doan-6-2-ke-hoach.md",
+    "flowCount": 10,
+    "noBusinessFixesIn61": true,
+    "stopAfter61": true
+  },
+  "provenance": {
+    "files": [
+      {
+        "file": "README.md",
+        "sha256": "a73505c27bfeb9a0594976d27b2342e59bc9cc99360979821a22dfd6a96c05ad"
+      },
+      {
+        "file": "backend/package-lock.json",
+        "sha256": "6dba4db4fe4f44287b69d4443fa618b304612e42a412104a4777daf8289addfc"
+      },
+      {
+        "file": "backend/package.json",
+        "sha256": "4de09067955458c53d57630449cc30143f9a7ecf93915efd9b55723643f075c5"
+      },
+      {
+        "file": "backend/src/app.js",
+        "sha256": "a64f7ba952eaf88d51780a359eb724a2ce652afaa7909fa9466b79dc61919caf"
+      },
+      {
+        "file": "backend/src/config/db.js",
+        "sha256": "db1be531ca6ac013910d2ac9a2de934dfd96afb9f3a9a140281f82a5f506c764"
+      },
+      {
+        "file": "backend/src/config/env.js",
+        "sha256": "9e4ec6b256ddae847688710a6127af90c1c28fc72803f715ebdb25b8e2e43609"
+      },
+      {
+        "file": "backend/src/config/jwt.js",
+        "sha256": "2b0e80bc6a96f0c011e4a59881632777e000f9bdd39a8b08f24fd79317d93443"
+      },
+      {
+        "file": "backend/src/controllers/authController.js",
+        "sha256": "7193bcecabaf2e22fbff210267c69ebbfdb0a40d2989fd6d2984ec45c5da0382"
+      },
+      {
+        "file": "backend/src/controllers/healthController.js",
+        "sha256": "b752218eeff680b297f2506aea0b2dacf675de0f761e49532b1ce46877dcb466"
+      },
+      {
+        "file": "backend/src/controllers/knowledgeArticleController.js",
+        "sha256": "aa7b5e070b953560369fc57a91613a00ace63eb64c1a46edfcde8b9d5f955f58"
+      },
+      {
+        "file": "backend/src/controllers/ticketController.js",
+        "sha256": "7976febb58bedfb3efb2842209b274e1c4f4f91cffbb00c8240e2e75d8883a44"
+      },
+      {
+        "file": "backend/src/controllers/userController.js",
+        "sha256": "aaa64c9c0ce9c00a4dd251534fa384eaf96255f8b4b46cb90889091fe9e0fef0"
+      },
+      {
+        "file": "backend/src/middleware/.gitkeep",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "file": "backend/src/middleware/authMiddleware.js",
+        "sha256": "a2a8f11f8386ab5f09bf7f40dc36d8e7a902d35178705d6210bb35aa5f8091d1"
+      },
+      {
+        "file": "backend/src/middleware/errorMiddleware.js",
+        "sha256": "db792ed2f960f2dc41a1516a71dce3abdbff3af160a8b2a4f525566d0032d960"
+      },
+      {
+        "file": "backend/src/middleware/roleMiddleware.js",
+        "sha256": "0c48c5ec81b388a903307862c38f51c8221230ba24e3e298f9d2f87c5eef3d92"
+      },
+      {
+        "file": "backend/src/models/.gitkeep",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "file": "backend/src/models/knowledgeArticleModel.js",
+        "sha256": "a6a4b16693561ff380c19779e14c5f35a8183a2f19e683ede61a6e50f4abc2f2"
+      },
+      {
+        "file": "backend/src/models/ticketModel.js",
+        "sha256": "eedcaa76e2d347a315e408490960ad29b2bff900de5435117477d96a15b1dfab"
+      },
+      {
+        "file": "backend/src/models/userModel.js",
+        "sha256": "6e2b80e7ce448f3ce171d970cd1f1ca440a4a3116ef952ed2cea08aa284f621b"
+      },
+      {
+        "file": "backend/src/rag/config.js",
+        "sha256": "d0498acd50512aeca00b43a549bbc7d99eca4d62daee0cdb52742fdc5c90cd27"
+      },
+      {
+        "file": "backend/src/rag/embedding.js",
+        "sha256": "646ef325a9e0e4f044061667c7a19442ba4e48552dd40473b37a043165cfdbb5"
+      },
+      {
+        "file": "backend/src/rag/experiment.js",
+        "sha256": "4e3bf4f0894a03524fc7aa489235d72bf6bf13569e603c984346d6f141284698"
+      },
+      {
+        "file": "backend/src/rag/geminiClient.js",
+        "sha256": "1eb35590358f9fcdccce84dfeefa20e55335a493eff72f56eee7cd38dab72825"
+      },
+      {
+        "file": "backend/src/rag/generationConfig.js",
+        "sha256": "0c0a3fc037291e309e550434fcbbf63e703aef89a85eb21b579ac2163061862c"
+      },
+      {
+        "file": "backend/src/rag/generationContext.js",
+        "sha256": "0455ed8ae2613c4457eb1e47f4e28c8c7b4fcbd208b1828f6f01a329ffbeb45d"
+      },
+      {
+        "file": "backend/src/rag/generationOutput.js",
+        "sha256": "46fc223ad5725bd28c9b24c2c04353eaba3b95ae609d9df0d20649ee148e9b8a"
+      },
+      {
+        "file": "backend/src/rag/generationPrompt.js",
+        "sha256": "8e1129b98c8d14f5f51560279eaa62470b9c7690ab89c75283a92ac8498c5e09"
+      },
+      {
+        "file": "backend/src/rag/generationSafety.js",
+        "sha256": "0d720e95f54b415d8c97aaaeca6e10bfd42b831f75ba0b164f4ddbc55f49177d"
+      },
+      {
+        "file": "backend/src/rag/generationService.js",
+        "sha256": "d0c43c3c4ecec6a0d92cbaeda57d3eb7b19798851495c1a732a3f73e0ac090f4"
+      },
+      {
+        "file": "backend/src/rag/pipeline.js",
+        "sha256": "2c526c9b8632c6ba6abec490f50a0ed75741dd06a3cc1bc37b23397ad85fa94a"
+      },
+      {
+        "file": "backend/src/rag/retrieval.js",
+        "sha256": "0017a076405ee9f93d311362ca7462cdd7ecb12d6e9afe583a82a6d38e3aaf08"
+      },
+      {
+        "file": "backend/src/rag/retrievalConfig.js",
+        "sha256": "e8419901fa5261b2ab8a6528d6e4fed8c5ab8fd8c73e44dcb991bd799abb6113"
+      },
+      {
+        "file": "backend/src/rag/retrievalEvaluation.js",
+        "sha256": "dffa432c6d5250cd33c842a2b558688bfc304db5ec66ed16db1f960cba8ee5d7"
+      },
+      {
+        "file": "backend/src/rag/retrievalExperiment.js",
+        "sha256": "1631d4c4943903f6780ab169ecdbd839e28cc45d63a0203ab75b87d74a9d6463"
+      },
+      {
+        "file": "backend/src/rag/retrievalQuestions.json",
+        "sha256": "9a28b25aa26ce9f7b5df620c28a18d68869ccf034a3d91c39b3673aba1bd68bc"
+      },
+      {
+        "file": "backend/src/rag/text.js",
+        "sha256": "9fdbe9c60d282db0ca999b3a01d7366f2a45c15c667a460e95b027d85de8791d"
+      },
+      {
+        "file": "backend/src/routes/authRoutes.js",
+        "sha256": "ed09e26942885d2968bc42f6618c10332cd0854df4f914f9827eb0c46e7bb2e8"
+      },
+      {
+        "file": "backend/src/routes/healthRoutes.js",
+        "sha256": "8cf7588aea7bb313323c46810c656329ae50114c9ea2dc651733934a1ab6a661"
+      },
+      {
+        "file": "backend/src/routes/knowledgeArticleRoutes.js",
+        "sha256": "df84ea0c5ae5de25e0fa2305b3f0aeb8b8a8291e71f25321f364cd89846555fb"
+      },
+      {
+        "file": "backend/src/routes/ragRoutes.js",
+        "sha256": "3294b43c271f2d4eee13677b3f7bc901e08722aa61d2d72fb7481b1670daf283"
+      },
+      {
+        "file": "backend/src/routes/testRoutes.js",
+        "sha256": "6232923d8a9eb8d51827b1dca442d7d1bce03f4127bf3e99045a94b817ccc4ea"
+      },
+      {
+        "file": "backend/src/routes/ticketRoutes.js",
+        "sha256": "350c5e2ba40c4ae47bcdccc21d86e298a3c5b084efa18f89641761a0ffff7975"
+      },
+      {
+        "file": "backend/src/routes/userRoutes.js",
+        "sha256": "0a21a09e33c995c2482bfb5a4557c612b9dfe08f9351a66c8056370d534a6961"
+      },
+      {
+        "file": "backend/src/services/.gitkeep",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "file": "backend/src/utils/.gitkeep",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "file": "backend/src/utils/knowledgeSeedData.js",
+        "sha256": "f84245ff1124697b2106ea38fa675c11a8baf9653a42d6ea5601ea0f409e6029"
+      },
+      {
+        "file": "backend/src/utils/seedKnowledge.js",
+        "sha256": "6c9d7995a29f8a06f681fc665c589c6d3a1a6f62d9971bd95e2498d2ff74e398"
+      },
+      {
+        "file": "backend/src/utils/seedUsers.js",
+        "sha256": "5f5c88900957e396b920ea882596c56473eeeb00a4f7077e998ee32e0409fc3c"
+      },
+      {
+        "file": "backend/src/utils/validation.js",
+        "sha256": "5bb6daff06431a6f133cb9ccaee4c1936f0944185e6f619000c3d6c8f2fd3845"
+      },
+      {
+        "file": "backend/tests/stage2-api.cjs",
+        "sha256": "626d5834824d55a5b1f9ba48eb21d8a41168221a489763a07fd7ee5e35212a84"
+      },
+      {
+        "file": "backend/tests/stage2-browser.cjs",
+        "sha256": "31a412b4f61aaa415646dcfcf5cb4f05b126c0dc5d0e771811b5e6cd5081a4d2"
+      },
+      {
+        "file": "backend/tests/stage3-api.cjs",
+        "sha256": "a9f1b96d0ba492ecc3211baba754c56234aba1382e52f88756929353c8aaa871"
+      },
+      {
+        "file": "backend/tests/stage3-browser.cjs",
+        "sha256": "d3c57e1b78f21244da3f7acea9bba6ad5ac9f6b66127bb26af0676df117b1d78"
+      },
+      {
+        "file": "backend/tests/stage4-2-api.cjs",
+        "sha256": "88bfd285a5c9c21f83bb99d111414c43b786940c5bb53a603b1ca2755e2015c1"
+      },
+      {
+        "file": "backend/tests/stage4-2-regression.cjs",
+        "sha256": "a4c75516b228642cd2f44dc8047648bb878bdd538fffa7848385baea0015e26a"
+      },
+      {
+        "file": "backend/tests/stage4-3-seed.cjs",
+        "sha256": "e9f4fe3197d767868f2659816457ced57b38c1f8dce67086abbfbce9affd7cc4"
+      },
+      {
+        "file": "backend/tests/stage4-4-browser.cjs",
+        "sha256": "20df863764103ec7611d06eb6dbf121335e482fa5699ccf149a7389435d7911d"
+      },
+      {
+        "file": "backend/tests/stage4-4-regression.cjs",
+        "sha256": "05c260f9568470bbc381ad67aa4bf45799636b3c3b01422292140f5158385e56"
+      },
+      {
+        "file": "backend/tests/stage4-5-regression.cjs",
+        "sha256": "65175e1748d9508ddb457ddc218c1bfde3da24a0b578c0d62aafae1a78f1dbd8"
+      },
+      {
+        "file": "backend/tests/stage5-2-experiment.cjs",
+        "sha256": "19346bdf1d4bb192134160e822487dbf47ab5b0c4e5d5fd056e17fba72a4958c"
+      },
+      {
+        "file": "backend/tests/stage5-2-logic.cjs",
+        "sha256": "60fc6d93b86d42996fd0a718c2dc7ae666174c77dd3394f12867ab0bc7b2b1b8"
+      },
+      {
+        "file": "backend/tests/stage5-3-experiment.cjs",
+        "sha256": "5cabfb22f74e57fa247fd681c0e5128b8b5e18d0e07781d24d9a89f1af302b4d"
+      },
+      {
+        "file": "backend/tests/stage5-3-logic.cjs",
+        "sha256": "ef61734eee097b8b6e5c26379a8f1bdc96175f09f15fc9a11004425ee0d542bf"
+      },
+      {
+        "file": "backend/tests/stage5-4-api.cjs",
+        "sha256": "47865ab9fe86e3e818ed3a81475bb66ea957c8717c9cb5dbe39be90a27b62c06"
+      },
+      {
+        "file": "backend/tests/stage5-4-generation.cjs",
+        "sha256": "a026d5ea2600b192448d2290408ff504dd7da1c34e7088ede3555ac44884b16b"
+      },
+      {
+        "file": "backend/tests/stage5-4-logic.cjs",
+        "sha256": "22f9523bcf1c821e1e4c396f6e5343aa8f39db1404cc7c3ddbedf557832b7857"
+      },
+      {
+        "file": "backend/tests/stage5-5-browser.cjs",
+        "sha256": "b4a5b28ad6d59753687980ebf6580685e19749e91bd7921087c3144b9006c1d2"
+      },
+      {
+        "file": "backend/tests/stage5-5-regression.cjs",
+        "sha256": "474cab5400cafc7ab582f99be9a49e43758621229cbd59f652418f1e9f268b0c"
+      },
+      {
+        "file": "database/01_create_database.sql",
+        "sha256": "0dd07408ac230d9f1fc2050a5bd923931dd915eaa9b02a0a4a6978d4e1905e10"
+      },
+      {
+        "file": "database/02_create_users.sql",
+        "sha256": "9d9da44dbedf67c97d50eb275f1fedba7f97ea6f6d8cefc8b1e21c278cd9ec64"
+      },
+      {
+        "file": "database/03_create_tickets.sql",
+        "sha256": "ee0d9e7d008758af69f1354d6d72019b628de94c757525f76c006357a261a9cb"
+      },
+      {
+        "file": "database/04_create_knowledge_base.sql",
+        "sha256": "5d546d3e535d8349e7bd419e2aa03ec3ec1eafe1c554242eabceb735c9d6520f"
+      },
+      {
+        "file": "docs/.gitkeep",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "file": "docs/giai-doan-2.md",
+        "sha256": "f5dbc69d173cd32f2758fac0ba5de311a4c956be7cb64898ea59b851e4629a63"
+      },
+      {
+        "file": "docs/giai-doan-3.md",
+        "sha256": "c309bf538bd94c6fe9a968aa10c184dddcafd8c6379e122cb9309c50527b22bf"
+      },
+      {
+        "file": "docs/giai-doan-4-2.md",
+        "sha256": "b30b3513985e5d63002518ceb020369b058d85fcc11c54fd4442d51eafd8af81"
+      },
+      {
+        "file": "docs/giai-doan-4-3.md",
+        "sha256": "ebe365416f7c322291b432daae8bdbf46a995a8c702d1f43505e01403e22299e"
+      },
+      {
+        "file": "docs/giai-doan-4-4.md",
+        "sha256": "219a43c75630d4e0e3d8559cc1a0a4329ed6e9d31b885295355486c9b8433529"
+      },
+      {
+        "file": "docs/giai-doan-4-5.md",
+        "sha256": "eac7f6ee2562429ce9a573ff8bca4a6a5ea06bd4bb1845df75f42b684162daf9"
+      },
+      {
+        "file": "docs/giai-doan-5-1.md",
+        "sha256": "d6d2a02ca389c43577b7118debd723aed137173fa16459a10cee82cc4a809b3a"
+      },
+      {
+        "file": "docs/giai-doan-5-2.md",
+        "sha256": "c52d7bf8f22530e5ba07dc2fa42fe26062b55243783806330b571f4ac4510ea3"
+      },
+      {
+        "file": "docs/giai-doan-5-3.md",
+        "sha256": "83b73278d907a60db15ea14b6b61930ade2e72baadf2be6c3ff431b08d53a4ba"
+      },
+      {
+        "file": "docs/giai-doan-5-4.md",
+        "sha256": "be34f5642b0505f0de6477b7a659a83104d8f1c9aa825ba5959cfab9d76e69d6"
+      },
+      {
+        "file": "docs/giai-doan-5-5.md",
+        "sha256": "588d3724a4caba30369ca1c6fba95e2fb8b6c2a50e306b39e3633d99d97c34cf"
+      },
+      {
+        "file": "docs/giai-doan-5-6.md",
+        "sha256": "d3b082bf346c73674f4a2b1ab7d9c81e6b4057de984caafe69de193a31226f37"
+      },
+      {
+        "file": "docs/giai-doan-5-minh-chung.md",
+        "sha256": "1ceebff781489b1701907990d27b6fdc2db3de97b4a42f449b4cfa07ead0c4ff"
+      },
+      {
+        "file": "docs/stage2-api-results.json",
+        "sha256": "f5c35941e7a1b3db1b35adb8b2b1328356a336f4ea849ecb2c3245cba7c36ca3"
+      },
+      {
+        "file": "docs/stage2-browser-results.json",
+        "sha256": "213d3e5311579a787a67f6e9279a10c95bfa5c3c0f3f39990b2ef2519e8eeb41"
+      },
+      {
+        "file": "docs/stage3-api-results.json",
+        "sha256": "3574e864e20e2c60a4406f737316a873571b72e243bfed20fb90d4033e4fe060"
+      },
+      {
+        "file": "docs/stage3-browser-results.json",
+        "sha256": "70f219268cc775bb39c8e77c423949610750433b4a9d7cb02176b0079dde72f2"
+      },
+      {
+        "file": "docs/stage3-ticket-demo.png",
+        "sha256": "833da5dcb8c4d15972c0273a96cc699d750f3547502f58bb1ccd976f68177ebd"
+      },
+      {
+        "file": "docs/stage4-2-api-results.json",
+        "sha256": "f23a001fa62c60f1cba0b4e1e71aa72b0389e43d9e6af69ad2f97b2af785373f"
+      },
+      {
+        "file": "docs/stage4-2-regression-results.json",
+        "sha256": "c324be6c4e276a57ca32d75a8f299ac19b079dec62047fedca61bf21feb03a34"
+      },
+      {
+        "file": "docs/stage4-3-results.json",
+        "sha256": "0f0ee8f7e0225d9f470b09d8e9a45b42679ad60879ff8bbe149de2024c209140"
+      },
+      {
+        "file": "docs/stage4-4-browser-results.json",
+        "sha256": "5b2aeef88763957dce682a15d94fe43bc7aaabe4a8e44e4f6938544ecb9b8c7e"
+      },
+      {
+        "file": "docs/stage4-4-knowledge.png",
+        "sha256": "5845d946aaecf5be89e04e52f9c46ad882e51c6dcadad20188455c917145f225"
+      },
+      {
+        "file": "docs/stage4-4-regression-results.json",
+        "sha256": "27af30897bd439894452f86b349148eda85ad0e9039e8a1dec0ba691097dbe4d"
+      },
+      {
+        "file": "docs/stage4-5-results.json",
+        "sha256": "656516a4622ebfca2697f924466260366cc3fe53479bb5943b3c2f2ff8195a3d"
+      },
+      {
+        "file": "docs/stage5-2-results.json",
+        "sha256": "1b3fd8cb492c64f93d8abaa58402eb962ff6ca840ba3ee91e6b1d4f21525a1b4"
+      },
+      {
+        "file": "docs/stage5-3-results.json",
+        "sha256": "3c1c242ad2f9549f87d076760f4b96932bc92ca1c8b67ea35e90e4a5902f9d5d"
+      },
+      {
+        "file": "docs/stage5-4-results.json",
+        "sha256": "e23c5b20721f3ef0b81570a1cefefa6e960b69538b0590efeac6c8323a14395f"
+      },
+      {
+        "file": "docs/stage5-5-results.json",
+        "sha256": "9cb4e28d46aaa714473cde350e4d0ee87ba23c4341a0e81d8c75fb0b62d4c4a2"
+      },
+      {
+        "file": "docs/stage5-6-results.json",
+        "sha256": "45732f6c01e53b194b1b77481c423b1511a959c3ae74828d566463963af09b81"
+      },
+      {
+        "file": "frontend/package-lock.json",
+        "sha256": "f695dec53a8cdf2be75ae275d3cc40438ec49753c589402f506ed27864ff36fd"
+      },
+      {
+        "file": "frontend/package.json",
+        "sha256": "621af58cb0cacef64fc58d1423bc2e5eb5f33a11a319d4adfefd4cdaccc54ff4"
+      },
+      {
+        "file": "frontend/src/App.jsx",
+        "sha256": "e8b026a426f657b2712349fe18c2ae47fc55a43a4f298a7a0a5e08f4a3f069d7"
+      },
+      {
+        "file": "frontend/src/KnowledgeBase.jsx",
+        "sha256": "a06a56350980feed2a6a260bbb3e719a6a21c8f1d8f426f98a521b4529d5d58d"
+      },
+      {
+        "file": "frontend/src/RagAssistant.jsx",
+        "sha256": "c1e1f9dd9a1b94dfe33703d424e0f0153659385cd43e36be1faf846039c1f98a"
+      },
+      {
+        "file": "frontend/src/Tickets.jsx",
+        "sha256": "3f8d96e6fc734ba0a5e646ccc5c5c390d55815fc55ef0a2d6cb551f9716f2426"
+      },
+      {
+        "file": "frontend/src/api.js",
+        "sha256": "aefc2feff8db92e325078807a4959500b3ca071fc3a1f84dbe3825d25731096e"
+      },
+      {
+        "file": "frontend/src/main.jsx",
+        "sha256": "7f1a7423e83e3e484f47a560f2898a7ab33aec81d9768dd3d96d40456e092f2b"
+      },
+      {
+        "file": "frontend/src/style.css",
+        "sha256": "9346e30dc3c69c2616c18edb2ac93f8a6e4d68f890d385bb17cbda3f05a46ba4"
+      }
+    ]
+  }
+}

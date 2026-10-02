@@ -1,0 +1,2572 @@
+{
+  "stage": "6.2",
+  "testedAt": "2026-10-02T09:20:51.310Z",
+  "completed": true,
+  "git": {
+    "baseCommit": "bd3ee7b921397a2f6f05bb331b0b0b9f0c331269",
+    "branch": "main",
+    "initialWorkingTree": "CLEAN",
+    "initialOriginMain": "bd3ee7b921397a2f6f05bb331b0b0b9f0c331269"
+  },
+  "environment": {
+    "node": "v22.17.1",
+    "platform": "win32",
+    "browser": "Microsoft Edge headless",
+    "playwright": "1.63.0",
+    "sourceFiles": [
+      {
+        "file": "backend/src/app.js",
+        "sha256": "a64f7ba952eaf88d51780a359eb724a2ce652afaa7909fa9466b79dc61919caf"
+      },
+      {
+        "file": "backend/src/rag/generationService.js",
+        "sha256": "d0c43c3c4ecec6a0d92cbaeda57d3eb7b19798851495c1a732a3f73e0ac090f4"
+      },
+      {
+        "file": "backend/src/rag/generationConfig.js",
+        "sha256": "0c0a3fc037291e309e550434fcbbf63e703aef89a85eb21b579ac2163061862c"
+      },
+      {
+        "file": "frontend/src/App.jsx",
+        "sha256": "e8b026a426f657b2712349fe18c2ae47fc55a43a4f298a7a0a5e08f4a3f069d7"
+      }
+    ],
+    "browserVersion": "154.0.4258.37",
+    "runner": {
+      "file": "backend/tests/stage6-2-e2e.cjs",
+      "sha256": "7baf068ed7da9bca461ce5ae053087ecff6c462912d5d16a153ed003ce815fed"
+    }
+  },
+  "database": {
+    "before": {
+      "counts": {
+        "users": 3,
+        "tickets": 3,
+        "ticket_history": 17,
+        "knowledge_articles": 8
+      },
+      "published": 8
+    },
+    "afterE2E": {
+      "counts": {
+        "users": 3,
+        "tickets": 3,
+        "ticket_history": 17,
+        "knowledge_articles": 8
+      },
+      "published": 8
+    },
+    "after": {
+      "counts": {
+        "users": 3,
+        "tickets": 3,
+        "ticket_history": 17,
+        "knowledge_articles": 8
+      },
+      "published": 8,
+      "fullOriginalRowsPreserved": true
+    }
+  },
+  "e2e": {
+    "flow1": {
+      "name": "EMPLOYEE tạo Ticket",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Login và role",
+          "expected": "EMPLOYEE đăng nhập bằng UI thật",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "Validation và tạo Ticket",
+          "expected": "Rỗng bị chặn; POST 201, NEW/LOW, đúng creator",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS",
+          "observed": {
+            "id": 118,
+            "code": "TKT-000118",
+            "status": "NEW"
+          }
+        },
+        {
+          "name": "List/detail/reload",
+          "expected": "Ticket tồn tại sau reload, dữ liệu MySQL đúng",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow2": {
+      "name": "IT tiếp nhận và xử lý",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "IT login và tiếp nhận",
+          "expected": "assigned_to là IT, NEW → RECEIVED",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "Priority và bắt đầu xử lý",
+          "expected": "LOW/MEDIUM/HIGH thủ công; RECEIVED → IN_PROGRESS",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS",
+          "observed": {
+            "status": "IN_PROGRESS",
+            "historyCount": 3,
+            "actorField": "actor_id"
+          }
+        }
+      ]
+    },
+    "flow3": {
+      "name": "Solution, RESOLVED và EMPLOYEE xem kết quả",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Thiếu solution không đổi trạng thái/history",
+          "expected": "UI chặn rỗng; API 400; DB không đổi",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "RESOLVED có solution",
+          "expected": "Lưu solution, history đúng",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "EMPLOYEE đăng nhập lại xem solution",
+          "expected": "Thấy RESOLVED; không có nút xử lý/đóng",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "Xử lý lại rồi CLOSED",
+          "expected": "RESOLVED → IN_PROGRESS → RESOLVED → CLOSED; không mở CLOSED",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow4": {
+      "name": "Ticket negative / backend RBAC",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Chuẩn bị user đối chiếu",
+          "expected": "Chỉ tạo 2 user tạm cần cho IDOR/assigned khác IT",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "EMPLOYEE trái quyền và IDOR",
+          "expected": "403, body gán người xử lý 400; dữ liệu không đổi",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "IT khác không xử lý; thiếu token/ID/sai role",
+          "expected": "403 / 401 / 404 đúng thiết kế",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow5": {
+      "name": "Knowledge Base bằng UI thật",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "EMPLOYEE list/search/detail PUBLISHED",
+          "expected": "8 bài PUBLISHED, không có nút quản trị",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "IT tạo DRAFT và sửa",
+          "expected": "Code/creator giữ nguyên, updated_by là IT",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "Publish/Archive/Draft và visibility EMPLOYEE",
+          "expected": "Vòng trạng thái đúng, EMPLOYEE chỉ thấy khi PUBLISHED",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow6": {
+      "name": "KB backend RBAC",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "EMPLOYEE không ghi/đọc DRAFT",
+          "expected": "POST/PUT/PATCH status/detail đều 403",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN quản lý bài của IT",
+          "expected": "Sửa DRAFT, giữ creator/code, updated_by ADMIN",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow7": {
+      "name": "RAG có nguồn: retrieval thật, Gemini MOCK",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Gửi câu hỏi, loading và chặn lặp",
+          "expected": "Một request, UI disable trong khi provider chờ",
+          "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+          "status": "PASS",
+          "observed": {
+            "mode": "MOCK_PROVIDER_REAL_RETRIEVAL_CONTEXT_VALIDATOR",
+            "sources": [
+              "KB-000008"
+            ]
+          }
+        },
+        {
+          "name": "Không tự tạo Ticket / không gọi Google từ browser",
+          "expected": "Số Ticket không đổi trong FLOW 7, không lộ trace/raw output",
+          "mode": "REAL_DB_OBSERVATION",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow8": {
+      "name": "RAG ngoài KB → Ticket chủ động",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Threshold fallback thật",
+          "expected": "answered=false, sources=[], provider không được gọi",
+          "mode": "REAL_RETRIEVAL_NO_PROVIDER",
+          "status": "PASS"
+        },
+        {
+          "name": "Nút chuyển chỉ điều hướng, user quyết định gửi",
+          "expected": "Mở mục Ticket, chọn form; không POST tự động",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS",
+          "observed": {
+            "autoSubmit": false,
+            "userDecision": "Hủy tạo, không thêm Ticket"
+          }
+        }
+      ]
+    },
+    "flow9": {
+      "name": "ADMIN",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "ADMIN profile, Ticket và KB",
+          "expected": "Quyền theo code, không có POST tạo Ticket",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS",
+          "observed": {
+            "users": "Backend API available; dedicated frontend management screen not implemented."
+          }
+        },
+        {
+          "name": "ADMIN xử lý Ticket IT đang nhận qua API",
+          "expected": "ADMIN được đổi priority và workflow, IT khác vẫn bị chặn",
+          "mode": "REAL_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN RAG",
+          "expected": "Có answer MOCK và fallback thật; không có nút tạo Ticket",
+          "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+          "status": "PASS"
+        }
+      ]
+    },
+    "flow10": {
+      "name": "Session / reload / error",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Reload, logout và protected UI",
+          "expected": "Giữ phiên qua reload; logout xóa token và UI bảo vệ",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "Token sai/hết hạn, backend 401 thật",
+          "expected": "Xóa token và trở về login",
+          "mode": "BROWSER_API_MYSQL",
+          "status": "PASS"
+        },
+        {
+          "name": "INACTIVE trên user tạm",
+          "expected": "Login và token cũ bị 401, không đổi user gốc",
+          "mode": "REAL_API_MYSQL_TEMP_USER",
+          "status": "PASS"
+        },
+        {
+          "name": "UI lỗi 403/404/500, empty và loading",
+          "expected": "Hiển thị lỗi an toàn, không crash",
+          "mode": "MOCK_NETWORK_ERROR_EMPTY_DELAY",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "responsive": {
+    "checks": [
+      {
+        "screen": "Login",
+        "width": 1280,
+        "status": "PASS",
+        "pageWidth": 1280
+      },
+      {
+        "screen": "Ticket",
+        "width": 1280,
+        "status": "PASS",
+        "pageWidth": 1280
+      },
+      {
+        "screen": "Knowledge Base",
+        "width": 1280,
+        "status": "PASS",
+        "pageWidth": 1280
+      },
+      {
+        "screen": "RAG answer/sources",
+        "width": 1280,
+        "status": "PASS",
+        "pageWidth": 1280
+      },
+      {
+        "screen": "Login",
+        "width": 390,
+        "status": "PASS",
+        "pageWidth": 390
+      },
+      {
+        "screen": "Ticket",
+        "width": 390,
+        "status": "PASS",
+        "pageWidth": 390
+      },
+      {
+        "screen": "Knowledge Base",
+        "width": 390,
+        "status": "PASS",
+        "pageWidth": 390
+      },
+      {
+        "screen": "RAG answer/sources",
+        "width": 390,
+        "status": "PASS",
+        "pageWidth": 390
+      }
+    ],
+    "summary": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "previous_p2_review": {
+    "P2-01": {
+      "status": "REPRODUCED",
+      "mode": "REPLAY_HISTORICAL_PROVIDER_OUTPUT_REAL_RETRIEVAL",
+      "observations": [
+        {
+          "id": "B01",
+          "reproduced": true,
+          "actual": "Output lịch sử chưa đạt grounding/clarification vẫn đi qua validator và hiển thị UI.",
+          "expected": "Chỉ khẳng định có căn cứ, xử lý câu mơ hồ phù hợp."
+        },
+        {
+          "id": "C03",
+          "reproduced": true,
+          "actual": "Output lịch sử chưa đạt grounding/clarification vẫn đi qua validator và hiển thị UI.",
+          "expected": "Chỉ khẳng định có căn cứ, xử lý câu mơ hồ phù hợp."
+        }
+      ],
+      "severity": "P2",
+      "proposed_stage": "6.3",
+      "e2eImpact": "Chất lượng nội dung, không crash/navigation/RBAC.",
+      "demoImpact": "Cần trình bày giới hạn; không nâng P1 vì chưa có bằng chứng lỗi mới làm hỏng workflow."
+    },
+    "P2-02": {
+      "status": "REPRODUCED",
+      "mode": "REPLAY_HISTORICAL_PROVIDER_OUTPUT_REAL_RETRIEVAL",
+      "observations": [
+        {
+          "id": "A03",
+          "reproduced": true,
+          "http": 502,
+          "actual": "Quote quá dài bị từ chối, UI hiển thị lỗi an toàn, không answer giả."
+        },
+        {
+          "id": "C01",
+          "reproduced": true,
+          "http": 502,
+          "actual": "Quote quá dài bị từ chối, UI hiển thị lỗi an toàn, không answer giả."
+        }
+      ],
+      "severity": "P2",
+      "proposed_stage": "6.3",
+      "e2eImpact": "Có thể không nhận được answer; UI xử lý 502 đúng.",
+      "demoImpact": "Cần trình bày giới hạn; không nâng P1 vì chưa có bằng chứng lỗi mới làm hỏng workflow."
+    },
+    "P2-03": {
+      "status": "VERIFIED",
+      "mode": "CURRENT_RUN_AND_STATIC_REVIEW",
+      "severity": "P2",
+      "proposed_stage": "6.3",
+      "e2eImpact": "Runner mới được lưu Git; vẫn phụ thuộc MySQL/demo/Edge/Playwright thư mục tạm.",
+      "demoImpact": "Môi trường hiện tại chạy được; máy mới cần chuẩn bị dependency/cache. Không dùng --reuse-browser.",
+      "remaining": "Chưa thử trên máy sạch hoặc CI; không kết luận đã sửa toàn bộ vấn đề tái lập."
+    },
+    "P2-04": {
+      "status": "REPRODUCED_CONTROLLER_MODEL_MOCK",
+      "severity": "P2",
+      "proposed_stage": "6.3",
+      "mode": "ISOLATED_CONTROLLER_NO_DB_WRITE",
+      "observed": [
+        {
+          "role": "EMPLOYEE"
+        },
+        {
+          "status": "INACTIVE"
+        }
+      ],
+      "e2eImpact": "Controller không kiểm ADMIN cuối; không thử khóa ADMIN gốc.",
+      "demoImpact": "Không tác động luồng demo thông thường; cần chốt chính sách bảo vệ tài khoản cuối.",
+      "limitation": "Không phải thử nghiệm E2E mất quyền ADMIN thật."
+    },
+    "P2-05": {
+      "status": "REPRODUCED",
+      "severity": "P2",
+      "proposed_stage": "6.3",
+      "mode": "REAL_BROWSER_KEYBOARD_AND_REAL_API",
+      "expected": "Giới hạn title UI/API thống nhất.",
+      "actual": "UI chặn theo UTF-16, API nhận đủ title theo code point.",
+      "uiUtf16": 255,
+      "apiUtf16": 279,
+      "apiCodePoints": 149,
+      "e2eImpact": "Title ngoài BMP bị giới hạn sớm trên UI.",
+      "demoImpact": "Chữ Việt BMP thông thường không bị khác biệt này."
+    }
+  },
+  "regression": {
+    "suites": [
+      {
+        "suite": "Auth/JWT/RBAC/Users: fixture tạm GĐ6.2",
+        "mode": "REAL_API_MYSQL_NO_ORIGINAL_USER_MUTATION",
+        "tests": [
+          {
+            "name": "Login /me EMPLOYEE",
+            "status": "PASS"
+          },
+          {
+            "name": "Login /me IT",
+            "status": "PASS"
+          },
+          {
+            "name": "Login /me ADMIN",
+            "status": "PASS"
+          },
+          {
+            "name": "Bcrypt cost 12 cho tài khoản gốc",
+            "status": "PASS"
+          },
+          {
+            "name": "Sai mật khẩu / email không tồn tại",
+            "status": "PASS"
+          },
+          {
+            "name": "Thiếu/sai/hết hạn/sai signature JWT",
+            "status": "PASS"
+          },
+          {
+            "name": "Ma trận RBAC thật",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN tạo user tạm, response không password, bcrypt",
+            "status": "PASS"
+          },
+          {
+            "name": "Email trùng bị 409",
+            "status": "PASS"
+          },
+          {
+            "name": "INACTIVE chặn login/token trên user tạm",
+            "status": "PASS"
+          },
+          {
+            "name": "Token cũ dùng role hiện tại DB",
+            "status": "PASS"
+          },
+          {
+            "name": "Non-admin không quản lý user",
+            "status": "PASS"
+          },
+          {
+            "name": "Validation user và ID",
+            "status": "PASS"
+          },
+          {
+            "name": "Health/DB health",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "RAG GĐ5.2 logic",
+        "tests": [
+          {
+            "name": "Chuẩn hóa tiếng Việt/line break, giữ khoảng trắng kỹ thuật",
+            "status": "PASS"
+          },
+          {
+            "name": "SQL chỉ đọc PUBLISHED bằng tham số",
+            "status": "PASS"
+          },
+          {
+            "name": "Từ chối DRAFT và ARCHIVED trước chunking",
+            "status": "PASS"
+          },
+          {
+            "name": "Bài ngắn giữ nguyên một chunk",
+            "status": "PASS"
+          },
+          {
+            "name": "Coverage Unicode/emoji/đoạn dài; index/span/overlap và tiến lên",
+            "status": "PASS"
+          },
+          {
+            "name": "Ngân sách token hẹp tự chia, không truncation/mất nội dung",
+            "status": "PASS"
+          },
+          {
+            "name": "Từ chối rỗng/config sai/title vượt ngân sách",
+            "status": "PASS"
+          },
+          {
+            "name": "Validator từ chối NaN, Infinity, sai chiều, string và vector 0",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "RAG GĐ5.3 logic",
+        "tests": [
+          {
+            "test": 4,
+            "name": "Cosine với chính nó gần 1; trực giao 0; đối hướng -1; vector chưa L2",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 5,
+            "name": "Ranking giảm dần",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 6,
+            "name": "Top-K đủ số lượng khi đủ chunk",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 7,
+            "name": "K lớn hơn index và index rỗng xử lý an toàn",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 8,
+            "name": "K không phải số nguyên dương bị từ chối",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 9,
+            "name": "Câu hỏi rỗng hoặc sai kiểu bị từ chối",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 10,
+            "name": "Metadata nguồn nguyên vẹn; không trả embedding",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 11,
+            "name": "Rank bắt đầu 1 và liên tiếp",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 12,
+            "name": "Tie deterministic theo articleId/chunkIndex, độc lập thứ tự input",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 13,
+            "name": "Aggregation max toàn index; chunk trùng không chiếm chỗ article",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 14,
+            "name": "Threshold bao gồm biên bằng ngưỡng và validation",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 15,
+            "name": "Retrieval không sửa input vectors",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": 16,
+            "name": "Giữ tiếng Việt NFC và prefix query chính xác",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn vector sai/zero/nonfinite và query quá ngân sách",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B2",
+            "name": "24 câu/nhãn/split giữ đúng Markdown GĐ5.1",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B3",
+            "name": "Metric không gộp OUT; chọn threshold chỉ DEV, đếm FP/FN đúng",
+            "status": "PASS",
+            "mode": "logic fixture"
+          },
+          {
+            "test": "B4",
+            "name": "Keyword baseline giữ phép includes trên code + title như frontend",
+            "status": "PASS",
+            "mode": "logic fixture"
+          }
+        ]
+      },
+      {
+        "suite": "RAG GĐ5.4 logic",
+        "tests": [
+          {
+            "name": "Question rỗng/whitespace/sai kiểu/quá dài bị chặn",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Threshold bị từ chối không gọi Gemini, sources rỗng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Threshold accept gọi Gemini và trả cấu trúc đúng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Context chỉ PUBLISHED, kiểm tra đúng code/title và ngưỡng",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Context khử trùng bài, không vượt ngân sách",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Nguồn mới ARCHIVED/đổi nội dung bị chặn trước và sau generation",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Prompt grounding tách instruction khỏi QUESTION/CONTEXT",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Sources lấy từ context được kiểm chứng, không nhận sources của LLM",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Chặn evidence không có trong nguồn và mã KB trong answer",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "LLM báo thiếu context trả fallback chuẩn không nguồn giả",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Response rỗng/sai JSON/sai schema không được tính generation thành công",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Secret không xuất hiện output; không giữ raw lỗi provider",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK thiếu key báo lỗi kiểm soát",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK phân loại key/quota/model/timeout/network, không retry tự động",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "SDK chặn response rỗng và bị cắt",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          },
+          {
+            "name": "Question quá token bị chặn trước gọi provider",
+            "status": "PASS",
+            "type": "LOGIC_MOCK_GEMINI"
+          }
+        ]
+      },
+      {
+        "suite": "RAG GĐ5.4 API mock",
+        "tests": [
+          {
+            "name": "API thiếu JWT -> 401",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API JWT sai -> 401",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép EMPLOYEE đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép IT đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API cho phép ADMIN đăng nhập thật",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API validate question/body",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          },
+          {
+            "name": "API provider failure trả lỗi kiểm soát, không giả câu trả lời",
+            "status": "PASS",
+            "type": "REAL_JWT_MYSQL_MOCK_GENERATION"
+          }
+        ]
+      },
+      {
+        "suite": "stage3-api.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "test": 1,
+            "name": "EMPLOYEE tạo Ticket NEW",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "Priority mặc định LOW",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "EMPLOYEE chỉ thấy Ticket của mình",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "EMPLOYEE không xem Ticket người khác",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "EMPLOYEE không được tiếp nhận",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "IT xem tất cả Ticket",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "IT tiếp nhận NEW -> RECEIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "assigned_to lấy từ IT đăng nhập",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "Priority LOW -> HIGH",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "RECEIVED -> IN_PROGRESS",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "Không cho NEW -> RESOLVED",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "RESOLVED thiếu solution bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "RESOLVED có solution thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "RESOLVED -> CLOSED",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "CLOSED không mở lại",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "RESOLVED -> IN_PROGRESS",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "Mọi thay đổi trạng thái có history đúng thứ tự",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "EMPLOYEE xem history của mình",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "IT khác không xử lý Ticket đã assigned",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "API không trả password/hash user",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Không token -> 401",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Role không phù hợp -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "ID không tồn tại -> 404, ID sai -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "Priority không hợp lệ bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Title/description rỗng bị từ chối",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn giả mạo trường server quản lý",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN xử lý Ticket của IT, CLOSED chỉ xem",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "Hai người nhận đồng thời: chỉ một thành công",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Rollback thật khi bước ghi history thất bại",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Workflow khác bị chặn và không thêm history",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "stage4-2-api.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "test": 1,
+            "name": "Thiếu token -> 401 ở mọi endpoint",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "EMPLOYEE không tạo bài -> 403",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "IT tạo bài thành công",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Bài mới là DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Code dạng KB-xxxxxx",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "created_by đúng IT",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "ADMIN tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "EMPLOYEE không thấy DRAFT trong danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "IT thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "ADMIN thấy DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "EMPLOYEE không xem trực tiếp DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "IT cập nhật title/content",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "updated_by đúng người cập nhật",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "EMPLOYEE không được update hoặc đổi status",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "EMPLOYEE thấy PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "EMPLOYEE xem chi tiết PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "EMPLOYEE không thấy ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "Chặn mọi transition không hợp lệ",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "Chặn title rỗng, sai kiểu hoặc quá dài",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "Chặn content rỗng hoặc sai kiểu",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "ID không tồn tại -> 404",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "Mọi response không lộ password/hash/secret/stack/SQL",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Chặn trường chỉ server được quyết định",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "ADMIN sửa bài, giữ code/creator, truy vấn tham số an toàn",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "ID/status/body không hợp lệ -> 400",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "Tạo đồng thời không trùng mã",
+            "status": "PASS"
+          },
+          {
+            "test": "B5",
+            "name": "Publish đồng thời chỉ một request hợp lệ",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "stage2-browser.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "name": "Frontend EMPLOYEE: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend IT: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend ADMIN: login, role display, reload, logout",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend wrong password shows error without session",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend invalid JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend expired JWT removed and login restored",
+            "status": "PASS"
+          },
+          {
+            "name": "Frontend no JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "stage3-browser.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "name": "EMPLOYEE: login, create, list, detail, initial history",
+            "status": "PASS"
+          },
+          {
+            "name": "IT: view employee ticket, accept, set HIGH, start, resolve, close",
+            "status": "PASS"
+          },
+          {
+            "name": "EMPLOYEE: sees CLOSED, assignee, solution, five history entries",
+            "status": "PASS"
+          },
+          {
+            "name": "ADMIN: view ticket and history, existing users API works",
+            "status": "PASS"
+          },
+          {
+            "name": "No frontend JavaScript runtime errors",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "stage4-4-browser.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "test": 1,
+            "name": "Login Employee",
+            "status": "PASS"
+          },
+          {
+            "test": 2,
+            "name": "Employee có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 3,
+            "name": "Employee mở Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 4,
+            "name": "Hiển thị đúng 8 bài PUBLISHED từ API",
+            "status": "PASS"
+          },
+          {
+            "test": 5,
+            "name": "Employee không có Tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 6,
+            "name": "Employee không có Sửa bài",
+            "status": "PASS"
+          },
+          {
+            "test": 7,
+            "name": "Employee không có nút đổi trạng thái",
+            "status": "PASS"
+          },
+          {
+            "test": 8,
+            "name": "Search Wi-Fi, không phân biệt hoa thường, trim",
+            "status": "PASS"
+          },
+          {
+            "test": 9,
+            "name": "Search không có kết quả",
+            "status": "PASS"
+          },
+          {
+            "test": 10,
+            "name": "Employee mở chi tiết",
+            "status": "PASS"
+          },
+          {
+            "test": 11,
+            "name": "Hiển thị đủ nội dung và giữ xuống dòng",
+            "status": "PASS"
+          },
+          {
+            "test": 12,
+            "name": "Quay lại danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 13,
+            "name": "Login IT",
+            "status": "PASS"
+          },
+          {
+            "test": 14,
+            "name": "IT có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 15,
+            "name": "IT thấy danh sách",
+            "status": "PASS"
+          },
+          {
+            "test": 16,
+            "name": "IT có nút Tạo bài",
+            "status": "PASS"
+          },
+          {
+            "test": 17,
+            "name": "IT tạo bài mới DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 18,
+            "name": "IT mở chi tiết bài vừa tạo",
+            "status": "PASS"
+          },
+          {
+            "test": 19,
+            "name": "IT sửa title/content, giữ code/status",
+            "status": "PASS"
+          },
+          {
+            "test": 20,
+            "name": "DRAFT -> PUBLISHED",
+            "status": "PASS"
+          },
+          {
+            "test": 21,
+            "name": "PUBLISHED -> ARCHIVED",
+            "status": "PASS"
+          },
+          {
+            "test": 22,
+            "name": "ARCHIVED -> DRAFT",
+            "status": "PASS"
+          },
+          {
+            "test": 23,
+            "name": "IT tìm theo code",
+            "status": "PASS"
+          },
+          {
+            "test": 24,
+            "name": "Login ADMIN",
+            "status": "PASS"
+          },
+          {
+            "test": 25,
+            "name": "ADMIN có mục Kho kiến thức",
+            "status": "PASS"
+          },
+          {
+            "test": 26,
+            "name": "ADMIN xem đủ ba trạng thái",
+            "status": "PASS"
+          },
+          {
+            "test": 27,
+            "name": "ADMIN tạo/sửa bài",
+            "status": "PASS"
+          },
+          {
+            "test": 28,
+            "name": "ADMIN đổi trạng thái đủ workflow",
+            "status": "PASS"
+          },
+          {
+            "test": 29,
+            "name": "API quản lý user ADMIN cũ hoạt động",
+            "status": "PASS"
+          },
+          {
+            "test": 30,
+            "name": "Tab Ticket và chi tiết cũ hoạt động",
+            "status": "PASS"
+          },
+          {
+            "test": 31,
+            "name": "Frontend build",
+            "status": "PASS"
+          },
+          {
+            "test": 32,
+            "name": "Không lỗi JavaScript nghiêm trọng",
+            "status": "PASS"
+          },
+          {
+            "test": 33,
+            "name": "Frontend không hard-code tám bài",
+            "status": "PASS"
+          },
+          {
+            "test": 34,
+            "name": "Employee không có chức năng quản trị, không thấy bài tạm chưa xuất bản",
+            "status": "PASS"
+          },
+          {
+            "test": 35,
+            "name": "Reload giữ phiên đăng nhập",
+            "status": "PASS"
+          },
+          {
+            "test": "B1",
+            "name": "Màn hình 390px không tràn ngang",
+            "status": "PASS"
+          },
+          {
+            "test": "B2",
+            "name": "Loading, lỗi 500 thân thiện, thử lại và danh sách rỗng",
+            "status": "PASS"
+          },
+          {
+            "test": "B3",
+            "name": "403/404 hiển thị thông báo, không mở chi tiết",
+            "status": "PASS"
+          },
+          {
+            "test": "B4",
+            "name": "401 xóa phiên và quay lại Login",
+            "status": "PASS"
+          }
+        ]
+      },
+      {
+        "suite": "stage5-5-browser.cjs",
+        "status": "PASS",
+        "tests": [
+          {
+            "id": 1,
+            "name": "EMPLOYEE đăng nhập thật",
+            "mode": "REAL_LOGIN",
+            "status": "PASS"
+          },
+          {
+            "id": 2,
+            "name": "EMPLOYEE thấy mục Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 3,
+            "name": "Mở giao diện hỏi đáp",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 4,
+            "name": "Rỗng và whitespace không gửi request",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "4b",
+            "name": "Giới hạn 1000 code point, không cắt sai emoji",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "4c",
+            "name": "Shift+Enter xuống dòng; IME Enter không gửi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 5,
+            "name": "Gửi Enter, trim, body đúng và JWT hiện tại",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 6,
+            "name": "Loading, disable và chặn submit lặp",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 7,
+            "name": "Answer và câu hỏi hiển thị đúng; giữ xuống dòng",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 8,
+            "name": "Sources chỉ có code/title backend trả",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 10,
+            "name": "Fallback không giữ answer/nguồn cũ hoặc tự bịa",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 11,
+            "name": "EMPLOYEE sang Ticket, không tự POST tạo yêu cầu",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 12,
+            "name": "IT mở Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 13,
+            "name": "IT nhận answer; fallback không có nút tạo Ticket",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 14,
+            "name": "ADMIN mở Trợ lý CNTT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 15,
+            "name": "ADMIN nhận answer; fallback không có nút tạo Ticket",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 16,
+            "name": "401 xóa phiên, về login; không hiển thị raw lỗi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 17,
+            "name": "Xử lý HTTP 403 / FORBIDDEN",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 18,
+            "name": "Xử lý HTTP 429 / RAG_BUSY",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 19,
+            "name": "Xử lý HTTP 500 / RAG_ERROR",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E400",
+            "name": "Xử lý HTTP 400 / INVALID_QUESTION",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E404",
+            "name": "Xử lý HTTP 404 / NOT_FOUND",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E503",
+            "name": "Xử lý HTTP 503 / GEMINI_RATE_LIMIT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E502",
+            "name": "Xử lý HTTP 502 / GEMINI_INVALID_EVIDENCE",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "E504",
+            "name": "Xử lý HTTP 504 / GEMINI_TIMEOUT",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 20,
+            "name": "Network error và gửi lại sau lỗi",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "EJSON",
+            "name": "Response sai contract không crash hoặc tự tạo answer",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 23,
+            "name": "Answer và source được render text, không thực thi HTML",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 25,
+            "name": "Màn hình 390px không tràn; form và nguồn đọc được",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": "LIFECYCLE",
+            "name": "Chuyển tab khi request đang chạy không làm rò kết quả",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          },
+          {
+            "id": 9,
+            "name": "Ngoài KB: browser → backend/retrieval thật → fallback, không Gemini",
+            "mode": "REAL_BACKEND_RETRIEVAL",
+            "status": "PASS"
+          },
+          {
+            "id": 22,
+            "name": "Browser không gọi Google/Gemini trực tiếp",
+            "mode": "BROWSER_REQUEST_OBSERVATION",
+            "status": "PASS"
+          },
+          {
+            "id": "RUNTIME",
+            "name": "Không có lỗi JavaScript frontend",
+            "mode": "BROWSER_REAL_AUTH_MOCK_RAG",
+            "status": "PASS"
+          }
+        ]
+      }
+    ],
+    "status": "PASS",
+    "summary": {
+      "total": 206,
+      "passed": 206,
+      "failed": 0
+    }
+  },
+  "frontend_build": {
+    "status": "PASS",
+    "command": "node node_modules/vite/bin/vite.js build",
+    "directory": "frontend"
+  },
+  "gemini_real_requests": 0,
+  "provider": {
+    "mode": "MOCK_SDK_GENERATE_CONTENT",
+    "calls": 8,
+    "traces": [
+      {
+        "question": "Không kết nối được Wi-Fi thì cần kiểm tra gì trước?",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000008"
+        ],
+        "context": [
+          "KB-000008",
+          "KB-000013",
+          "KB-000015"
+        ]
+      },
+      {
+        "question": "Nhân viên mới có bao nhiêu ngày nghỉ phép năm?",
+        "geminiCalled": false,
+        "reason": "BELOW_THRESHOLD",
+        "sources": [],
+        "context": []
+      },
+      {
+        "question": "Không kết nối được Wi-Fi thì cần kiểm tra gì trước?",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000008"
+        ],
+        "context": [
+          "KB-000008",
+          "KB-000013",
+          "KB-000015"
+        ]
+      },
+      {
+        "question": "Nhân viên mới có bao nhiêu ngày nghỉ phép năm?",
+        "geminiCalled": false,
+        "reason": "BELOW_THRESHOLD",
+        "sources": [],
+        "context": []
+      },
+      {
+        "question": "Biểu tượng sóng trên laptop có dấu gạch, tôi không vào mạng không dây được.",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000008"
+        ],
+        "context": [
+          "KB-000008",
+          "KB-000013"
+        ]
+      },
+      {
+        "question": "Tôi không đăng nhập được vào trang làm việc.",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000015"
+        ],
+        "context": [
+          "KB-000015",
+          "KB-000013",
+          "KB-000008"
+        ]
+      },
+      {
+        "question": "Không kết nối được Wi-Fi thì cần kiểm tra gì trước?",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000008"
+        ],
+        "context": [
+          "KB-000008",
+          "KB-000013",
+          "KB-000015"
+        ]
+      },
+      {
+        "question": "Không kết nối được Wi-Fi thì cần kiểm tra gì trước?",
+        "geminiCalled": true,
+        "reason": "GENERATED",
+        "sources": [
+          "KB-000008"
+        ],
+        "context": [
+          "KB-000008",
+          "KB-000013",
+          "KB-000015"
+        ]
+      }
+    ]
+  },
+  "security": {
+    "envTracked": "NOT FOUND",
+    "secretValuesInFiles": "NOT FOUND",
+    "screenshots": "PASS_TEXT_AND_VISUAL_REVIEW_9_IMAGES",
+    "originalSourceChanged": "NOT FOUND",
+    "realGeminiRequests": 0,
+    "excludedArtifacts": "NOT FOUND: .env, model cache, dist, node_modules trong Git/thay đổi GĐ6.2",
+    "scope": "File GĐ6.2, bundle frontend và đường dẫn Git hiện tại; không quét toàn lịch sử Git/CVE/pentest."
+  },
+  "issues": {
+    "P0": [],
+    "P1": [],
+    "P2": [
+      {
+        "id": "P2-01",
+        "title": "Grounding và xử lý câu mơ hồ chưa đầy đủ",
+        "severity": "P2",
+        "origin": "GĐ6.1",
+        "resolved": false,
+        "proposed_stage": "6.3",
+        "steps": "Phát lại B01/C03 từ GĐ5.4 tại SDK mock, qua retrieval/context/validator thật rồi quan sát UI.",
+        "expected": "Mọi khẳng định có căn cứ và câu mơ hồ được hỏi rõ.",
+        "actual": "Output lịch sử vẫn được validator chấp nhận và hiển thị; không đo lại Gemini live.",
+        "verification": {
+          "status": "REPRODUCED",
+          "mode": "REPLAY_HISTORICAL_PROVIDER_OUTPUT_REAL_RETRIEVAL",
+          "observations": [
+            {
+              "id": "B01",
+              "reproduced": true,
+              "actual": "Output lịch sử chưa đạt grounding/clarification vẫn đi qua validator và hiển thị UI.",
+              "expected": "Chỉ khẳng định có căn cứ, xử lý câu mơ hồ phù hợp."
+            },
+            {
+              "id": "C03",
+              "reproduced": true,
+              "actual": "Output lịch sử chưa đạt grounding/clarification vẫn đi qua validator và hiển thị UI.",
+              "expected": "Chỉ khẳng định có căn cứ, xử lý câu mơ hồ phù hợp."
+            }
+          ],
+          "severity": "P2",
+          "proposed_stage": "6.3",
+          "e2eImpact": "Chất lượng nội dung, không crash/navigation/RBAC.",
+          "demoImpact": "Cần trình bày giới hạn; không nâng P1 vì chưa có bằng chứng lỗi mới làm hỏng workflow."
+        },
+        "evidence": [
+          "docs/stage5-4-results.json: B01, C03",
+          "backend/src/rag/generationOutput.js",
+          "docs/stage6-2-results.json: previous_p2_review.P2-01"
+        ],
+        "recommendation": "Đánh giá grounding/câu mơ hồ và evidence dài trong phạm vi được duyệt, giữ nguyên kết quả lịch sử."
+      },
+      {
+        "id": "P2-02",
+        "title": "Một số output Gemini bị từ chối do quote quá dài",
+        "severity": "P2",
+        "origin": "GĐ6.1",
+        "resolved": false,
+        "proposed_stage": "6.3",
+        "steps": "Phát lại A03/C01 có quote lịch sử vượt giới hạn, quan sát API/UI.",
+        "expected": "Output hợp lệ trong contract và có thể trình bày câu trả lời có nguồn.",
+        "actual": "HTTP 502 GEMINI_INVALID_EVIDENCE; UI báo lỗi an toàn, không bịa câu trả lời.",
+        "verification": {
+          "status": "REPRODUCED",
+          "mode": "REPLAY_HISTORICAL_PROVIDER_OUTPUT_REAL_RETRIEVAL",
+          "observations": [
+            {
+              "id": "A03",
+              "reproduced": true,
+              "http": 502,
+              "actual": "Quote quá dài bị từ chối, UI hiển thị lỗi an toàn, không answer giả."
+            },
+            {
+              "id": "C01",
+              "reproduced": true,
+              "http": 502,
+              "actual": "Quote quá dài bị từ chối, UI hiển thị lỗi an toàn, không answer giả."
+            }
+          ],
+          "severity": "P2",
+          "proposed_stage": "6.3",
+          "e2eImpact": "Có thể không nhận được answer; UI xử lý 502 đúng.",
+          "demoImpact": "Cần trình bày giới hạn; không nâng P1 vì chưa có bằng chứng lỗi mới làm hỏng workflow."
+        },
+        "evidence": [
+          "docs/stage5-4-results.json: A03, C01",
+          "backend/src/rag/generationOutput.js",
+          "backend/src/rag/generationPrompt.js",
+          "docs/stage6-2-results.json: previous_p2_review.P2-02"
+        ],
+        "recommendation": "Đánh giá grounding/câu mơ hồ và evidence dài trong phạm vi được duyệt, giữ nguyên kết quả lịch sử."
+      },
+      {
+        "id": "P2-03",
+        "title": "Bộ điều phối regression cần dễ tái lập hơn",
+        "severity": "P2",
+        "origin": "GĐ6.1",
+        "resolved": false,
+        "proposed_stage": "6.3",
+        "steps": "Chạy runner trên môi trường hiện có, kiểm dependency browser/cache/cổng; không reuse-browser.",
+        "expected": "Môi trường kiểm thử có thể chuẩn bị và chạy lại trên máy sạch.",
+        "actual": "PASS trên máy hiện tại; còn phụ thuộc Playwright thư mục tạm/Edge/model cache/MySQL, chưa kiểm máy sạch hoặc CI.",
+        "verification": {
+          "status": "VERIFIED",
+          "mode": "CURRENT_RUN_AND_STATIC_REVIEW",
+          "severity": "P2",
+          "proposed_stage": "6.3",
+          "e2eImpact": "Runner mới được lưu Git; vẫn phụ thuộc MySQL/demo/Edge/Playwright thư mục tạm.",
+          "demoImpact": "Môi trường hiện tại chạy được; máy mới cần chuẩn bị dependency/cache. Không dùng --reuse-browser.",
+          "remaining": "Chưa thử trên máy sạch hoặc CI; không kết luận đã sửa toàn bộ vấn đề tái lập."
+        },
+        "evidence": [
+          "backend/tests/stage4-5-regression.cjs",
+          "backend/tests/stage5-5-regression.cjs",
+          "backend/tests/stage5-5-browser.cjs",
+          "docs/stage6-2-results.json: previous_p2_review.P2-03"
+        ],
+        "recommendation": "Làm rõ dependency/cache/cổng và provenance để tái lập test trên môi trường mới."
+      },
+      {
+        "id": "P2-04",
+        "title": "Chưa có bảo vệ ADMIN cuối cùng",
+        "severity": "P2",
+        "origin": "GĐ6.1",
+        "resolved": false,
+        "proposed_stage": "6.3",
+        "steps": "Gọi controller changeRole/changeStatus thật với model giả lập ADMIN duy nhất trong bộ nhớ.",
+        "expected": "Có quy tắc bảo vệ ADMIN ACTIVE cuối sau khi chính sách được chốt.",
+        "actual": "Controller nhận self-demote và INACTIVE với HTTP 200; không thử khóa ADMIN thật.",
+        "verification": {
+          "status": "REPRODUCED_CONTROLLER_MODEL_MOCK",
+          "severity": "P2",
+          "proposed_stage": "6.3",
+          "mode": "ISOLATED_CONTROLLER_NO_DB_WRITE",
+          "observed": [
+            {
+              "role": "EMPLOYEE"
+            },
+            {
+              "status": "INACTIVE"
+            }
+          ],
+          "e2eImpact": "Controller không kiểm ADMIN cuối; không thử khóa ADMIN gốc.",
+          "demoImpact": "Không tác động luồng demo thông thường; cần chốt chính sách bảo vệ tài khoản cuối.",
+          "limitation": "Không phải thử nghiệm E2E mất quyền ADMIN thật."
+        },
+        "evidence": [
+          "backend/src/controllers/userController.js: changeRole/changeStatus",
+          "backend/src/models/userModel.js: updateRole/updateStatus",
+          "docs/stage6-2-results.json: previous_p2_review.P2-04"
+        ],
+        "recommendation": "Chốt chính sách bảo vệ ADMIN ACTIVE cuối, dùng fixture tạm/mô phỏng an toàn khi kiểm."
+      },
+      {
+        "id": "P2-05",
+        "title": "Giới hạn title KB khác đơn vị đếm giữa UI và backend",
+        "severity": "P2",
+        "origin": "GĐ6.1",
+        "resolved": false,
+        "proposed_stage": "6.3",
+        "steps": "Gõ title ngoài BMP bằng keyboard browser, so với POST API thật vào bài test tạm.",
+        "expected": "Giới hạn title UI/API thống nhất.",
+        "actual": "UI giữ 255 UTF-16; API nhận 279 UTF-16 = 149 code point.",
+        "verification": {
+          "status": "REPRODUCED",
+          "severity": "P2",
+          "proposed_stage": "6.3",
+          "mode": "REAL_BROWSER_KEYBOARD_AND_REAL_API",
+          "expected": "Giới hạn title UI/API thống nhất.",
+          "actual": "UI chặn theo UTF-16, API nhận đủ title theo code point.",
+          "uiUtf16": 255,
+          "apiUtf16": 279,
+          "apiCodePoints": 149,
+          "e2eImpact": "Title ngoài BMP bị giới hạn sớm trên UI.",
+          "demoImpact": "Chữ Việt BMP thông thường không bị khác biệt này."
+        },
+        "evidence": [
+          "frontend/src/KnowledgeBase.jsx: maxLength=255",
+          "backend/src/controllers/knowledgeArticleController.js: [...title].length",
+          "docs/stage6-2-results.json: previous_p2_review.P2-05"
+        ],
+        "recommendation": "Thống nhất giới hạn title Unicode UI/API và thông báo validation."
+      }
+    ],
+    "P3": [
+      {
+        "id": "P3-01",
+        "title": "Quy mô và chất lượng retrieval",
+        "observation": "Corpus 8 bài/24 câu nhỏ; B05 sai Top-1, B03/B07 false reject lịch sử; index RAM, chưa pagination, vector DB/hybrid/reranker.",
+        "recommendation": "Chỉ nghiên cứu sau khi có phạm vi và bộ đánh giá mở rộng; không tự đổi threshold.",
+        "severity": "P3",
+        "origin": "GĐ6.1",
+        "newIssue": false
+      },
+      {
+        "id": "P3-02",
+        "title": "Bảo vệ khi triển khai ngoài môi trường demo",
+        "observation": "Chưa có login rate limit, thu hồi JWT khi logout hoặc quota theo user; CORS cố định 127.0.0.1:5173. Có RBAC, expiry, ACTIVE và busy guard RAG.",
+        "recommendation": "Thiết kế theo môi trường triển khai tương lai; chưa pentest/thử tải/CVE, không tuyên bố production-ready.",
+        "severity": "P3",
+        "origin": "GĐ6.1",
+        "newIssue": false
+      },
+      {
+        "id": "P3-03",
+        "title": "Trải nghiệm và chức năng mở rộng",
+        "observation": "Chưa UI quản trị users, chat memory/history/streaming, realtime hoặc bản nháp form qua tab/reload; navigation React state.",
+        "recommendation": "Giữ phạm vi đồ án; chỉ bổ sung sau phê duyệt, không xem các chức năng chưa yêu cầu là lỗi.",
+        "severity": "P3",
+        "origin": "GĐ6.1",
+        "newIssue": false
+      },
+      {
+        "id": "P3-04",
+        "title": "Chất lượng đánh giá độc lập",
+        "observation": "Chấm groundedness lịch sử do Codex, chưa có người chấm độc lập hoặc tập doanh nghiệp lớn.",
+        "recommendation": "Bổ sung đánh giá độc lập/tập mới khi được duyệt; không thay nhãn hoặc kết quả lịch sử.",
+        "severity": "P3",
+        "origin": "GĐ6.1",
+        "newIssue": false
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "file": "docs/evidence/stage6-2/01-employee-ticket.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "994dbe88510deb5d1103d2cb39fefbda3dfb94f8b8d28f0812352a7d6d08d0ab",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/02-it-processing.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "0e729345165774ba4308b2a17e92f51bb16a933fe9c737409059a1dc1b18da3c",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/03-resolved-solution.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "195fe1c55f68ffb4b965acd51aef55e15ca07b270c9be0b03ac0a5f998ed6f3e",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/04-employee-kb.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "19a09cf79a6a1835233cf164ce9c57aea214dc559028d816409fbcdb05148af7",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/05-it-kb.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "43376601da45250e44472f22223b2f258b4dd7ee86b1c740c8ba471df2289cb0",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/06-rag-answer-mock.png",
+      "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+      "sha256": "e0570b9ea2f69a6f5337018eeef3904b1ee5797bd0b201f8ef5b7c16fe290e55",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/07-rag-fallback.png",
+      "mode": "REAL_RETRIEVAL_NO_PROVIDER",
+      "sha256": "ddb098cf6d41547a4c79b297e6903f8cffcf272f92434a4a100c4baffc23de17",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/08-fallback-ticket-form.png",
+      "mode": "REAL_BROWSER",
+      "sha256": "5fc0831d3eaf32946c25b94ecf0890780a01d80d2c3f3f1540e55b0fa885d1d4",
+      "visualReview": "PASS"
+    },
+    {
+      "file": "docs/evidence/stage6-2/09-mobile-rag-mock.png",
+      "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+      "sha256": "dcc2f5e83f389e679106ff0764e9770c7ffe120fbba8db85da56048361fb9306",
+      "visualReview": "PASS"
+    }
+  ],
+  "temporaryData": {
+    "users": [
+      {
+        "id": 62,
+        "role": "EMPLOYEE"
+      },
+      {
+        "id": 63,
+        "role": "IT"
+      },
+      {
+        "id": 64,
+        "role": "EMPLOYEE"
+      }
+    ],
+    "tickets": [
+      {
+        "id": 118,
+        "code": "TKT-000118"
+      },
+      {
+        "id": 119,
+        "code": "TKT-000119"
+      }
+    ],
+    "articles": [
+      {
+        "id": 156,
+        "code": "KB-000156"
+      },
+      {
+        "id": 157,
+        "code": "KB-000157"
+      }
+    ]
+  },
+  "recommendation_for_stage6_3": [
+    "Chốt chính sách bảo vệ ADMIN ACTIVE cuối, dùng fixture tạm/mô phỏng an toàn khi kiểm.",
+    "Thống nhất giới hạn title Unicode UI/API và thông báo validation.",
+    "Làm rõ dependency/cache/cổng và provenance để tái lập test trên môi trường mới.",
+    "Đánh giá grounding/câu mơ hồ và evidence dài trong phạm vi được duyệt, giữ nguyên kết quả lịch sử.",
+    "Giữ bốn nhóm P3 ngoài phạm vi nếu chưa có yêu cầu mở rộng."
+  ],
+  "previousAttempts": [
+    {
+      "testedAt": "2026-10-02T08:57:41.526Z",
+      "completed": false,
+      "e2e": {
+        "flow1": {
+          "name": "EMPLOYEE tạo Ticket",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Login và role",
+              "expected": "EMPLOYEE đăng nhập bằng UI thật",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Validation và tạo Ticket",
+              "expected": "Rỗng bị chặn; POST 201, NEW/LOW, đúng creator",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "id": 100,
+                "code": "TKT-000100",
+                "status": "NEW"
+              }
+            },
+            {
+              "name": "List/detail/reload",
+              "expected": "Ticket tồn tại sau reload, dữ liệu MySQL đúng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow2": {
+          "name": "IT tiếp nhận và xử lý",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "IT login và tiếp nhận",
+              "expected": "assigned_to là IT, NEW → RECEIVED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Priority và bắt đầu xử lý",
+              "expected": "LOW/MEDIUM/HIGH thủ công; RECEIVED → IN_PROGRESS",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "status": "IN_PROGRESS",
+                "historyCount": 3,
+                "actorField": "actor_id"
+              }
+            }
+          ]
+        },
+        "flow3": {
+          "name": "Solution, RESOLVED và EMPLOYEE xem kết quả",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Thiếu solution không đổi trạng thái/history",
+              "expected": "UI chặn rỗng; API 400; DB không đổi",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "RESOLVED có solution",
+              "expected": "Lưu solution, history đúng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "EMPLOYEE đăng nhập lại xem solution",
+              "expected": "Thấy RESOLVED; không có nút xử lý/đóng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Xử lý lại rồi CLOSED",
+              "expected": "RESOLVED → IN_PROGRESS → RESOLVED → CLOSED; không mở CLOSED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow4": {
+          "name": "Ticket negative / backend RBAC",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Chuẩn bị user đối chiếu",
+              "expected": "Chỉ tạo 2 user tạm cần cho IDOR/assigned khác IT",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "EMPLOYEE trái quyền và IDOR",
+              "expected": "403, body gán người xử lý 400; dữ liệu không đổi",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "IT khác không xử lý; thiếu token/ID/sai role",
+              "expected": "403 / 401 / 404 đúng thiết kế",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow5": {
+          "name": "Knowledge Base bằng UI thật",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "EMPLOYEE list/search/detail PUBLISHED",
+              "expected": "8 bài PUBLISHED, không có nút quản trị",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "IT tạo DRAFT và sửa",
+              "expected": "Code/creator giữ nguyên, updated_by là IT",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Publish/Archive/Draft và visibility EMPLOYEE",
+              "expected": "Vòng trạng thái đúng, EMPLOYEE chỉ thấy khi PUBLISHED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow6": {
+          "name": "KB backend RBAC",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "EMPLOYEE không ghi/đọc DRAFT",
+              "expected": "POST/PUT/PATCH status/detail đều 403",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "ADMIN quản lý bài của IT",
+              "expected": "Sửa DRAFT, giữ creator/code, updated_by ADMIN",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow7": {
+          "name": "RAG có nguồn: retrieval thật, Gemini MOCK",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Gửi câu hỏi, loading và chặn lặp",
+              "expected": "Một request, UI disable trong khi provider chờ",
+              "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+              "status": "PASS",
+              "observed": {
+                "mode": "MOCK_PROVIDER_REAL_RETRIEVAL_CONTEXT_VALIDATOR",
+                "sources": [
+                  "KB-000008"
+                ]
+              }
+            },
+            {
+              "name": "Không tự tạo Ticket / không gọi Google từ browser",
+              "expected": "Số Ticket không đổi trong FLOW 7, không lộ trace/raw output",
+              "mode": "REAL_DB_OBSERVATION",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow8": {
+          "name": "RAG ngoài KB → Ticket chủ động",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Threshold fallback thật",
+              "expected": "answered=false, sources=[], provider không được gọi",
+              "mode": "REAL_RETRIEVAL_NO_PROVIDER",
+              "status": "PASS"
+            },
+            {
+              "name": "Nút chuyển chỉ điều hướng, user quyết định gửi",
+              "expected": "Mở mục Ticket, chọn form; không POST tự động",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "autoSubmit": false,
+                "userDecision": "Hủy tạo, không thêm Ticket"
+              }
+            }
+          ]
+        },
+        "flow9": {
+          "name": "ADMIN",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "ADMIN profile, Ticket và KB",
+              "expected": "Quyền theo code, không có POST tạo Ticket",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "users": "Backend API available; dedicated frontend management screen not implemented."
+              }
+            },
+            {
+              "name": "ADMIN xử lý Ticket IT đang nhận qua API",
+              "expected": "ADMIN được đổi priority và workflow, IT khác vẫn bị chặn",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "ADMIN RAG",
+              "expected": "Có answer MOCK và fallback thật; không có nút tạo Ticket",
+              "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow10": {
+          "name": "Session / reload / error",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Reload, logout và protected UI",
+              "expected": "Giữ phiên qua reload; logout xóa token và UI bảo vệ",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Token sai/hết hạn, backend 401 thật",
+              "expected": "Xóa token và trở về login",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "INACTIVE trên user tạm",
+              "expected": "Login và token cũ bị 401, không đổi user gốc",
+              "mode": "REAL_API_MYSQL_TEMP_USER",
+              "status": "PASS"
+            },
+            {
+              "name": "UI lỗi 403/404/500, empty và loading",
+              "expected": "Hiển thị lỗi an toàn, không crash",
+              "mode": "MOCK_NETWORK_ERROR_EMPTY_DELAY",
+              "status": "PASS"
+            }
+          ]
+        }
+      },
+      "cleanup": {
+        "status": "PASS",
+        "fullOriginalRowsPreserved": true,
+        "remainingTemporaryRows": 0
+      },
+      "infrastructureError": null
+    },
+    {
+      "testedAt": "2026-10-02T09:00:36.973Z",
+      "completed": true,
+      "e2e": {
+        "flow1": {
+          "name": "EMPLOYEE tạo Ticket",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Login và role",
+              "expected": "EMPLOYEE đăng nhập bằng UI thật",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Validation và tạo Ticket",
+              "expected": "Rỗng bị chặn; POST 201, NEW/LOW, đúng creator",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "id": 109,
+                "code": "TKT-000109",
+                "status": "NEW"
+              }
+            },
+            {
+              "name": "List/detail/reload",
+              "expected": "Ticket tồn tại sau reload, dữ liệu MySQL đúng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow2": {
+          "name": "IT tiếp nhận và xử lý",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "IT login và tiếp nhận",
+              "expected": "assigned_to là IT, NEW → RECEIVED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Priority và bắt đầu xử lý",
+              "expected": "LOW/MEDIUM/HIGH thủ công; RECEIVED → IN_PROGRESS",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "status": "IN_PROGRESS",
+                "historyCount": 3,
+                "actorField": "actor_id"
+              }
+            }
+          ]
+        },
+        "flow3": {
+          "name": "Solution, RESOLVED và EMPLOYEE xem kết quả",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Thiếu solution không đổi trạng thái/history",
+              "expected": "UI chặn rỗng; API 400; DB không đổi",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "RESOLVED có solution",
+              "expected": "Lưu solution, history đúng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "EMPLOYEE đăng nhập lại xem solution",
+              "expected": "Thấy RESOLVED; không có nút xử lý/đóng",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Xử lý lại rồi CLOSED",
+              "expected": "RESOLVED → IN_PROGRESS → RESOLVED → CLOSED; không mở CLOSED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow4": {
+          "name": "Ticket negative / backend RBAC",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Chuẩn bị user đối chiếu",
+              "expected": "Chỉ tạo 2 user tạm cần cho IDOR/assigned khác IT",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "EMPLOYEE trái quyền và IDOR",
+              "expected": "403, body gán người xử lý 400; dữ liệu không đổi",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "IT khác không xử lý; thiếu token/ID/sai role",
+              "expected": "403 / 401 / 404 đúng thiết kế",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow5": {
+          "name": "Knowledge Base bằng UI thật",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "EMPLOYEE list/search/detail PUBLISHED",
+              "expected": "8 bài PUBLISHED, không có nút quản trị",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "IT tạo DRAFT và sửa",
+              "expected": "Code/creator giữ nguyên, updated_by là IT",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Publish/Archive/Draft và visibility EMPLOYEE",
+              "expected": "Vòng trạng thái đúng, EMPLOYEE chỉ thấy khi PUBLISHED",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow6": {
+          "name": "KB backend RBAC",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "EMPLOYEE không ghi/đọc DRAFT",
+              "expected": "POST/PUT/PATCH status/detail đều 403",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "ADMIN quản lý bài của IT",
+              "expected": "Sửa DRAFT, giữ creator/code, updated_by ADMIN",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow7": {
+          "name": "RAG có nguồn: retrieval thật, Gemini MOCK",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Gửi câu hỏi, loading và chặn lặp",
+              "expected": "Một request, UI disable trong khi provider chờ",
+              "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+              "status": "PASS",
+              "observed": {
+                "mode": "MOCK_PROVIDER_REAL_RETRIEVAL_CONTEXT_VALIDATOR",
+                "sources": [
+                  "KB-000008"
+                ]
+              }
+            },
+            {
+              "name": "Không tự tạo Ticket / không gọi Google từ browser",
+              "expected": "Số Ticket không đổi trong FLOW 7, không lộ trace/raw output",
+              "mode": "REAL_DB_OBSERVATION",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow8": {
+          "name": "RAG ngoài KB → Ticket chủ động",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Threshold fallback thật",
+              "expected": "answered=false, sources=[], provider không được gọi",
+              "mode": "REAL_RETRIEVAL_NO_PROVIDER",
+              "status": "PASS"
+            },
+            {
+              "name": "Nút chuyển chỉ điều hướng, user quyết định gửi",
+              "expected": "Mở mục Ticket, chọn form; không POST tự động",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "autoSubmit": false,
+                "userDecision": "Hủy tạo, không thêm Ticket"
+              }
+            }
+          ]
+        },
+        "flow9": {
+          "name": "ADMIN",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "ADMIN profile, Ticket và KB",
+              "expected": "Quyền theo code, không có POST tạo Ticket",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS",
+              "observed": {
+                "users": "Backend API available; dedicated frontend management screen not implemented."
+              }
+            },
+            {
+              "name": "ADMIN xử lý Ticket IT đang nhận qua API",
+              "expected": "ADMIN được đổi priority và workflow, IT khác vẫn bị chặn",
+              "mode": "REAL_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "ADMIN RAG",
+              "expected": "Có answer MOCK và fallback thật; không có nút tạo Ticket",
+              "mode": "MOCK_PROVIDER_REAL_RETRIEVAL",
+              "status": "PASS"
+            }
+          ]
+        },
+        "flow10": {
+          "name": "Session / reload / error",
+          "status": "PASS",
+          "checks": [
+            {
+              "name": "Reload, logout và protected UI",
+              "expected": "Giữ phiên qua reload; logout xóa token và UI bảo vệ",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "Token sai/hết hạn, backend 401 thật",
+              "expected": "Xóa token và trở về login",
+              "mode": "BROWSER_API_MYSQL",
+              "status": "PASS"
+            },
+            {
+              "name": "INACTIVE trên user tạm",
+              "expected": "Login và token cũ bị 401, không đổi user gốc",
+              "mode": "REAL_API_MYSQL_TEMP_USER",
+              "status": "PASS"
+            },
+            {
+              "name": "UI lỗi 403/404/500, empty và loading",
+              "expected": "Hiển thị lỗi an toàn, không crash",
+              "mode": "MOCK_NETWORK_ERROR_EMPTY_DELAY",
+              "status": "PASS"
+            }
+          ]
+        }
+      },
+      "cleanup": {
+        "status": "PASS",
+        "fullOriginalRowsPreserved": true,
+        "remainingTemporaryRows": 0
+      },
+      "infrastructureError": null
+    }
+  ],
+  "cleanup": {
+    "status": "PASS",
+    "fullOriginalRowsPreserved": true,
+    "remainingTemporaryRows": 0
+  },
+  "runtimeCleanup": {
+    "httpServer": "CLOSED",
+    "modelDispose": "DISPOSED"
+  },
+  "priorReportsPreserved": true,
+  "finishedAt": "2026-10-02T09:21:42.474Z",
+  "e2eSummary": {
+    "PASS": 10,
+    "FAIL": 0,
+    "PARTIAL": 0,
+    "NOT RUN": 0
+  },
+  "e2eStepSummary": {
+    "total": 28,
+    "passed": 28,
+    "failed": 0
+  },
+  "newApplicationIssues": [],
+  "testInfrastructure": {
+    "resolved": true,
+    "unresolved": 0,
+    "observation": "Hai lượt đầu không hoàn tất teardown do stopBrowser chờ sự kiện exit đã xảy ra. Sửa riêng runner để kiểm signalCode/xóa tham chiếu; lần rà soát cuối cũng loại report/ảnh GĐ6.2 khỏi artifact lịch sử cần khôi phục.",
+    "finalRun": "Chạy lại đầy đủ E2E/regression/build sau chỉnh runner, exit 0, HTTP CLOSED, model DISPOSED.",
+    "previousAttempts": "Giữ một checkpoint completed=false và một lượt trước completed=true; số liệu chính thuộc lượt mới nhất."
+  },
+  "manualReview": {
+    "reviewedAt": "2026-10-02T09:34:37.350Z",
+    "scope": "Phân loại lỗi, rà ảnh/secret, đối chiếu kết quả tự động; không đổi nhãn kiểm thử.",
+    "sections": 26,
+    "postRunFormatting": "Chỉ sửa mã hóa comment trong runner sau test; không đổi logic."
+  }
+}

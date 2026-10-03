@@ -232,3 +232,28 @@ GĐ5.5 đã kiểm thử 34 browser tests, regression 83 API nghiệp vụ + 51 
 Pipeline hiện tại: Knowledge Base PUBLISHED → Chunking → Embedding local bằng Xenova/multilingual-e5-small (384 chiều) → vector trong RAM → Retrieval cosine → context → Gemini gemini-3.5-flash-lite → answer/sources hoặc fallback → React Trợ lý CNTT. Câu hỏi đi qua JWT, validation và query embedding; Gemini chỉ chạy ở backend. EMPLOYEE gửi yêu cầu hỗ trợ bằng cách tạo Ticket, IT tiếp nhận/xử lý; RAG không tự tạo Ticket.
 
 Xem [tổng kết và đánh giá RAG](docs/giai-doan-5-6.md), [kết quả kiểm chứng cuối](docs/stage5-6-results.json) và [checklist 14 hình minh chứng](docs/giai-doan-5-minh-chung.md). GĐ5.6 giữ nguyên code nghiệp vụ/số liệu thực nghiệm cũ và không gọi Gemini thật. Các chỉ số Retrieval, Generation, groundedness, nguồn, latency và UX được phân biệt; những trường hợp chưa đạt vẫn được ghi nhận. Phần RAG hoàn thiện trong phạm vi nghiên cứu/thực nghiệm đồ án, chưa triển khai production.
+
+## Kiểm thử hoàn thiện GĐ6.3
+
+Từ `backend`, `npm run test:stage6-3` chạy logic/replay/mock trong bộ nhớ:
+không cần `.env`, MySQL, browser, model cache hoặc Gemini thật. Hai thư mục
+backend/frontend có package-lock; cài dependency bằng `npm ci` trong từng thư mục.
+
+`npm run test:stage6-3:integration` chạy API/MySQL, browser Unicode, E2E và regression.
+Chỉ dùng database local demo `it_support_rag`, ban đầu 3 users/3 tickets/17 history/8 KB
+PUBLISHED, ba demo role ACTIVE; không chạy cùng phiên sửa dữ liệu khác.
+Cần cấu hình backend local theo `.env.example`, mật khẩu demo runtime, JWT và MySQL;
+không ghi secret vào báo cáo. Không cần Gemini key thật: provider được mock, 0 request thật.
+Model E5/cache hiện có cần cho retrieval thật; không xóa cache. Lần tải model đầu cần mạng.
+
+Browser dùng Microsoft Edge và Playwright 1.63.0 hiện có tại
+`%TEMP%/it-support-browser-check/node_modules/playwright` (cùng prerequisite các suite cũ).
+Nếu thiếu, cài đúng phiên bản vào thư mục test riêng bằng
+`npm install --prefix "$env:TEMP/it-support-browser-check" --no-save playwright@1.63.0`
+trong PowerShell. Cổng 5173 phải trống; runner tự mở/đóng backend/frontend test.
+Không chạy các suite API cũ riêng trên dữ liệu cần bảo toàn; runner tổng dọn fixture
+và đối chiếu toàn bộ bản ghi, giữ báo cáo lịch sử nguyên byte.
+
+**NOT VERIFIED ON CLEAN MACHINE.** Các lệnh npm ci ở trên là hướng dẫn chuẩn bị,
+không phải tuyên bố đã kiểm chứng cài mới/CI. Kết quả GĐ6.3 tách khỏi lịch sử GĐ5/6.2;
+mock/replay không chứng minh chất lượng Gemini live. Chi tiết: [GĐ6.3](docs/giai-doan-6-3.md).

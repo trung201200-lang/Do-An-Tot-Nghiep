@@ -76,6 +76,7 @@ export default function KnowledgeBase({ token, user, onUnauthorized }) {
     if (!canManage || busy) return;
     const body = { title: title.trim(), content: content.trim() };
     if (!body.title || !body.content) { setError('Tiêu đề và nội dung không được chỉ chứa khoảng trắng.'); return; }
+    if ([...body.title].length > 255) { setError('Tiêu đề tối đa 255 ký tự Unicode.'); return; }
     if (new TextEncoder().encode(JSON.stringify(body)).length > 16 * 1024) {
       setError('Nội dung quá dài. Hãy rút gọn bài viết trước khi lưu.'); return;
     }
@@ -152,7 +153,8 @@ export default function KnowledgeBase({ token, user, onUnauthorized }) {
       {canManage && ['create', 'edit'].includes(mode) && <form className="kb-form" onSubmit={save}>
         <h3>{mode === 'create' ? 'Tạo bài viết' : 'Sửa bài viết'}</h3>
         <label htmlFor="kb-title">Tiêu đề</label>
-        <input id="kb-title" required maxLength={255} value={title} onChange={event => setTitle(event.target.value)} disabled={busy} />
+        <input id="kb-title" required aria-describedby="kb-title-limit" value={title} onChange={event => setTitle(event.target.value)} disabled={busy} />
+        <p id="kb-title-limit">{[...title.trim()].length}/255 ký tự Unicode</p>
         <label htmlFor="kb-content">Nội dung</label>
         <textarea id="kb-content" required rows={12} value={content} onChange={event => setContent(event.target.value)} disabled={busy} />
         <div className="actions">

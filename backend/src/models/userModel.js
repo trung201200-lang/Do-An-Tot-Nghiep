@@ -29,14 +29,38 @@ async function createUser({ name, email, password, role, status }) {
   return findById(result.insertId);
 }
 
-async function updateStatus(id, status) {
-  await pool.execute('UPDATE users SET status = ? WHERE id = ?', [status, id]);
-  return findById(id);
+// Mọi cập nhật role/status dùng cùng thứ tự khóa để tránh hai request cùng
+// loại bỏ ADMIN ACTIVE cuối. Quy mô users nhỏ; không thêm bảng/khóa phân tán.
+async function updateAccess(id, field, value) {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const [rows] = await connection.execute(
+      'SELECT id, name, email, role, status FROM users ORDER BY id FOR UPDATE',
+    );
+    const target = rows.find(user => user.id === id);
+    if (!target) { await connection.commit(); return undefined; }
+    const next = { ...target, [field]: value };
+    if (target.role === 'ADMIN' && target.status === 'ACTIVE'
+        && (next.role !== 'ADMIN' || next.status !== 'ACTIVE')
+        && !rows.some(user => user.id !== id && user.role === 'ADMIN' && user.status === 'ACTIVE')) {
+      throw Object.assign(new Error('Không thể hạ quyền hoặc vô hiệu hóa ADMIN đang hoạt động cuối cùng.'), {
+        code: 'LAST_ACTIVE_ADMIN', status: 409, isUserError: true,
+      });
+    }
+    // field chỉ do hai hàm nội bộ bên dưới lựa chọn, không nhận từ request.
+    await connection.execute(`UPDATE users SET ${field} = ? WHERE id = ?`, [value, id]);
+    await connection.commit();
+    return next;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }
 
-async function updateRole(id, role) {
-  await pool.execute('UPDATE users SET role = ? WHERE id = ?', [role, id]);
-  return findById(id);
-}
+async function updateStatus(id, status) { return updateAccess(id, 'status', status); }
+async function updateRole(id, role) { return updateAccess(id, 'role', role); }
 
 module.exports = { findByEmail, findById, listUsers, createUser, updateStatus, updateRole };

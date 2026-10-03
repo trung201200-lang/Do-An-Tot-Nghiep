@@ -12,7 +12,9 @@
         "experiment:retrieval": "node src/rag/retrievalExperiment.js",
         "test:stage5-3": "node tests/stage5-3-experiment.cjs",
         "test:stage5-4:logic": "node tests/stage5-4-logic.cjs",
-        "test:stage5-4": "node tests/stage5-4-generation.cjs"
+        "test:stage5-4": "node tests/stage5-4-generation.cjs",
+        "test:stage6-3": "node tests/stage6-3-fixes.cjs",
+        "test:stage6-3:integration": "node tests/stage6-3-integration.cjs"
     },
     "dependencies": {
         "@google/genai": "2.24.0",

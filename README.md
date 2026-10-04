@@ -199,7 +199,7 @@ Tài liệu từng giai đoạn mô tả trạng thái tại thời điểm đó
 
 Hiện chưa phân trang, cập nhật thời gian thực, upload hoặc lịch sử phiên bản KB. Search không bỏ dấu tiếng Việt; chuyển tab không lưu form chưa gửi. Review bảo mật ở phạm vi đồ án/local, chưa phải đánh giá bảo mật triển khai production.
 
-GĐ5.6 đã hoàn thành tổng hợp, đánh giá và kiểm thử cuối phần RAG. Dừng sau GĐ5.6; chưa bắt đầu GĐ6.
+GĐ6.4 đã hoàn thành kiểm chứng bản demo cuối. Xem [báo cáo](docs/giai-doan-6-4.md), [kịch bản demo 7–10 phút](docs/giai-doan-6-4-demo-script.md) và [kết quả](docs/stage6-4-results.json). Phạm vi RAG kiểm chứng mới dùng E5 thật/Gemini mock, 0 request Gemini thật; hai P2 vẫn MITIGATED. Dừng sau GĐ6.4.
 
 ## GĐ5.4: RAG Generation với Gemini
 
@@ -257,3 +257,9 @@ và đối chiếu toàn bộ bản ghi, giữ báo cáo lịch sử nguyên byt
 **NOT VERIFIED ON CLEAN MACHINE.** Các lệnh npm ci ở trên là hướng dẫn chuẩn bị,
 không phải tuyên bố đã kiểm chứng cài mới/CI. Kết quả GĐ6.3 tách khỏi lịch sử GĐ5/6.2;
 mock/replay không chứng minh chất lượng Gemini live. Chi tiết: [GĐ6.3](docs/giai-doan-6-3.md).
+
+GĐ6.4 dùng lại bộ integration trên, bổ sung `node tests/stage6-4-ui.cjs` trong
+backend để kiểm form/detail/editor tại 1280px và 390px, không ghi dữ liệu form.
+Chạy tuần tự, không cùng phiên demo. E5 ở môi trường kiểm chứng vẫn cần mạng;
+sandbox chặn fetch có thể làm child test dừng trước cleanup. Khi runner lỗi,
+kiểm fixture và fingerprint theo báo cáo GĐ6.4 trước khi chạy lại, không reset DB.

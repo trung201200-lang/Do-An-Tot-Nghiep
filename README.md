@@ -263,3 +263,35 @@ backend để kiểm form/detail/editor tại 1280px và 390px, không ghi dữ 
 Chạy tuần tự, không cùng phiên demo. E5 ở môi trường kiểm chứng vẫn cần mạng;
 sandbox chặn fetch có thể làm child test dừng trước cleanup. Khi runner lỗi,
 kiểm fixture và fingerprint theo báo cáo GĐ6.4 trước khi chạy lại, không reset DB.
+
+## GĐ7.1: lựa chọn generation provider
+
+Backend đọc `RAG_PROVIDER` khi tạo RAG service. Bỏ biến này dùng `gemini` mặc định;
+`RAG_PROVIDER=gemini` giữ model, prompt, evidence validator và response hiện tại.
+Giá trị rỗng/không hợp lệ trả `GENERATION_PROVIDER_CONFIGURATION` (503).
+`RAG_PROVIDER=ollama` hiện trả `OLLAMA_NOT_IMPLEMENTED` (503): chưa tích hợp Ollama,
+không tự chuyển sang Gemini. Khởi động lại backend khi đổi provider.
+
+Factory ở `backend/src/rag/generationProvider.js`; Gemini client chỉ khởi tạo khi
+thực sự cần generation. Fallback retrieval với Gemini mặc định không cần key.
+Provider không hợp lệ/Ollama chưa hỗ trợ bị từ chối ngay khi tạo service, trước retrieval.
+API vẫn chỉ nhận `{ question }`, không nhận provider/model/URL từ frontend.
+
+API JavaScript nội bộ hỗ trợ `createRagService(pool, { provider, loadEmbedding })`.
+Provider có `{ name, model, generate(prompt) }`, trả `{ text, usage }`; `loadEmbedding`
+dành cho test dùng embedder trong bộ nhớ. Khi không inject, dùng E5 và factory thật.
+Prompt GĐ7.1 vẫn có `systemInstruction/contents` như Gemini; adapter Ollama tương lai
+cần chuyển đổi định dạng, giữ nội dung instruction/schema và validator chung.
+
+Trace nội bộ thêm `provider`, `model`, `providerCalled`; giữ `geminiCalled` cho runner
+cũ, chỉ true khi gọi generate của provider mang tên Gemini. Các cờ là đánh dấu gọi
+adapter, không chứng minh request mạng thành công. Response công khai vẫn chỉ
+`answered/answer/sources`; route không trả trace. Provider injection là cấu hình tin cậy
+trong code backend, không phải dữ liệu người dùng. Lỗi provider được truyền lên,
+không thử provider khác. Mã lỗi validator vẫn giữ `GEMINI_*` để tương thích ở GĐ7.1.
+
+Test an toàn từ thư mục backend: `npm run test:stage7-1`. Runner dùng mock SDK,
+pool/embedder trong bộ nhớ; chặn mạng, đọc `.env`, driver MySQL và model loader;
+không ghi báo cáo lịch sử. Gồm 11 nhóm test provider/service và 58 test logic hồi quy.
+Không chạy integration/API/browser thật trong giai đoạn này: các runner đó cần
+MySQL, có thể tạo/dọn fixture, ghi artifact hoặc gọi model/API.

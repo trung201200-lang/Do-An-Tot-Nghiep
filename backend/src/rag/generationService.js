@@ -8,25 +8,25 @@ const {loadEmbedder}=require('./embedding');
 const {retrieve,queryText}=require('./retrieval');
 const {selectContext,verifySources}=require('./generationContext');
 const {buildPrompt}=require('./generationPrompt');
-const {createGeminiClient}=require('./geminiClient');
+const {createGenerationProvider,validateProvider}=require('./generationProvider');
 const {fallback,normalizeOutput}=require('./generationOutput');
 const {RagError,ensureNoSecrets}=require('./generationSafety');
 function validateQuestion(question) {
   if(typeof question!=='string'||!question.trim()||Array.from(question).length>config.MAX_QUESTION_CHARACTERS)throw new RagError('INVALID_QUESTION',400,'Câu hỏi phải có từ 1 đến 1000 ký tự.');
   const result=normalizeText(question);ensureNoSecrets(result);return result;
 }
-async function answerQuestion({question,corpus,embedder,generate,verify=async()=>{}}) {
+async function answerQuestion({question,corpus,embedder,generate,providerName='gemini',providerModel=config.MODEL,verify=async()=>{}}) {
   const started=performance.now();question=validateQuestion(question);
   if(embedder.countTokens(queryText(question))>MAX_TOKENS)throw new RagError('QUESTION_TOO_LONG',400,'Câu hỏi vượt giới hạn token; vui lòng rút gọn.');
   const retrieval=await retrieve({question,vectors:corpus.vectors,embedder,k:config.TOP_K,threshold:config.THRESHOLD});
   const timing={queryEmbeddingMs:retrieval.timing.queryEmbeddingMs,retrievalMs:retrieval.timing.searchMs,contextMs:0,generationMs:0,totalMs:0};
-  const trace={retrieval:retrieval.topArticles,context:[],geminiCalled:false,reason:'BELOW_THRESHOLD',timing};
+  const trace={retrieval:retrieval.topArticles,context:[],provider:providerName,model:providerModel,providerCalled:false,geminiCalled:false,reason:'BELOW_THRESHOLD',timing};
   if(!retrieval.accepted){timing.totalMs=performance.now()-started;return {response:fallback(),trace};}
   const contextStart=performance.now();const context=selectContext(retrieval.topArticles,corpus.articles);await verify(context);
   trace.context=context;timing.contextMs=performance.now()-contextStart;
   if(!context.length){trace.reason='NO_CONTEXT';timing.totalMs=performance.now()-started;return {response:fallback(),trace};}
   const prompt=buildPrompt(question,context);ensureNoSecrets(prompt);
-  const generateStart=performance.now();trace.geminiCalled=true;
+  const generateStart=performance.now();trace.providerCalled=true;trace.geminiCalled=providerName==='gemini';
   const generated=await generate(prompt);timing.generationMs=performance.now()-generateStart;
   let normalized;
   try { normalized=normalizeOutput(generated.text,context); }
@@ -43,10 +43,13 @@ async function answerQuestion({question,corpus,embedder,generate,verify=async()=
   Object.assign(trace,{reason:normalized.reason,evidence:normalized.evidence,usage:generated.usage});
   timing.totalMs=performance.now()-started;return {response:normalized.response,trace};
 }
-function createRagService(pool) {
-  let embedderPromise,corpus,indexKey,client,busy=false;
+// Injection is an internal JS API, not a public request option. loadEmbedding
+// permits in-memory service tests without downloading a model or using MySQL.
+function createRagService(pool,{provider,loadEmbedding=loadEmbedder}={}) {
+  const selectedProvider=validateProvider(provider===undefined?createGenerationProvider():provider);
+  let embedderPromise,corpus,indexKey,busy=false;
   async function prepare(){
-    if(!embedderPromise)embedderPromise=loadEmbedder().catch(error=>{embedderPromise=null;throw error;});
+    if(!embedderPromise)embedderPromise=loadEmbedding().catch(error=>{embedderPromise=null;throw error;});
     const embedder=await embedderPromise;
     const rows=await readPublished(pool);const key=createHash('sha256').update(JSON.stringify(rows)).digest('hex');
     if(key!==indexKey){corpus=rows.length?await runPipeline(pool,embedder):{articles:[],vectors:[]};indexKey=key;}
@@ -57,7 +60,7 @@ function createRagService(pool) {
     if(busy)throw new RagError('RAG_BUSY',429,'Hệ thống đang xử lý câu hỏi khác; vui lòng thử lại.');
     busy=true;
     try{const start=performance.now();const prepared=await prepare();const preparationMs=performance.now()-start;
-      const result=await answerQuestion({question,...prepared,verify:context=>verifySources(pool,context),generate:async prompt=>{if(!client)client=createGeminiClient();return client.generate(prompt);}});
+      const result=await answerQuestion({question,...prepared,providerName:selectedProvider.name,providerModel:selectedProvider.model,verify:context=>verifySources(pool,context),generate:prompt=>selectedProvider.generate(prompt)});
       result.trace.preparationMs=preparationMs;return result;
     }finally{busy=false;}
   },async dispose(){if(embedderPromise)await(await embedderPromise).dispose();}};

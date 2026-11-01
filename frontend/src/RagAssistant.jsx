@@ -3,6 +3,11 @@ import { apiRequest } from './api';
 
 const MAX_QUESTION = 1000; // Đồng bộ giới hạn Unicode code point của API GĐ5.4.
 const failureText = failure => {
+  if (['OLLAMA_INVALID_RESPONSE', 'OLLAMA_INVALID_OUTPUT', 'OLLAMA_INVALID_EVIDENCE', 'OLLAMA_INCOMPLETE', 'OLLAMA_EMPTY'].includes(failure.code))
+    return 'Chưa xác minh được câu trả lời từ Ollama. Bạn có thể diễn đạt lại câu hỏi hoặc thử lại sau.';
+  if (failure.code === 'OLLAMA_UNAVAILABLE') return 'Không kết nối được Ollama. Vui lòng kiểm tra dịch vụ local đã chạy.';
+  if (failure.code === 'OLLAMA_MODEL_UNAVAILABLE') return 'Không tìm thấy model Ollama. Vui lòng kiểm tra model đã được tải trên backend.';
+  if (failure.code === 'OLLAMA_CONFIGURATION') return 'Cấu hình Ollama trên backend chưa hợp lệ.';
   if (['GEMINI_INVALID_EVIDENCE', 'GEMINI_INVALID_OUTPUT', 'GEMINI_INCOMPLETE', 'GEMINI_EMPTY'].includes(failure.code))
     return 'Chưa xác minh được câu trả lời từ nguồn kiến thức. Bạn có thể diễn đạt lại câu hỏi hoặc thử lại sau.';
   if (failure.code === 'GEMINI_RATE_LIMIT') return 'Dịch vụ trả lời đang hết hạn mức hoặc giới hạn lượt hỏi. Vui lòng thử lại sau.';

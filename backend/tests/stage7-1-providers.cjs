@@ -58,10 +58,16 @@ async function main() {
     }
     delete process.env.RAG_PROVIDER;
   });
-  await check('Ollama explicitly unavailable, never falls back to Gemini', () => {
+  await check('Ollama selection is lazy and never selects Gemini', async () => {
     process.env.RAG_PROVIDER = 'ollama';
-    assert.throws(() => createGenerationProvider({ geminiFactory: () => { throw new Error('SDK_UNEXPECTED'); } }), e => e.code === 'OLLAMA_NOT_IMPLEMENTED' && e.status === 503);
-    assert.throws(() => createRagService({}), e => e.code === 'OLLAMA_NOT_IMPLEMENTED');
+    process.env.OLLAMA_MODEL = 'fixture:local';
+    process.env.OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
+    process.env.OLLAMA_TIMEOUT_MS = '30000';
+    let calls = 0;
+    const provider = createGenerationProvider({ geminiFactory: () => { throw new Error('SDK_UNEXPECTED'); },
+      ollamaFactory: () => ({ async generate() { calls++; return { text: valid }; } }) });
+    assert.equal(provider.name, 'ollama'); assert.equal(calls, 0);
+    await provider.generate({}); assert.equal(calls, 1);
     delete process.env.RAG_PROVIDER;
   });
   await check('Service injection, actual provider trace, unchanged public response', async () => {

@@ -32,6 +32,10 @@ async function answerQuestion({question,corpus,embedder,generate,providerName='g
   try { normalized=normalizeOutput(generated.text,context); }
   catch(error) {
     if(['GEMINI_INVALID_OUTPUT','GEMINI_INVALID_EVIDENCE'].includes(error.code)) {
+      if(providerName==='ollama') {
+        throw new RagError(error.code.replace('GEMINI_', 'OLLAMA_'), error.status,
+          'Không xác minh được nội dung hoặc căn cứ của câu trả lời Ollama.');
+      }
       ensureNoSecrets(generated.text);
       timing.totalMs=performance.now()-started;
       // Chỉ runner thực nghiệm đọc diagnostic; HTTP route chỉ trả code/message cố định.

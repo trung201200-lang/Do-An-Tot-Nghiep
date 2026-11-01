@@ -269,19 +269,19 @@ kiểm fixture và fingerprint theo báo cáo GĐ6.4 trước khi chạy lại, 
 Backend đọc `RAG_PROVIDER` khi tạo RAG service. Bỏ biến này dùng `gemini` mặc định;
 `RAG_PROVIDER=gemini` giữ model, prompt, evidence validator và response hiện tại.
 Giá trị rỗng/không hợp lệ trả `GENERATION_PROVIDER_CONFIGURATION` (503).
-`RAG_PROVIDER=ollama` hiện trả `OLLAMA_NOT_IMPLEMENTED` (503): chưa tích hợp Ollama,
+GĐ7.2 bổ sung adapter hoạt động cho `RAG_PROVIDER=ollama` (hướng dẫn bên dưới),
 không tự chuyển sang Gemini. Khởi động lại backend khi đổi provider.
 
 Factory ở `backend/src/rag/generationProvider.js`; Gemini client chỉ khởi tạo khi
 thực sự cần generation. Fallback retrieval với Gemini mặc định không cần key.
-Provider không hợp lệ/Ollama chưa hỗ trợ bị từ chối ngay khi tạo service, trước retrieval.
+Provider/cấu hình Ollama không hợp lệ bị từ chối ngay khi tạo service, trước retrieval.
 API vẫn chỉ nhận `{ question }`, không nhận provider/model/URL từ frontend.
 
 API JavaScript nội bộ hỗ trợ `createRagService(pool, { provider, loadEmbedding })`.
 Provider có `{ name, model, generate(prompt) }`, trả `{ text, usage }`; `loadEmbedding`
 dành cho test dùng embedder trong bộ nhớ. Khi không inject, dùng E5 và factory thật.
-Prompt GĐ7.1 vẫn có `systemInstruction/contents` như Gemini; adapter Ollama tương lai
-cần chuyển đổi định dạng, giữ nội dung instruction/schema và validator chung.
+Prompt vẫn có `systemInstruction/contents` như Gemini; adapter Ollama chuyển thành
+messages system/user, giữ nội dung instruction/schema và validator chung.
 
 Trace nội bộ thêm `provider`, `model`, `providerCalled`; giữ `geminiCalled` cho runner
 cũ, chỉ true khi gọi generate của provider mang tên Gemini. Các cờ là đánh dấu gọi
@@ -295,3 +295,76 @@ pool/embedder trong bộ nhớ; chặn mạng, đọc `.env`, driver MySQL và m
 không ghi báo cáo lịch sử. Gồm 11 nhóm test provider/service và 58 test logic hồi quy.
 Không chạy integration/API/browser thật trong giai đoạn này: các runner đó cần
 MySQL, có thể tạo/dọn fixture, ghi artifact hoặc gọi model/API.
+
+## GĐ7.2: Ollama Local
+
+`ollamaClient.js` dùng fetch có sẵn của Node, `POST /api/chat`, `stream: false`,
+`format: RESPONSE_SCHEMA`, giới hạn output `num_predict` bằng cấu hình generation
+hiện tại. Không thêm dependency. Chuyển prompt tại adapter, không đổi prompt Gemini.
+Kết quả `message.content` được kiểm JSON/schema rồi trả `{ text, usage }`;
+`prompt_eval_count/eval_count` thành input/output tokens, thiếu số liệu trả null.
+Validator chung tiếp tục kiểm toàn evidence và nguồn PUBLISHED trước/sau generation.
+Mã lỗi validator của nhánh Ollama đổi thành `OLLAMA_INVALID_OUTPUT/EVIDENCE`;
+Gemini giữ nguyên mã lỗi/response. Không log body hoặc raw lỗi provider.
+
+Cấu hình riêng trong `backend/.env` local (người dùng tự điền, không commit):
+
+```dotenv
+RAG_PROVIDER=ollama
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=TEN_MODEL_LOCAL_DA_TAI
+OLLAMA_TIMEOUT_MS=30000
+```
+
+`OLLAMA_MODEL` bắt buộc khi chọn Ollama, không có model mặc định và không tự tải.
+Tên trên là placeholder, phải thay bằng tag thật trong `ollama ls`.
+URL chỉ chấp nhận HTTP loopback 127.0.0.1/localhost/[::1], có thể đổi port;
+không path/query/credential và không theo redirect. Tag chứa `cloud` bị chặn;
+người vận hành vẫn phải bảo đảm model/daemon thực sự chạy local, không dùng alias
+trỏ cloud hoặc proxy. Frontend không được chọn provider/model/URL.
+Timeout 1–300000 ms, mặc định 30000; timer áp dụng cả fetch và đọc response body.
+
+Lỗi phân biệt: `OLLAMA_UNAVAILABLE` (503, không kết nối),
+`OLLAMA_MODEL_UNAVAILABLE` (503, HTTP 404: model hoặc endpoint không tồn tại),
+`OLLAMA_TIMEOUT` (504), `OLLAMA_HTTP_ERROR` (502),
+`OLLAMA_INVALID_RESPONSE`, `OLLAMA_EMPTY`, `OLLAMA_INCOMPLETE`,
+`OLLAMA_INVALID_OUTPUT`, `OLLAMA_INVALID_EVIDENCE` (502).
+Thông báo cố định, không trả nội dung lỗi upstream. Không retry/chuyển Gemini.
+
+### Cài và tải model thủ công — chưa thực hiện trong GĐ7.2
+
+1. Cài Ollama theo [hướng dẫn Windows chính thức](https://docs.ollama.com/windows)
+   và mở ứng dụng. API local mặc định ở port 11434.
+2. Chọn model local phù hợp RAM/GPU và hỗ trợ structured output. Không có khẳng định
+   về tốc độ/chất lượng model cụ thể ở giai đoạn này. Tự chạy các lệnh dưới đây sau
+   khi thay placeholder bằng tên/tag model mong muốn:
+
+```powershell
+ollama pull <model:tag>
+ollama ls
+# Chỉ khi chưa có ứng dụng/daemon đang phục vụ:
+ollama serve
+```
+
+3. Đặt `OLLAMA_MODEL` trùng tag vừa tải, cấu hình backend như trên rồi khởi động lại
+   backend. Muốn dùng lại Gemini, đặt `RAG_PROVIDER=gemini` và restart; không tự đổi.
+
+Nguồn giao thức: [Chat API](https://docs.ollama.com/api/chat),
+[structured outputs](https://docs.ollama.com/capabilities/structured-outputs),
+[CLI](https://docs.ollama.com/cli). Chỉ dùng mô hình local, không cần Ollama API key.
+
+### Kiểm chứng và giới hạn
+
+Trong backend: `npm run test:stage7-2`. Gồm 18 nhóm mock HTTP Ollama, 11 nhóm
+provider/service và 58 test logic hồi quy; không mạng thật/MySQL/model download,
+không ghi báo cáo lịch sử. Test GĐ7.1 đã cập nhật ca Ollama từ placeholder sang
+lựa chọn adapter lazy; không còn kỳ vọng lỗi NOT_IMPLEMENTED.
+
+Chưa kiểm daemon/model Ollama thật, tốc độ/phần cứng, chất lượng tiếng Việt,
+hoặc toàn bộ browser/E2E. Giao diện vẫn abort request sau 65 giây; tăng timeout
+backend trên mức này không làm UI đợi lâu hơn. Cold start E5 và nạp model local
+có thể gây timeout; browser abort không bảo đảm model đã ngừng tính toán.
+Ngân sách context hiện tại là ký tự, không phải tokenizer Ollama; cần kiểm context
+window của model thực tế trước benchmark, chưa chứng minh không truncation.
+E5 vẫn có thể cần mạng lúc nạp: tích hợp Ollama không đồng nghĩa toàn bộ RAG đã offline.
+Evidence khớp nguồn không bảo đảm mọi khẳng định trong answer đúng ngữ nghĩa.

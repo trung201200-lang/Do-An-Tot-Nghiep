@@ -1,0 +1,6 @@
+.ui-confirm-dialog { width: min(480px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: var(--space-6); color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+.ui-confirm-dialog::backdrop { background: #111e3680; }
+.ui-confirm-dialog h2 { font-size: 21px; overflow-wrap: anywhere; }
+.ui-confirm-dialog p { color: var(--text-muted); }
+.ui-confirm-dialog .actions { justify-content: flex-end; margin-top: var(--space-6); }
+@media (max-width: 600px) { .ui-confirm-dialog { padding: var(--space-5); } .ui-confirm-dialog .actions > button { flex: 1 1 100%; } }

@@ -14,7 +14,11 @@
         "test:stage5-4:logic": "node tests/stage5-4-logic.cjs",
         "test:stage5-4": "node tests/stage5-4-generation.cjs",
         "test:stage6-3": "node tests/stage6-3-fixes.cjs",
-        "test:stage6-3:integration": "node tests/stage6-3-integration.cjs"
+        "test:stage6-3:integration": "node tests/stage6-3-integration.cjs",
+        "test:stage7-1": "node tests/stage7-1-providers.cjs",
+        "test:stage7-2": "node tests/stage7-2-ollama.cjs && node tests/stage7-1-providers.cjs",
+        "test:rag-diagnostics": "node tests/rag-diagnostics.cjs",
+        "test:stage7-2-2": "node tests/stage7-2-2-grounding.cjs"
     },
     "dependencies": {
         "@google/genai": "2.24.0",

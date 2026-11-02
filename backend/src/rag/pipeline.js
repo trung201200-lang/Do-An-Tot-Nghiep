@@ -4,28 +4,35 @@ const os = require('node:os');
 const config = require('./config');
 const { normalizeText, embeddingText, chunkArticle, validateCoverage } = require('./text');
 const { validateVector } = require('./embedding');
+const { setDiagnosticStage } = require('./ragDiagnostics');
 const PUBLISHED_SQL = 'SELECT id, code, title, content, status, updated_at FROM knowledge_articles WHERE status = ? ORDER BY id';
 async function readPublished(db) { return (await db.execute(PUBLISHED_SQL, ['PUBLISHED']))[0]; }
 async function runPipeline(db, embedder) {
   const started = performance.now();
+  setDiagnosticStage('kb_read');
   const articles = await readPublished(db);
   const readMs = performance.now() - started;
   if (!articles.length) throw new Error('Không có bài PUBLISHED để thực nghiệm.');
   let tick = performance.now();
+  setDiagnosticStage('corpus_preprocessing');
   const prepared = articles.map(article => ({ ...article, content: normalizeText(article.content) }));
   const preprocessingMs = performance.now() - tick;
   tick = performance.now();
   const chunks = [];
+  setDiagnosticStage('corpus_chunking');
   for (const article of prepared) chunks.push(...await chunkArticle(article, embedder.countTokens));
   const chunkingMs = performance.now() - tick;
   tick = performance.now();
   const vectors = [];
+  setDiagnosticStage('corpus_embedding');
   for (const chunk of chunks) vectors.push({ ...chunk, embedding: await embedder.embed(embeddingText(normalizeText(chunk.title), chunk.chunk_text)) });
   const embeddingMs = performance.now() - tick;
   tick = performance.now();
+  setDiagnosticStage('corpus_validation');
   for (const vector of vectors) validateVector(vector.embedding);
   for (const article of prepared) validateCoverage(article.content, chunks.filter(chunk => chunk.article_id === article.id));
   const validationMs = performance.now() - tick;
+  setDiagnosticStage('corpus_summary');
   const lengths = chunks.map(chunk => Array.from(chunk.chunk_text).length);
   const summary = {
     timestamp: new Date().toISOString(), articleCount: articles.length, chunkCount: chunks.length,

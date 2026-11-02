@@ -1,4 +1,5 @@
 const config = require('./config');
+const { setDiagnosticStage } = require('./ragDiagnostics');
 function validateVector(vector) {
   if (!Array.isArray(vector) || vector.length !== config.DIMENSION || !vector.every(value => typeof value === 'number' && Number.isFinite(value))) throw new Error('Vector sai dimension hoặc có số không hữu hạn.');
   const norm = Math.hypot(...vector);
@@ -6,11 +7,14 @@ function validateVector(vector) {
   return norm;
 }
 async function loadEmbedder() {
+  setDiagnosticStage('embedding_import');
   const { AutoTokenizer, AutoModel, env } = await import('@huggingface/transformers');
   env.cacheDir = config.CACHE_DIR;
   env.allowLocalModels = false;
   const options = { revision: config.REVISION };
+  setDiagnosticStage('embedding_tokenizer');
   const tokenizer = await AutoTokenizer.from_pretrained(config.MODEL, options);
+  setDiagnosticStage('embedding_model');
   const model = await AutoModel.from_pretrained(config.MODEL, { ...options, dtype: config.DTYPE, device: 'cpu' });
   const tokenize = text => tokenizer(text, { truncation: false, padding: false });
   return {

@@ -1,5 +1,6 @@
 require('../config/env');
 module.exports = Object.freeze({
+  DEFAULT_PROVIDER: 'gemini',
   MODEL: 'gemini-3.5-flash-lite',
   THRESHOLD: 0.8504602347669256,
   TOP_K: 3,

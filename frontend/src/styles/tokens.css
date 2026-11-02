@@ -1,0 +1,35 @@
+:root {
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 15px;
+  --text-heading: clamp(25px, 2.3vw, 32px);
+  --canvas: #f4f6fa;
+  --surface: #fff;
+  --navy: #111e36;
+  --navy-light: #1b2b46;
+  --text: #1d2b40;
+  --text-muted: #65738a;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #edf4ff;
+  --border: #e3e8f0;
+  --focus: #78a7f8;
+  --danger: #a52d38;
+  --danger-bg: #fff2f3;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 2px 8px #18294304;
+  --shadow-md: 0 10px 32px #142b5212;
+  --sidebar-width: 256px;
+}

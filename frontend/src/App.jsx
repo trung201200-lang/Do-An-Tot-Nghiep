@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { apiRequest } from './api';
 import Tickets from './Tickets';
 import KnowledgeBase from './KnowledgeBase';
 import RagAssistant from './RagAssistant';
+import AppShell from './components/layout/AppShell';
+import { Alert, Button, EmptyState, LoadingState } from './components/ui';
+import LoginPage from './pages/LoginPage';
+import OverviewPage from './pages/OverviewPage';
+import UserManagement from './pages/UserManagement';
 
 const TOKEN_KEY = 'it_support_token';
-const roleNames = { EMPLOYEE: 'Nhân viên', IT: 'Nhân viên IT', ADMIN: 'Quản trị viên' };
 
 export default function App() {
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '');
@@ -16,11 +20,35 @@ export default function App() {
   const [checking, setChecking] = useState(Boolean(token));
   const [submitting, setSubmitting] = useState(false);
   const [retry, setRetry] = useState(0);
-  const [section, setSection] = useState('tickets');
+  const [section, setSection] = useState('overview');
+  const [ticketQuestion, setTicketQuestion] = useState('');
+  const activeToken = useRef(token);
+  const accessRevision = useRef(0);
+  activeToken.current = token;
+  function navigate(next) { setTicketQuestion(''); setSection(next === 'users' && user?.role !== 'ADMIN' ? 'overview' : next); }
+
+  async function refreshAccess() {
+    const revision = ++accessRevision.current;
+    try {
+      const data = await apiRequest('/auth/me', { token });
+      if (activeToken.current !== token || accessRevision.current !== revision) return;
+      setUser(data.user);
+      if (data.user.role !== 'ADMIN') requestAnimationFrame(() => document.getElementById('main-content')?.focus());
+    } catch (failure) { if (activeToken.current === token && accessRevision.current === revision && failure.status === 401) logout('Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.'); }
+  }
+  function applySelfChange(account) {
+    if (account.id !== user.id) return;
+    accessRevision.current += 1;
+    if (account.status === 'INACTIVE') { logout('Tài khoản của bạn đã được vô hiệu hóa.'); return; }
+    setUser(previous => ({ ...previous, role: account.role, status: account.status }));
+    if (account.role !== 'ADMIN') { setSection('overview'); requestAnimationFrame(() => document.getElementById('main-content')?.focus()); }
+  }
 
   function logout(message = '') {
+    accessRevision.current += 1;
     sessionStorage.removeItem(TOKEN_KEY);
-    setSection('tickets');
+    setSection('overview');
+    setTicketQuestion('');
     setToken('');
     setUser(null);
     setPassword('');
@@ -50,11 +78,12 @@ export default function App() {
     if (!token || !user) return;
     let active = true;
     async function verifySession() {
+      const revision = accessRevision.current;
       try {
         const data = await apiRequest('/auth/me', { token });
-        if (active) { setUser(data.user); setError(''); }
+        if (active && accessRevision.current === revision) { setUser(data.user); setError(''); }
       } catch (failure) {
-        if (!active) return;
+        if (!active || accessRevision.current !== revision) return;
         if (failure.status === 401) logout(failure.message);
         else setError(failure.message);
       }
@@ -85,51 +114,20 @@ export default function App() {
     }
   }
 
-  return (
-    <main>
-      <h1>HỆ THỐNG HỖ TRỢ CNTT NỘI BỘ</h1>
-      <p>Quản lý yêu cầu hỗ trợ và tra cứu hướng dẫn xử lý sự cố CNTT nội bộ.</p>
-      {error && <p className="error" role="alert">{error}</p>}
-      {checking ? <p role="status">Đang kiểm tra phiên đăng nhập...</p> : token ? (
-        user ? (
-          <section>
-            <h2>Xin chào, {user.name}</h2>
-            <p>Vai trò: <strong>{roleNames[user.role] || user.role}</strong></p>
-            <p>Email: {user.email}</p>
-            <p>Bạn đã đăng nhập thành công.</p>
-            <button type="button" onClick={() => logout()}>Đăng xuất</button>
-            <nav className="section-nav" aria-label="Chức năng">
-              <button type="button" aria-pressed={section === 'tickets'} onClick={() => setSection('tickets')}>{user.role === 'EMPLOYEE' ? 'Ticket của tôi' : 'Ticket'}</button>
-              <button type="button" aria-pressed={section === 'knowledge'} onClick={() => setSection('knowledge')}>Kho kiến thức</button>
-              <button type="button" aria-pressed={section === 'rag'} onClick={() => setSection('rag')}>Trợ lý CNTT</button>
-            </nav>
-            {section === 'tickets'
-              ? <Tickets key={user.id} token={token} user={user} onUnauthorized={logout} />
-              : section === 'knowledge'
-                ? <KnowledgeBase key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} />
-                : <RagAssistant key={user.id} token={token} user={user} onUnauthorized={logout} onCreateTicket={() => setSection('tickets')} />}
-          </section>
-        ) : (
-          <section>
-            <p>Chưa xác minh được phiên đăng nhập.</p>
-            <div className="actions">
-              <button type="button" onClick={() => setRetry((value) => value + 1)}>Thử lại</button>
-              <button type="button" onClick={() => logout()}>Quay lại đăng nhập</button>
-            </div>
-          </section>
-        )
-      ) : (
-        <form onSubmit={login}>
-          <h2>Đăng nhập</h2>
-          <label htmlFor="email">Email</label>
-          <input id="email" name="email" type="email" autoComplete="username" required maxLength={254}
-            value={email} onChange={(event) => setEmail(event.target.value)} disabled={submitting} />
-          <label htmlFor="password">Mật khẩu</label>
-          <input id="password" name="password" type="password" autoComplete="current-password" required
-            value={password} onChange={(event) => setPassword(event.target.value)} disabled={submitting} />
-          <button type="submit" disabled={submitting}>{submitting ? 'Đang đăng nhập...' : 'Đăng nhập'}</button>
-        </form>
-      )}
-    </main>
-  );
+  if (checking) return <main className="session-page"><div className="session-card"><LoadingState message="Đang kiểm tra phiên đăng nhập..." />{error && <Alert>{error}</Alert>}</div></main>;
+
+  if (!token) return <LoginPage email={email} password={password} onEmailChange={setEmail} onPasswordChange={setPassword} onSubmit={login} submitting={submitting} error={error} />;
+
+  if (!user) return <main className="session-page"><div className="session-card">{error && <Alert>{error}</Alert>}<EmptyState icon="shield" title="Chưa xác minh được phiên đăng nhập" description="Vui lòng thử lại để tiếp tục vào không gian làm việc."><Button onClick={() => setRetry(value => value + 1)}>Thử lại</Button><Button variant="secondary" onClick={() => logout()}>Quay lại đăng nhập</Button></EmptyState></div></main>;
+
+  // Do not retain the admin-only screen after a role change from /auth/me.
+  const visibleSection = section === 'users' && user.role !== 'ADMIN' ? 'overview' : section;
+  return <AppShell user={user} section={visibleSection} onNavigate={navigate} onLogout={() => logout()}>
+    {error && <Alert>{error}</Alert>}
+    {visibleSection === 'overview' ? <OverviewPage key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} onNavigate={navigate} />
+      : visibleSection === 'tickets' ? <Tickets key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} initialQuestion={user.role === 'EMPLOYEE' ? ticketQuestion : ''} />
+        : visibleSection === 'knowledge' ? <KnowledgeBase key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} />
+          : visibleSection === 'rag' ? <RagAssistant key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} onCreateTicket={question => { if (user.role === 'EMPLOYEE') { setTicketQuestion(question); setSection('tickets'); } }} />
+            : visibleSection === 'users' && user.role === 'ADMIN' ? <UserManagement key={`${user.id}:${user.role}`} token={token} user={user} onUnauthorized={logout} onAccessDenied={refreshAccess} onSelfChanged={applySelfChange} /> : null}
+  </AppShell>;
 }

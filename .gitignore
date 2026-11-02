@@ -7,3 +7,4 @@ dist/
 
 # Cache model và báo cáo chạy local GĐ5.2
 backend/.cache/
+database/tk nv.sql

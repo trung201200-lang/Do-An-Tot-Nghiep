@@ -6,7 +6,14 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "test:ui1": "node scripts/check-ui1.mjs",
+    "test:ui2": "node scripts/check-ui1.mjs --tickets",
+    "test:ui3": "node scripts/check-ui1.mjs --knowledge",
+    "test:ui4": "node scripts/check-ui1.mjs --rag",
+    "test:ui5": "node scripts/check-ui1.mjs --dashboard",
+    "test:ui6": "node scripts/check-ui1.mjs --users",
+    "test:ui7": "node scripts/check-ui1.mjs --audit"
   },
   "dependencies": { "react": "^19.1.0", "react-dom": "^19.1.0" },
   "devDependencies": { "vite": "^6.3.5" }

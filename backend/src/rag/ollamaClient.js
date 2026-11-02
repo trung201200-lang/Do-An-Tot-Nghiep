@@ -1,5 +1,5 @@
 const config = require('./generationConfig');
-const { RESPONSE_SCHEMA } = require('./generationPrompt');
+const { OLLAMA_RESPONSE_SCHEMA } = require('./ollamaPrompt');
 const { RagError, ensureNoSecrets } = require('./generationSafety');
 
 function readOllamaConfig() {
@@ -33,7 +33,9 @@ function createOllamaClient({ settings = readOllamaConfig(), fetchImpl = globalT
         method: 'POST', redirect: 'error', signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: settings.model, messages: toOllamaMessages(prompt),
-          stream: false, format: RESPONSE_SCHEMA, options: { num_predict: config.MAX_OUTPUT_TOKENS } }),
+          stream: false, format: OLLAMA_RESPONSE_SCHEMA,
+          // Grounded extraction favors stable decoding; this never changes the model's answered flag.
+          options: { num_predict: config.MAX_OUTPUT_TOKENS, temperature: 0, seed: 42 } }),
       });
       // Never expose response bodies, remote messages, request data or raw errors.
       if (response.status === 404) throw failure('MODEL_UNAVAILABLE', 503, 'Không tìm thấy model Ollama; kiểm tra model đã tải và endpoint local.');

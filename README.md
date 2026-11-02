@@ -131,7 +131,7 @@ Trong frontend, dùng npm.cmd run build để build và npm.cmd run preview đ�
 
 Chỉ dùng local/demo. Mật khẩu là SEED_USER_PASSWORD tại thời điểm tạo tài khoản; không công bố mật khẩu thật trong tài liệu. Ba tài khoản demo hiện ACTIVE.
 
-Sau đăng nhập, chọn Ticket hoặc Kho kiến thức. Reload giữ phiên và trở về tab Ticket. Frontend không lưu mật khẩu vào sessionStorage/localStorage.
+Sau đăng nhập, hệ thống mở trang Tổng quan. Dùng menu bên để truy cập Yêu cầu hỗ trợ, Kho kiến thức hoặc Trợ lý AI; Quản lý người dùng chỉ dành cho ADMIN. Tải lại trang giữ phiên đăng nhập và trở về Tổng quan. Frontend không lưu mật khẩu vào sessionStorage/localStorage.
 
 ## Seed Knowledge Base
 
@@ -368,3 +368,51 @@ Ngân sách context hiện tại là ký tự, không phải tokenizer Ollama; c
 window của model thực tế trước benchmark, chưa chứng minh không truncation.
 E5 vẫn có thể cần mạng lúc nạp: tích hợp Ollama không đồng nghĩa toàn bộ RAG đã offline.
 Evidence khớp nguồn không bảo đảm mọi khẳng định trong answer đúng ngữ nghĩa.
+
+### Chẩn đoán lỗi RAG trong development
+
+Mặc định không ghi log chẩn đoán. Để bật, đặt cả hai biến trong `backend/.env`
+(hoặc môi trường chạy backend), rồi tự khởi động lại backend trong terminal:
+
+```dotenv
+NODE_ENV=development
+RAG_DIAGNOSTICS=true
+```
+
+Request lỗi sẽ ghi một dòng `[rag-diagnostic]` ra stderr của backend. Response API
+giữ nguyên, không thêm debug. Log chỉ chứa `stage`, `error.name`, `error.code`,
+`cause.code`, `provider`, `providerCalled`. Tên/mã lỗi dùng danh sách cho phép cố định;
+giá trị lạ thành `UNKNOWN`, giá trị thiếu thành `null`. Không ghi message, stack,
+câu hỏi, KB, prompt, output model, SQL, credential hoặc cấu hình môi trường.
+`provider` là adapter đã chọn (`null` nếu chưa chọn, `unknown` nếu adapter inject
+không thuộc Gemini/Ollama); `providerCalled=true` nghĩa là đã bắt đầu gọi adapter,
+không khẳng định HTTP request đã tới model. Trạng thái được tách theo request.
+
+Các stage phân biệt nạp E5 (`embedding_import`, `embedding_tokenizer`,
+`embedding_model`; `embedding_load` khi chờ loader), đọc KB (`kb_read`), dựng index
+(`corpus_*`), `retrieval`, `provider_generate`, `output_validation` và kiểm tra nguồn
+(`source_verify_before`, `source_verify_after`). Stage cho biết bước đang thực hiện
+khi lỗi, không tự xác nhận nguyên nhân gốc. Mã chưa nằm trong allowlist cần được
+kiểm tra riêng; không bật log raw error để tìm thêm thông tin.
+
+Tắt bằng `RAG_DIAGNOSTICS=false` rồi khởi động lại backend. `NODE_ENV=production`
+luôn tắt log này dù flag bằng `true`. Biến môi trường có sẵn được ưu tiên hơn `.env`.
+Đổi `.env` không tự cập nhật tiến trình đang chạy. Không cần thay cấu hình provider.
+
+Test an toàn: trong `backend`, chạy `npm run test:rag-diagnostics` và
+`npm run test:stage7-2`. Suite chẩn đoán dùng handler/service thật với dependency
+mock, không mở server, không đọc `.env` thật, không gọi database/model/network
+và không ghi báo cáo thực nghiệm. Không dùng suite integration để kiểm tra thay đổi này.
+
+### GĐ7.2.2: hướng dẫn và schema riêng cho Ollama
+
+Ollama dùng prompt riêng, schema giới hạn answer/evidence và `temperature=0`,
+`seed=42`. Gemini giữ nguyên prompt/schema. Không tự sửa `answered=false` thành
+true; mọi câu trả lời true vẫn phải qua validator evidence chung. Retrieval,
+threshold, E5, KB và response API không đổi. Cần restart backend để nạp code mới.
+
+Unit an toàn: `npm run test:stage7-2-2` trong backend. Xem [báo cáo GĐ7.2.2](docs/giai-doan-7-2-2.md)
+về 30 lượt Ollama local, các thử nghiệm thất bại, kết quả cuối và hướng dẫn runner
+live có opt-in. Evidence khớp không chứng minh mọi khẳng định của answer có căn cứ;
+model nhỏ vẫn có thể trả sai trích dẫn hoặc fallback. Chưa kiểm chứng ngữ nghĩa
+từng khẳng định hay chất lượng tổng quát trên tập dữ liệu lớn.

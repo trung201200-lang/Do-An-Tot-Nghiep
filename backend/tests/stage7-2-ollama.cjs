@@ -17,7 +17,8 @@ process.env.OLLAMA_MODEL = 'fixture:local';
 const { createOllamaClient, readOllamaConfig } = require('../src/rag/ollamaClient');
 const { createGenerationProvider } = require('../src/rag/generationProvider');
 const { createRagService } = require('../src/rag/generationService');
-const { buildPrompt, RESPONSE_SCHEMA } = require('../src/rag/generationPrompt');
+const { buildPrompt } = require('../src/rag/generationPrompt');
+const { OLLAMA_RESPONSE_SCHEMA } = require('../src/rag/ollamaPrompt');
 const quote = 'Kiểm tra Wi-Fi đã bật và chế độ máy bay đã tắt.';
 const valid = JSON.stringify({ answered: true, answer: quote, evidence: [quote] });
 const prompt = buildPrompt('Wi-Fi?', [{ code: 'KB-000008', title: 'Wi-Fi', text: quote }]);
@@ -30,7 +31,7 @@ async function main() {
   await check('HTTP mapping, schema, non-streaming, usage and local defaults', async () => {
     const r = await client(async (url, options) => {
       assert.equal(url, 'http://127.0.0.1:11434/api/chat'); assert.equal(options.method, 'POST'); assert.equal(options.redirect, 'error');
-      const body = JSON.parse(options.body); assert.equal(body.stream, false); assert.deepEqual(body.format, RESPONSE_SCHEMA);
+      const body = JSON.parse(options.body); assert.equal(body.stream, false); assert.deepEqual(body.format, OLLAMA_RESPONSE_SCHEMA);
       assert.equal(body.model, 'fixture:local'); assert.equal(body.messages[0].content, prompt.systemInstruction);
       assert.equal(body.messages[1].content, prompt.contents[0].parts[0].text); return response();
     }).generate(prompt);
